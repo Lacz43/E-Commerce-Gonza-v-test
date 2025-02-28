@@ -1,4 +1,6 @@
 import type { HTMLAttributes } from "react";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Button from "@mui/material/Button";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & { item: Item };
 
@@ -26,12 +28,14 @@ export default function ProductCard({ item, className, ...props }: CardProps) {
 					<div className=" text-base text-[#374151]">{item.description}</div>
 				)}
 				<div className="flex justify-end pt-6">
-					<button
-						type="button"
-						className="bg-[#7e22ce] text-[#ffffff] w-full font-bold text-base  p-3 rounded-lg hover:bg-purple-800 active:scale-95 transition-transform transform"
+					<Button
+						size="large"
+						variant="contained"
+						endIcon={<ShoppingCartIcon />}
+						className="w-full"
 					>
 						Añadir
-					</button>
+					</Button>
 				</div>
 			</div>
 		</div>
