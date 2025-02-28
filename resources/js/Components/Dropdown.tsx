@@ -1,10 +1,10 @@
 import { Transition } from '@headlessui/react';
-import { InertiaLinkProps, Link } from '@inertiajs/react';
+import { type InertiaLinkProps, Link } from '@inertiajs/react';
 import {
     createContext,
-    Dispatch,
-    PropsWithChildren,
-    SetStateAction,
+    type Dispatch,
+    type PropsWithChildren,
+    type SetStateAction,
     useContext,
     useState,
 } from 'react';
