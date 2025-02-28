@@ -1,0 +1,38 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsc && vite build",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "@headlessui/react": "^2.2.0",
+        "@inertiajs/react": "^2.0.3",
+        "@tailwindcss/forms": "^0.5.10",
+        "@tailwindcss/postcss": "^4.0.9",
+        "@tailwindcss/vite": "^4.0.9",
+        "@types/node": "^22.13.5",
+        "@types/react": "^19.0.10",
+        "@types/react-dom": "^19.0.4",
+        "@vitejs/plugin-react": "^4.3.4",
+        "autoprefixer": "^10.4.20",
+        "axios": "^1.8.1",
+        "concurrently": "^9.1.2",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.5.3",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "tailwindcss": "^4.0.9",
+        "typescript": "^5.7.3",
+        "vite": "^6.2.0"
+    },
+    "packageManager": "pnpm@10.5.2",
+    "pnpm": {
+        "ignoredBuiltDependencies": [
+            "esbuild"
+        ],
+        "onlyBuiltDependencies": [
+            "esbuild"
+        ]
+    }
+}

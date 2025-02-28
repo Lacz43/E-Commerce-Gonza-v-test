@@ -1,0 +1,3 @@
+@import "tailwindcss/preflight";  /* Reset de estilos (equivalente a base) */
+@import "tailwindcss/theme";      /* Componentes + Utilidades */
+@import "tailwindcss/utilities";  /* Utilidades adicionales (opcional) */
