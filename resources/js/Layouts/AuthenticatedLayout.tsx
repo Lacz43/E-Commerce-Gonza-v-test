@@ -3,13 +3,14 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import { type PropsWithChildren, type ReactNode, useState } from 'react';
+import type { Auth } from '@/Layouts/types';
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+    const user = (usePage().props as unknown as Auth).auth.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -53,6 +54,7 @@ export default function Authenticated({
                                                     viewBox="0 0 20 20"
                                                     fill="currentColor"
                                                 >
+                                                    <title>Menu</title>
                                                     <path
                                                         fillRule="evenodd"
                                                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -126,8 +128,8 @@ export default function Authenticated({
 
                 <div
                     className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
+                        `${showingNavigationDropdown ? 'block' : 'hidden'}
+                         sm:hidden`
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
