@@ -1,5 +1,5 @@
 // import { router } from "@inertiajs/react";
-import GuestLayout from "@/Layouts/GuestLayout";
+import Ecommerce from "@/Layouts/EcommerceLayout";
 import InfiniteScroll from "@/Components/InfiniteScroll";
 import ProductCard from "@/Components/ProductCard";
 import "../../css/welcome.css";
@@ -7,7 +7,8 @@ import { useEffect } from "react";
 
 export default function Welcome() {
 	useEffect(() => {
-		const products = new IntersectionObserver((entries) => { // inspector de elementos
+		const products = new IntersectionObserver((entries) => {
+			// inspector de elementos
 			for (const entry of entries) {
 				if (entry.isIntersecting) {
 					entry.target.classList.add("visible"); // si es visible, agregar la clase visible
@@ -21,10 +22,10 @@ export default function Welcome() {
 	}, []);
 
 	return (
-		<GuestLayout>
+		<Ecommerce>
 			<title>Gonza</title>
 			<div className="h-dvh">
-				<h2 className="text-5xl font-bold">Super Mercado Gonza</h2>
+				<h2 className="text-5xl font-bold text-center">Gonza</h2>
 
 				<p className="mt-5 font-light text-2xl text-gray-600">
 					La mejor opcion para realizar tus compras
@@ -42,6 +43,6 @@ export default function Welcome() {
 					loading: <div>Loading...</div>,
 				}}
 			</InfiniteScroll>
-		</GuestLayout>
+		</Ecommerce>
 	);
 }
