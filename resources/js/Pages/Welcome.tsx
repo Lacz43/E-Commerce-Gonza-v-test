@@ -4,6 +4,7 @@ import InfiniteScroll from "@/Components/InfiniteScroll";
 import ProductCard from "@/Components/ProductCard";
 import "../../css/welcome.css";
 import { useEffect } from "react";
+import InputProductSearch from "@/Components/InputProductSearch";
 
 export default function Welcome() {
 	useEffect(() => {
@@ -32,17 +33,20 @@ export default function Welcome() {
 				</p>
 			</div>
 
-			<InfiniteScroll
-				url={route("products")}
-				className="content my-5 mx-2 flex flex-wrap justify-center gap-4"
-			>
-				{{
-					card: (item) => (
-						<ProductCard key={item.id} item={item} className="" />
-					),
-					loading: <div>Loading...</div>,
-				}}
-			</InfiniteScroll>
+			<div className="content">
+				<InputProductSearch className="mx-auto bg-white"/>
+				<InfiniteScroll
+					url={route("products")}
+					className="my-5 mx-2 flex flex-wrap justify-center gap-4"
+				>
+					{{
+						card: (item) => (
+							<ProductCard key={item.id} item={item} className="" />
+						),
+						loading: <div>Loading...</div>,
+					}}
+				</InfiniteScroll>
+			</div>
 		</Ecommerce>
 	);
 }
