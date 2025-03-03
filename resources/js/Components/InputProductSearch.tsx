@@ -69,7 +69,13 @@ export default function FreeSoloCreateOption({
 					</li>
 				);
 			}}
-			sx={{ width: 300 }}
+			sx={{
+				width: 400,
+				borderRadius: "20px",
+				"& .MuiOutlinedInput-root": {
+					borderRadius: "20px",
+				},
+			}}
 			freeSolo
 			renderInput={(params) => (
 				<TextField {...params} label="Buscar Productos" />
