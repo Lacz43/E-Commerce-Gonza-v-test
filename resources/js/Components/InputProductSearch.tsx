@@ -72,7 +72,7 @@ export default function FreeSoloCreateOption({
 			sx={{
 				width: 400,
 				borderRadius: "20px",
-				"& .MuiOutlinedInput-root": {
+				"& .MuiOutlinedInput-root": { // modificar estilos de MUI
 					borderRadius: "20px",
 				},
 			}}

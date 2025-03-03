@@ -36,7 +36,7 @@ export default function InfiniteScroll({
 		try {
 			const { data } = await axios.get(url);
 			setItems((prev) => [...prev, ...data.products]);
-			setHasMore(data.products.length > 20);
+			setHasMore(data.products.length > 20); // esto rivisa si hay los suficientes elementos para seguir la carga
 		} catch (error) {
 			console.error(error);
 		} finally {
