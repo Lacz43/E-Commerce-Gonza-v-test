@@ -5,6 +5,7 @@ import ProductCard from "@/Components/ProductCard";
 import "../../css/welcome.css";
 import { useEffect } from "react";
 import InputProductSearch from "@/Components/InputProductSearch";
+import LoadingProductCard from "@/Components/LoadingProductCard";
 
 export default function Welcome() {
 	useEffect(() => {
@@ -34,7 +35,7 @@ export default function Welcome() {
 			</div>
 
 			<div className="content">
-				<InputProductSearch className="mx-auto bg-white"/>
+				<InputProductSearch className="mx-auto bg-white" />
 				<InfiniteScroll
 					url={route("products")}
 					className="my-5 mx-2 flex flex-wrap justify-center gap-4"
@@ -43,7 +44,13 @@ export default function Welcome() {
 						card: (item) => (
 							<ProductCard key={item.id} item={item} className="" />
 						),
-						loading: <div>Loading...</div>,
+						loading: (
+							<div className="my-5 mx-2 flex flex-wrap justify-center gap-4">
+								{[...Array(8).fill(null)].map((_, i) => (
+									<LoadingProductCard key={`card-${i}`} />
+								))}
+							</div>
+						),
 					}}
 				</InfiniteScroll>
 			</div>
