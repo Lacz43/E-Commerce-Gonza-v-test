@@ -27,21 +27,26 @@ export default function InfiniteScroll({
 	const [items, setItems] = useState<Item[]>([]);
 	const [loading, setLoading] = useState(false);
 	// const [page, _setPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 
 	const loadMoreItems = useCallback(async () => {
+		if (loading || !hasMore) return;
+
 		setLoading(true);
 		try {
 			const { data } = await axios.get(url);
 			setItems((prev) => [...prev, ...data.products]);
+			setHasMore(data.products.length > 20);
 		} catch (error) {
 			console.error(error);
 		} finally {
 			setLoading(false);
 		}
-	}, [url]);
+	}, [url, loading, hasMore]);
 
 	useEffect(() => {
-		const handleScroll = () => { // funcion para detectar posicion del scroll
+		const handleScroll = () => {
+			// funcion para detectar posicion del scroll
 			if (
 				window.innerHeight + Number(document.documentElement.scrollTop) >=
 				document.documentElement.offsetHeight - 100
@@ -67,7 +72,7 @@ export default function InfiniteScroll({
 			{typeof children.card === "function" && items.length > 0 ? (
 				items.map((item) => children.card(item))
 			) : (
-				<div className="text-center text-gray-500">No items found</div>
+				<div className="text-center text-gray-500">No hay productos</div>
 			)}
 		</div>
 	);
