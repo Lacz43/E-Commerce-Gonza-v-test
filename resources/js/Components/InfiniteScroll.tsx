@@ -10,9 +10,9 @@ import axios from "axios";
 type Props = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 	url: string;
 	children: {
-        card: (item: Item) => ReactNode;
-        loading: ReactNode;
-    };
+		card: (item: Item) => ReactNode;
+		loading: ReactNode;
+	};
 };
 
 // url: tipo string que contiene la url de la api
@@ -26,8 +26,8 @@ export default function InfiniteScroll({
 }: Props) {
 	const [items, setItems] = useState<Item[]>([]);
 	const [loading, setLoading] = useState(false);
-	// const [page, setPage] = useState(1);
-	//
+	// const [page, _setPage] = useState(1);
+
 	const loadMoreItems = useCallback(async () => {
 		setLoading(true);
 		try {
@@ -39,6 +39,20 @@ export default function InfiniteScroll({
 			setLoading(false);
 		}
 	}, [url]);
+
+	useEffect(() => {
+		const handleScroll = () => { // funcion para detectar posicion del scroll
+			if (
+				window.innerHeight + Number(document.documentElement.scrollTop) >=
+				document.documentElement.offsetHeight - 100
+			) {
+				loadMoreItems();
+			}
+		};
+
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, [loadMoreItems]);
 
 	useEffect(() => {
 		loadMoreItems();
