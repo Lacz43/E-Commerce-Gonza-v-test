@@ -34,18 +34,18 @@ export default function Welcome() {
 				</p>
 			</div>
 
-			<div className="content">
+			<div className="content mx-5 sm:mx-0">
 				<InputProductSearch className="mx-auto bg-white" />
 				<InfiniteScroll
 					url={route("products")}
-					className="my-5 mx-2 flex flex-wrap justify-center gap-4"
+					className="my-5 mx-2 flex flex-wrap gap-4"
 				>
 					{{
 						card: (item) => (
 							<ProductCard key={item.id} item={item} className="" />
 						),
 						loading: (
-							<div className="my-5 mx-2 flex flex-wrap justify-center gap-4">
+							<div className="my-5 mx-2 flex flex-wrap gap-4">
 								{[...Array(8).fill(null)].map((_, i) => (
 									<LoadingProductCard key={`card-${i}`} />
 								))}
