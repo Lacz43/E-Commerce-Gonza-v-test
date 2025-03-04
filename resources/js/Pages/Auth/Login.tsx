@@ -1,11 +1,8 @@
-import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import type { FormEventHandler } from "react";
+import { TextField, Checkbox, FormControlLabel, Button } from "@mui/material";
 
 export default function Login({
 	status,
@@ -30,58 +27,66 @@ export default function Login({
 
 	return (
 		<GuestLayout>
-			<Head title="Log in" />
+			<title>Log In</title>
 
 			{status && (
 				<div className="mb-4 text-sm font-medium text-green-600">{status}</div>
 			)}
 
-			<form onSubmit={submit}>
+			<form onSubmit={submit} className="w-full">
 				<div>
-					<InputLabel htmlFor="email" value="Email" />
-
-					<TextInput
-						id="email"
+					<TextField
+						id="outlined-required"
+						label="Correo Eletronico"
 						type="email"
-						name="email"
-						value={data.email}
-						className="mt-1 block w-full"
+						className="w-full"
 						autoComplete="username"
-						isFocused={true}
+						value={data.email}
+						size="small"
 						onChange={(e) => setData("email", e.target.value)}
+						error={!!errors.email}
 					/>
 
-					<InputError message={errors.email} className="mt-2" />
+					<InputError message={errors.email} className="mt-1" />
 				</div>
 
 				<div className="mt-4">
-					<InputLabel htmlFor="password" value="Contraseña" />
-
-					<TextInput
+					<TextField
 						id="password"
+						label="Contraseña"
 						type="password"
-						name="password"
+						className="w-full"
 						value={data.password}
-						className="mt-1 block w-full"
+						size="small"
 						autoComplete="current-password"
 						onChange={(e) => setData("password", e.target.value)}
+						error={!!errors.password}
 					/>
-
-					<InputError message={errors.password} className="mt-2" />
+					<InputError message={errors.password} className="mt-1" />
 				</div>
 
-				<div className="mt-4 block">
-					<label className="flex items-center" htmlFor="remember">
-						<Checkbox
-							name="remember"
-							checked={data.remember}
-							onChange={(e) =>
-								setData("remember", (e.target.checked || false) as false)
-							}
-						/>
-						<span className="ms-2 text-sm text-gray-600">Recuerdame</span>
-					</label>
+				<div className="mt-1 block">
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={data.remember}
+								onChange={(e) =>
+									setData("remember", (e.target.checked || false) as false)
+								}
+							/>
+						}
+						label="Recuerdame"
+					/>
 				</div>
+				<Button
+					size="medium"
+					variant="contained"
+					className="w-full"
+                    type="submit"
+                    disabled={processing}
+				>
+				    <b>Iniciar sesión</b>
+				</Button>
 
 				<div className="mt-4 flex items-center justify-end">
 					{canResetPassword && (
@@ -92,10 +97,6 @@ export default function Login({
 							¿Olvidaste tu contraseña?
 						</Link>
 					)}
-
-					<PrimaryButton className="ms-4" disabled={processing}>
-						Log in
-					</PrimaryButton>
 				</div>
 			</form>
 		</GuestLayout>
