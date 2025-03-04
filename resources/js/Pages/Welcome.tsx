@@ -38,7 +38,7 @@ export default function Welcome() {
 				<InputProductSearch className="mx-auto bg-white" />
 				<InfiniteScroll
 					url={route("products")}
-					className="my-5 mx-2 grid grid-cols-[repeat(auto-fit,minmax(20rem,_1fr))] gap-4"
+					className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
 				>
 					{{
 						card: (item) => (
