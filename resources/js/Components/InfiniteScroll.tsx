@@ -16,7 +16,8 @@ type Props = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 };
 
 // url: tipo string que contiene la url de la api
-// children: tipo function que recibe un array de items y devuelve un reactNode
+// children: tipo function que recibe un array de items y devuelve un ReactNode
+// classname: clases heredadas
 
 export default function InfiniteScroll({
 	url,
@@ -35,8 +36,8 @@ export default function InfiniteScroll({
 		setLoading(true);
 		try {
 			const { data } = await axios.get(url);
-			setItems((prev) => [...prev, ...data.products]);
-			setHasMore(data.products.length > 20); // esto rivisa si hay los suficientes elementos para seguir la carga
+			setItems((prev) => [...prev, ...data.products.data]); // añade los items cargados a un array
+			setHasMore(data.products.data > 20); // esto rivisa si hay los suficientes elementos para seguir la carga
 		} catch (error) {
 			console.error(error);
 		} finally {
