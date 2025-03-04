@@ -9,6 +9,7 @@ import axios from "axios";
 
 type Props = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 	url: string;
+	response: (data: any) => any;
 	children: {
 		card: (item: Item) => ReactNode;
 		loading: ReactNode;
@@ -22,6 +23,7 @@ type Props = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 export default function InfiniteScroll({
 	url,
 	children,
+	response,
 	className,
 	...props
 }: Props) {
@@ -36,14 +38,15 @@ export default function InfiniteScroll({
 		setLoading(true);
 		try {
 			const { data } = await axios.get(url);
-			setItems((prev) => [...prev, ...data.products.data]); // añade los items cargados a un array
-			setHasMore(data.products.data > 20); // esto rivisa si hay los suficientes elementos para seguir la carga
+			const obj = response(data);
+			setItems((prev) => [...prev, ...obj]); // añade los items cargados a un array
+			setHasMore(obj.length > 2); // esto rivisa si hay los suficientes elementos para seguir la carga
 		} catch (error) {
 			console.error(error);
 		} finally {
 			setLoading(false);
 		}
-	}, [url, loading, hasMore]);
+	}, [url, loading, hasMore, response]);
 
 	useEffect(() => {
 		const handleScroll = () => {
