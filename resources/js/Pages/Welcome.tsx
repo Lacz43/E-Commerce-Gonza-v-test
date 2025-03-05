@@ -48,7 +48,12 @@ export default function Welcome() {
 						loading: (
 							<div className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4">
 								{[...Array(8).fill(null)].map((_, i) => (
-									<LoadingProductCard key={`card-${i}`} />
+									<LoadingProductCard
+										key={`card-${
+											// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+											i
+										}`}
+									/>
 								))}
 							</div>
 						),
