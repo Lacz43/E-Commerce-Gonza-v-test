@@ -12,7 +12,7 @@ export default function ProductCard({ item, className, ...props }: CardProps) {
 		>
 			<figure className="flex justify-center items-center rounded-2xl size-80">
 				<img
-					src="https://www.supergarzon.com/site/pueblonuevo/5456-large_default/harina-pan-1kg-maiz.jpg"
+					src={item.image}
 					alt="Card Preview"
 					className="rounded-t-2xl"
 				/>
