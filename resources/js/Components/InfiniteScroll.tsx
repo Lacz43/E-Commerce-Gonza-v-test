@@ -7,15 +7,15 @@ import {
 } from "react";
 import axios from "axios";
 
-type PaginationResponse<T> = {
+type PaginationResponse<T, K extends string> = Record<K, {
   data: T[];
   current_page: number;
   last_page: number;
-};
+}>;
 
-type Props<T> = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+type Props<T, K extends string> = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 	url: string;
-	transformResponse: (data: any) => PaginationResponse<T>;
+	transformResponse: (data: PaginationResponse<T, K>) => PaginationResponse<T, K>[K];
 	children: {
 		card: (item: T) => ReactNode;
 		loading: ReactNode;
@@ -26,13 +26,13 @@ type Props<T> = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 // children: tipo function que recibe un array de items y devuelve un ReactNode
 // classname: clases heredadas
 
-export default function InfiniteScroll<T>({
+export default function InfiniteScroll<T, K extends string>({
 	url,
 	children,
 	transformResponse,
 	className,
 	...props
-}: Props<T>) {
+}: Props<T, K>) {
 	const [items, setItems] = useState<T[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
