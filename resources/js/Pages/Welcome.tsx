@@ -36,10 +36,10 @@ export default function Welcome() {
 
 			<div className="content mx-5 sm:mx-0 w-full">
 				<InputProductSearch className="mx-auto bg-white" />
-				<InfiniteScroll
+				<InfiniteScroll<Item>
 					url={route("products")}
 					className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
-                    response={res => res.products}
+					transformResponse={(res) => res.products}
 				>
 					{{
 						card: (item) => (
