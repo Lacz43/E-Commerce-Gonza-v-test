@@ -7,11 +7,17 @@ import {
 } from "react";
 import axios from "axios";
 
-type Props = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+type PaginationResponse<T> = {
+  data: T[];
+  current_page: number;
+  last_page: number;
+};
+
+type Props<T> = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 	url: string;
-	response: (data: any) => any;
+	transformResponse: (data: any) => PaginationResponse<T>;
 	children: {
-		card: (item: Item) => ReactNode;
+		card: (item: T) => ReactNode;
 		loading: ReactNode;
 	};
 };
@@ -20,14 +26,14 @@ type Props = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 // children: tipo function que recibe un array de items y devuelve un ReactNode
 // classname: clases heredadas
 
-export default function InfiniteScroll({
+export default function InfiniteScroll<T>({
 	url,
 	children,
-	response,
+	transformResponse,
 	className,
 	...props
-}: Props) {
-	const [items, setItems] = useState<Item[]>([]);
+}: Props<T>) {
+	const [items, setItems] = useState<T[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
@@ -38,7 +44,7 @@ export default function InfiniteScroll({
 		setLoading(true);
 		try {
 			const { data } = await axios.get(url, { params: { page: page } });
-			const obj = response(data);
+			const obj = transformResponse(data);
 
 			setItems((prev) => [...prev, ...obj.data]); // añade los items cargados a un array
 			setPage((prev) => prev + 1);
@@ -48,7 +54,7 @@ export default function InfiniteScroll({
 		} finally {
 			setLoading(false);
 		}
-	}, [url, loading, hasMore, page, response]);
+	}, [url, loading, hasMore, page, transformResponse]);
 
 	useEffect(() => {
 		if (!hasMore) return;
