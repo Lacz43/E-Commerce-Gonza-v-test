@@ -7,15 +7,29 @@ import {
 } from "react";
 import axios from "axios";
 
-type PaginationResponse<T, K extends string> = Record<K, {
-  data: T[];
-  current_page: number;
-  last_page: number;
-}>;
+// PaginationResponse: tipo object que contiene la respuesta de la api
+// T: tipo de los items
+// K: tipo string con el nombre del objeto de la api
+// se usa Record porque la api devuelve un objeto con una propiedad que es un objeto inderminado con la informacion de la pagina
+type PaginationResponse<T, K extends string> = Record<
+	K,
+	{
+		data: T[];
+		current_page: number;
+		last_page: number;
+	}
+>;
 
-type Props<T, K extends string> = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+// Props: tipo object que contiene las propiedades del componente
+// se usa Omit para ignorar las propiedades que no son necesarias
+type Props<T, K extends string> = Omit<
+	HTMLAttributes<HTMLDivElement>,
+	"children"
+> & {
 	url: string;
-	transformResponse: (data: PaginationResponse<T, K>) => PaginationResponse<T, K>[K];
+	transformResponse: (
+		data: PaginationResponse<T, K>,
+	) => PaginationResponse<T, K>[K]; //[K] es para que se pueda usar el nombre del objeto de la api
 	children: {
 		card: (item: T) => ReactNode;
 		loading: ReactNode;
@@ -24,8 +38,8 @@ type Props<T, K extends string> = Omit<HTMLAttributes<HTMLDivElement>, "children
 
 // url: tipo string que contiene la url de la api
 // children: tipo function que recibe un array de items y devuelve un ReactNode
+// transformResponse: tipo function que recibe un objeto de la api y devuelve un objeto con los datos transformados
 // classname: clases heredadas
-
 export default function InfiniteScroll<T, K extends string>({
 	url,
 	children,
