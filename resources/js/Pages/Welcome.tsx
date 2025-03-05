@@ -39,7 +39,7 @@ export default function Welcome() {
 				<InfiniteScroll
 					url={route("products")}
 					className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
-                    response={res => res.products.data}
+                    response={res => res.products}
 				>
 					{{
 						card: (item) => (
