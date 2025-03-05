@@ -29,7 +29,7 @@ export default function InfiniteScroll({
 }: Props) {
 	const [items, setItems] = useState<Item[]>([]);
 	const [loading, setLoading] = useState(false);
-	// const [page, _setPage] = useState(1);
+	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 
 	const loadMoreItems = useCallback(async () => {
@@ -37,16 +37,18 @@ export default function InfiniteScroll({
 
 		setLoading(true);
 		try {
-			const { data } = await axios.get(url);
+			const { data } = await axios.get(url, { params: { page: page } });
 			const obj = response(data);
-			setItems((prev) => [...prev, ...obj]); // añade los items cargados a un array
-			setHasMore(obj.length > 2); // esto rivisa si hay los suficientes elementos para seguir la carga
+
+			setItems((prev) => [...prev, ...obj.data]); // añade los items cargados a un array
+			setPage((prev) => prev + 1);
+			setHasMore(obj.current_page < obj.last_page); // esto rivisa si hay los suficientes elementos para seguir la carga
 		} catch (error) {
 			console.error(error);
 		} finally {
 			setLoading(false);
 		}
-	}, [url, loading, hasMore, response]);
+	}, [url, loading, hasMore, page, response]);
 
 	useEffect(() => {
 		const handleScroll = () => {
