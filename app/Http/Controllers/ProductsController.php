@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $products = Products::paginate(20);
         Debugbar::info($products);
