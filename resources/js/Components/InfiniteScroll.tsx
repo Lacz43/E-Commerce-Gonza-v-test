@@ -51,6 +51,7 @@ export default function InfiniteScroll({
 	}, [url, loading, hasMore, page, response]);
 
 	useEffect(() => {
+		if (!hasMore) return;
 		const handleScroll = () => {
 			// funcion para detectar posicion del scroll
 			if (
@@ -63,11 +64,12 @@ export default function InfiniteScroll({
 
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
-	}, [loadMoreItems]);
+	}, [loadMoreItems, hasMore]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		loadMoreItems();
-	}, [loadMoreItems]);
+	}, []);
 
 	if (loading) {
 		return children.loading;
