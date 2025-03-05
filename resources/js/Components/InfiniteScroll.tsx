@@ -60,7 +60,7 @@ export default function InfiniteScroll<T, K extends string>({
 			const { data } = await axios.get(url, { params: { page: page } });
 			const obj = transformResponse(data);
 
-			setItems((prev) => [...prev, ...obj.data]); // añade los items cargados a un array
+			setItems([...items, ...obj.data]); // añade los items cargados a un array
 			setPage((prev) => prev + 1);
 			setHasMore(obj.current_page < obj.last_page); // esto rivisa si hay los suficientes elementos para seguir la carga
 		} catch (error) {
@@ -68,7 +68,7 @@ export default function InfiniteScroll<T, K extends string>({
 		} finally {
 			setLoading(false);
 		}
-	}, [url, loading, hasMore, page, transformResponse]);
+	}, [url, loading, hasMore, page, transformResponse, items]);
 
 	useEffect(() => {
 		if (!hasMore) return;
@@ -91,10 +91,6 @@ export default function InfiniteScroll<T, K extends string>({
 		loadMoreItems();
 	}, []);
 
-	if (loading) {
-		return children.loading;
-	}
-
 	return (
 		<div {...props} className={`${className}`}>
 			{typeof children.card === "function" && items.length > 0 ? (
@@ -102,6 +98,7 @@ export default function InfiniteScroll<T, K extends string>({
 			) : (
 				<div className="text-center text-gray-500">No hay productos</div>
 			)}
+            {loading && children.loading}
 		</div>
 	);
 }
