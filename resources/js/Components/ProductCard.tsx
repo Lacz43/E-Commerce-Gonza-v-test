@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Button from "@mui/material/Button";
+import { imageUrl } from "@/utils";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & { item: Item };
 
@@ -12,7 +13,7 @@ export default function ProductCard({ item, className, ...props }: CardProps) {
 		>
 			<div className="flex justify-center items-center rounded-2xl">
 				<img
-					src={item.image}
+					src={imageUrl(item.image)}
 					alt="Card Preview"
 					className="rounded-t-2xl w-full h-full object-cover"
 				/>
