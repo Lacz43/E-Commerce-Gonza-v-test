@@ -10,13 +10,13 @@ export default function ProductCard({ item, className, ...props }: CardProps) {
 			{...props}
 			className={`flex flex-col rounded-2xl w-auto bg-white shadow-xl ${className}`}
 		>
-			<figure className="flex justify-center items-center rounded-2xl size-80">
+			<div className="flex justify-center items-center rounded-2xl size-80">
 				<img
 					src={item.image}
 					alt="Card Preview"
-					className="rounded-t-2xl"
+					className="rounded-t-2xl w-full h-full object-cover"
 				/>
-			</figure>
+			</div>
 			<div className="flex flex-col p-8 border-t border-t-gray-300">
 				<div className="text-2xl font-bold text-[#374151] pb-6">
 					{item.name}
