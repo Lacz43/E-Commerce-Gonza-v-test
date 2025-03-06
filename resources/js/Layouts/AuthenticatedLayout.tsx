@@ -83,6 +83,7 @@ export default function Authenticated({
 
 						<div className="-me-2 flex items-center sm:hidden">
 							<button
+                                type="button"
 								onClick={() =>
 									setShowingNavigationDropdown(
 										(previousState) => !previousState,
@@ -96,6 +97,7 @@ export default function Authenticated({
 									fill="none"
 									viewBox="0 0 24 24"
 								>
+                                    <title>menu burger</title>
 									<path
 										className={
 											!showingNavigationDropdown ? "inline-flex" : "hidden"
