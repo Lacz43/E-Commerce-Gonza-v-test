@@ -20,7 +20,7 @@ class ProductsFactory extends Factory
             'name' => $this->faker->word(),
             'image' => 'https://picsum.photos/' . $this->faker->numberBetween(400, 800) . '/' . $this->faker->numberBetween(300, 600),
             'barcode' => $this->faker->unique()->numberBetween(000000000000000, 9999999999999),
-            'description' => $this->faker->word(),
+            'description' => $this->faker->text(),
             'price' => $this->faker->randomFloat(2, 60, 600),
         ];
     }
