@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Products;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,11 @@ class FakeDataSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+
         Products::factory()->count(66)->create();
     }
 }
