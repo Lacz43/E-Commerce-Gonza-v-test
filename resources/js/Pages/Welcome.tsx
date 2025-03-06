@@ -46,7 +46,7 @@ export default function Welcome() {
 							<ProductCard key={item.id} item={item} className="" />
 						),
 						loading: (
-							<div className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4">
+							<>
 								{[...Array(8).fill(null)].map((_, i) => (
 									<LoadingProductCard
 										key={`card-${
@@ -55,7 +55,7 @@ export default function Welcome() {
 										}`}
 									/>
 								))}
-							</div>
+							</>
 						),
 					}}
 				</InfiniteScroll>
