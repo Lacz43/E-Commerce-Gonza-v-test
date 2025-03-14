@@ -1,16 +1,18 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Navbar from "@/Components/Navbar";
 import { Link } from "@inertiajs/react";
-import type { PropsWithChildren } from "react";
+import { useState, type PropsWithChildren } from "react";
 import Modal from "@/Components/Modal";
 import ProductsInCar from "@/Components/ProductsInCar";
 import { Close, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 
 export default function Ecommerce({ children }: PropsWithChildren) {
+    const [open, setOpen] = useState(false);
+
 	return (
 		<div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-			<Navbar />
+			<Navbar openCar={() => setOpen(true)} />
 			<div>
 				<Link href="/">
 					<ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
@@ -19,10 +21,10 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 
 			{children}
 
-			<Modal show={true} onClose={() => console.log("test")} maxWidth="2xl">
+			<Modal show={open} onClose={() => setOpen(false)} maxWidth="2xl">
 				<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
 					<h2 className="font-bold">Carrito</h2>
-					<button type="button" className="ml-auto">
+					<button type="button" className="ml-auto" onClick={() => setOpen(false)}>
 						<Close />
 					</button>
 				</div>
