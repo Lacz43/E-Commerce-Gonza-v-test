@@ -6,8 +6,14 @@ import "../../css/welcome.css";
 import { useEffect } from "react";
 import InputProductSearch from "@/Components/InputProductSearch";
 import LoadingProductCard from "@/Components/LoadingProductCard";
+import shoppingCart from "@/shoppingCart";
 
 export default function Welcome() {
+	function addToCart(item: Item) {
+		const cart = new shoppingCart();
+		cart.add(item);
+	}
+
 	useEffect(() => {
 		const products = new IntersectionObserver((entries) => {
 			// inspector de elementos
@@ -43,7 +49,12 @@ export default function Welcome() {
 				>
 					{{
 						card: (item) => (
-							<ProductCard key={item.id} item={item} className="" />
+							<ProductCard
+								key={item.id}
+								item={item}
+								className=""
+								addCart={(select) => addToCart(select)}
+							/>
 						),
 						loading: (
 							<>
