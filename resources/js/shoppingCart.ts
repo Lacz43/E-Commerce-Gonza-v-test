@@ -1,4 +1,4 @@
-const cartId = "shopping_cart";
+export const cartId = "shopping_cart";
 
 export default class shoppingCart {
 	public items: Item[];
@@ -11,7 +11,7 @@ export default class shoppingCart {
 
 	add(item: Item): void {
 		const subItem = this.items.find((sub) => sub.id === item.id);
-		if (subItem?.quantity) subItem.quantity ++;
+		if (subItem?.quantity) subItem.quantity++;
 		else {
 			item.quantity = 1;
 			this.items.push(item);
@@ -53,6 +53,7 @@ export default class shoppingCart {
 	save(): void {
 		this.updateTotal();
 		sessionStorage.setItem(cartId, JSON.stringify(this.items));
-		console.log(sessionStorage.getItem(cartId));
+		const event = new Event("addCart");
+		dispatchEvent(event);
 	}
 }
