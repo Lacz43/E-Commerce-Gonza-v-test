@@ -43,13 +43,13 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 						item={{ image: "", name: "test", price: 12 } as Item}
 					/>
 				</div>
-				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 flex">
+				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
 					<Button size="medium" variant="contained" endIcon={<WhatsApp />}>
 						<b>Enviar pedido por WhatsApp</b>
 					</Button>
 
-					<div className="ml-auto">
-						<Button size="medium" variant="contained" onClick={() => emtyCart()}>
+					<div className="ml-auto w-full mt-2 md:mt-0 md:w-auto">
+						<Button size="medium" variant="contained" onClick={() => emtyCart()} className="w-full">
 							<b>Vaciar</b>
 						</Button>
 					</div>
