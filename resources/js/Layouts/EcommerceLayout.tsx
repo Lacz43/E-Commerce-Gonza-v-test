@@ -6,9 +6,15 @@ import Modal from "@/Components/Modal";
 import ProductsInCar from "@/Components/ProductsInCar";
 import { Close, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
+import shoppingCart from "@/shoppingCart";
 
 export default function Ecommerce({ children }: PropsWithChildren) {
-    const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
+
+	function emtyCart() {
+		const cart = new shoppingCart();
+		cart.clear();
+	}
 
 	return (
 		<div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
@@ -24,7 +30,11 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 			<Modal show={open} onClose={() => setOpen(false)} maxWidth="2xl">
 				<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
 					<h2 className="font-bold">Carrito</h2>
-					<button type="button" className="ml-auto" onClick={() => setOpen(false)}>
+					<button
+						type="button"
+						className="ml-auto"
+						onClick={() => setOpen(false)}
+					>
 						<Close />
 					</button>
 				</div>
@@ -33,10 +43,16 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 						item={{ image: "", name: "test", price: 12 } as Item}
 					/>
 				</div>
-				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100">
+				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 flex">
 					<Button size="medium" variant="contained" endIcon={<WhatsApp />}>
 						<b>Enviar pedido por WhatsApp</b>
 					</Button>
+
+					<div className="ml-auto">
+						<Button size="medium" variant="contained" onClick={() => emtyCart()}>
+							<b>Vaciar</b>
+						</Button>
+					</div>
 				</div>
 			</Modal>
 		</div>
