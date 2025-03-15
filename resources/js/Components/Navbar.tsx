@@ -16,10 +16,16 @@ const CartBadge = styled(Badge)`
 export default function Navbar({ openCar }: { openCar?: () => void }) {
 	const [total, setTotal] = useState(0);
 
+	function updateQuantity() {
+		const cart = new shoppingCart();
+		setTotal(cart.items.length);
+	}
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
+		updateQuantity();
 		addEventListener("addCart", () => {
-			const cart = new shoppingCart();
-			setTotal(cart.items.length);
+			updateQuantity();
 		});
 		return () => removeEventListener("addCart", () => {});
 	}, []);
