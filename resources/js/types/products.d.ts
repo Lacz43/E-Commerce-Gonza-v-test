@@ -4,5 +4,6 @@ declare interface Item<T = unknown> {
 	image: string;
 	description: string;
 	price: number;
+    quantity?: number;
 	data?: T;
 }
