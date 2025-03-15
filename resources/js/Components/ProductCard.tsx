@@ -3,9 +3,17 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Button from "@mui/material/Button";
 import { imageUrl } from "@/utils";
 
-type CardProps = HTMLAttributes<HTMLDivElement> & { item: Item, addCart: (item: Item) => void};
+type CardProps = HTMLAttributes<HTMLDivElement> & {
+	item: Item;
+	addCart: (item: Item) => void;
+};
 
-export default function ProductCard({ item, className, addCart, ...props }: CardProps) {
+export default function ProductCard({
+	item,
+	className,
+	addCart,
+	...props
+}: CardProps) {
 	return (
 		<div
 			{...props}
@@ -34,7 +42,13 @@ export default function ProductCard({ item, className, addCart, ...props }: Card
 						variant="contained"
 						endIcon={<ShoppingCartIcon />}
 						className="w-full"
-                        onClick={() => addCart(item)}
+						onClick={() =>
+							addCart({
+								id: item.id,
+								price: item.price,
+								barcode: item.barcode,
+							} as Item)
+						}
 					>
 						Añadir
 					</Button>
