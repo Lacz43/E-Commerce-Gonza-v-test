@@ -1,3 +1,4 @@
+import shoppingCart from "@/shoppingCart";
 import { imageUrl } from "@/utils";
 import { Remove, Add, Delete } from "@mui/icons-material";
 import type { HTMLAttributes } from "react";
@@ -5,6 +6,8 @@ import type { HTMLAttributes } from "react";
 type Props = HTMLAttributes<HTMLDivElement> & { item: Item };
 
 export default function ProductsInCar({ item }: Props) {
+	const cart = new shoppingCart();
+
 	return (
 		<div className="flex w-full items-center">
 			<div className="size-20 flex mr-2 p-1">
@@ -18,11 +21,12 @@ export default function ProductsInCar({ item }: Props) {
 				<p className="font-bold">{item.name}</p>
 				<p className="font-light">{item.price} $</p>
 			</div>
-			<div className="">{(item.quantity ?? 1) * item.price} $</div>
+			<div className="">{((item.quantity ?? 1) * item.price).toFixed(2)} $</div>
 			<div className="ml-2 flex items-center">
 				<button
 					type="button"
 					className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
+					onClick={() => cart.update(item.id, (item.quantity ?? 1) - 1)}
 				>
 					<Remove />
 				</button>
@@ -30,12 +34,14 @@ export default function ProductsInCar({ item }: Props) {
 				<button
 					type="button"
 					className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
+					onClick={() => cart.update(item.id, (item.quantity ?? 1) + 1)}
 				>
 					<Add />
 				</button>
 				<button
 					type="button"
 					className="bg-red-600 px-2 py-1 ml-2 text-xl rounded-sm text-white"
+					onClick={() => cart.remove(item.id)}
 				>
 					<Delete />
 				</button>
