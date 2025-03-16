@@ -45,6 +45,8 @@ export default function ProductCard({
 						onClick={() =>
 							addCart({
 								id: item.id,
+								image: item.image,
+								name: item.name,
 								price: item.price,
 								barcode: item.barcode,
 							} as Item)
