@@ -3,15 +3,26 @@ import ProductsInCar from "@/Components/ProductsInCar";
 import { Close, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import shoppingCart from "@/shoppingCart";
+import { useEffect, useState } from "react";
 
 export default function CartModal({
 	show,
 	setOpen,
 }: { show: boolean; setOpen: (open: boolean) => void }) {
+	const [items, setItems] = useState<Item[]>([]);
+
 	function emtyCart() {
 		const cart = new shoppingCart();
 		cart.clear();
+		setItems([]);
 	}
+
+	useEffect(() => {
+		if (show) {
+			const cart = new shoppingCart();
+			setItems(cart.items);
+		}
+	}, [show]);
 
 	return (
 		<Modal show={show} onClose={() => setOpen(false)} maxWidth="2xl">
@@ -25,8 +36,10 @@ export default function CartModal({
 					<Close />
 				</button>
 			</div>
-			<div className="p-3 flex">
-				<ProductsInCar item={{ image: "", name: "test", price: 12 } as Item} />
+			<div className="p-3">
+				{items.map((it) => (
+					<ProductsInCar item={it} key={it.id} />
+				))}
 			</div>
 			<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
 				<Button size="medium" variant="contained" endIcon={<WhatsApp />}>
