@@ -14,7 +14,7 @@ export default function ProductsInCar({ item }: Props) {
 				<p className="font-bold">{item.name}</p>
 				<p className="font-light">{item.price} $</p>
 			</div>
-			<div className="">12 $</div>
+			<div className="">{(item.quantity ?? 1) * item.price} $</div>
 			<div className="ml-2 flex items-center">
 				<button
 					type="button"
@@ -22,7 +22,7 @@ export default function ProductsInCar({ item }: Props) {
 				>
 					<Remove />
 				</button>
-				<p className="font-bold mx-3">5</p>
+				<p className="font-bold mx-3">{item.quantity}</p>
 				<button
 					type="button"
 					className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
