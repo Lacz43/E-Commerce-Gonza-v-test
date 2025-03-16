@@ -18,7 +18,7 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 
 			{children}
 
-            <CartModal show={open} setOpen={setOpen} />
+			<CartModal show={open} setOpen={setOpen} />
 		</div>
 	);
 }
