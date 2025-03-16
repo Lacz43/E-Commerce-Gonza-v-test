@@ -48,7 +48,7 @@ export default class shoppingCart {
 
 	// remove: elimina un item del carrito
 	remove(id: number): void {
-		this.items.filter((item) => item.id !== id);
+		this.items = this.items.filter((item) => item.id !== id);
 		this.save();
 	}
 
