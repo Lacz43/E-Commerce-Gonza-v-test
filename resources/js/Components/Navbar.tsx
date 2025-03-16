@@ -18,7 +18,7 @@ export default function Navbar({ openCar }: { openCar?: () => void }) {
 
 	function updateQuantity() {
 		const cart = new shoppingCart();
-		setTotal(cart.items.length);
+		setTotal(cart.items.reduce((cur, sum) => cur + (sum.quantity ?? 1), 0));
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
