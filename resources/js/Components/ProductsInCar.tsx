@@ -7,8 +7,8 @@ type Props = HTMLAttributes<HTMLDivElement> & { item: Item };
 export default function ProductsInCar({ item }: Props) {
 	return (
 		<div className="flex w-full items-center">
-			<div className="">
-				<img src={imageUrl(item.image)} alt="" />
+			<div className="size-20 flex mr-2 p-1">
+				<img src={imageUrl(item.image)} alt="" className="object-cover mx-auto"/>
 			</div>
 			<div className="grow">
 				<p className="font-bold">{item.name}</p>
