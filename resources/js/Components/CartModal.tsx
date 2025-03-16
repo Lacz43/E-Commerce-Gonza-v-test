@@ -24,6 +24,14 @@ export default function CartModal({
 		}
 	}, [show]);
 
+	useEffect(() => {
+		addEventListener("addCart", () => {
+			const cart = new shoppingCart();
+			setItems(cart.items);
+		});
+		return () => removeEventListener("addCart", () => {});
+	}, []);
+
 	return (
 		<Modal show={show} onClose={() => setOpen(false)} maxWidth="2xl">
 			<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
