@@ -34,35 +34,37 @@ export default function CartModal({
 
 	return (
 		<Modal show={show} onClose={() => setOpen(false)} maxWidth="2xl">
-			<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
-				<h2 className="font-bold">Carrito</h2>
-				<button
-					type="button"
-					className="ml-auto"
-					onClick={() => setOpen(false)}
-				>
-					<Close />
-				</button>
-			</div>
-			<div className="p-3">
-				{items.map((it) => (
-					<ProductsInCar item={it} key={it.id} />
-				))}
-			</div>
-			<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
-				<Button size="medium" variant="contained" endIcon={<WhatsApp />}>
-					<b>Enviar pedido por WhatsApp</b>
-				</Button>
-
-				<div className="ml-auto w-full mt-2 md:mt-0 md:w-auto">
-					<Button
-						size="medium"
-						variant="contained"
-						onClick={() => emtyCart()}
-						className="w-full"
+			<div className="max-h-dvh flex flex-col">
+				<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
+					<h2 className="font-bold">Carrito</h2>
+					<button
+						type="button"
+						className="ml-auto"
+						onClick={() => setOpen(false)}
 					>
-						<b>Vaciar</b>
+						<Close />
+					</button>
+				</div>
+				<div className="p-3 overflow-x-hidden overflow-y-scroll">
+					{items.map((it) => (
+						<ProductsInCar item={it} key={it.id} />
+					))}
+				</div>
+				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
+					<Button size="medium" variant="contained" endIcon={<WhatsApp />}>
+						<b>Enviar pedido por WhatsApp</b>
 					</Button>
+
+					<div className="ml-auto w-full mt-2 md:mt-0 md:w-auto">
+						<Button
+							size="medium"
+							variant="contained"
+							onClick={() => emtyCart()}
+							className="w-full"
+						>
+							<b>Vaciar</b>
+						</Button>
+					</div>
 				</div>
 			</div>
 		</Modal>
