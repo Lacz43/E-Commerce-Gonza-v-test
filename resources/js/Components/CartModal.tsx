@@ -32,6 +32,20 @@ export default function CartModal({
 		return () => removeEventListener("addCart", () => {});
 	}, []);
 
+	function sendMessage() {
+		let url = `https://wa.me/${import.meta.env.VITE_COMPANY_PHONE}`;
+
+        const cart = new shoppingCart();
+        let message = "";
+
+        for(const item of cart.items){
+            message += `${item.name} \t${item.quantity}\n`;
+        }
+
+		url += `?text=${encodeURI(message)}`;
+		window.open(url);
+	}
+
 	return (
 		<Modal show={show} onClose={() => setOpen(false)} maxWidth="2xl">
 			<div className="max-h-dvh flex flex-col">
@@ -51,7 +65,12 @@ export default function CartModal({
 					))}
 				</div>
 				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
-					<Button size="medium" variant="contained" endIcon={<WhatsApp />}>
+					<Button
+						size="medium"
+						variant="contained"
+						endIcon={<WhatsApp />}
+						onClick={() => sendMessage()}
+					>
 						<b>Enviar pedido por WhatsApp</b>
 					</Button>
 
