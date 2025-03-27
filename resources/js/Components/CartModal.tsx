@@ -70,6 +70,7 @@ export default function CartModal({
 						variant="contained"
 						endIcon={<WhatsApp />}
 						onClick={() => sendMessage()}
+                        className="w-full md:w-auto"
 					>
 						<b>Enviar pedido por WhatsApp</b>
 					</Button>
