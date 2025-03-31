@@ -28,41 +28,48 @@ export default function ProductsInCar({ item }: Props) {
 						className="object-cover mx-auto"
 					/>
 				</div>
-				<div className={`grow ${line === item.id ? "max-md:hidden" : ""}`}>
-					<p className="font-bold">{item.name}</p>
-					<p className="font-light">{item.price} $</p>
-				</div>
-				<div className="">
-					{((item.quantity ?? 1) * item.price).toFixed(2)} $
+				<div className={line === item.id ? "max-md:hidden" : "flex w-full"}>
+					<div className="grow">
+						<p className="font-bold">{item.name}</p>
+						<p className="font-light">{item.price} $</p>
+					</div>
+					<div className="">
+						{((item.quantity ?? 1) * item.price).toFixed(2)} $
+					</div>
 				</div>
 			</div>
-			<div
-				className={`ml-2 flex items-center bg-white right-0 \
+			<div className="flex flex-col">
+				<div
+					className={`ml-2 flex items-center bg-white right-0 \
 					${line !== item.id ? "max-md:hidden" : ""}
                     `}
-			>
-				<button
-					type="button"
-					className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
-					onClick={() => cart.update(item.id, (item.quantity ?? 1) - 1)}
 				>
-					<Remove />
-				</button>
-				<p className="font-bold mx-3">{item.quantity}</p>
-				<button
-					type="button"
-					className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
-					onClick={() => cart.update(item.id, (item.quantity ?? 1) + 1)}
-				>
-					<Add />
-				</button>
-				<button
-					type="button"
-					className="bg-red-600 px-2 py-1 ml-2 text-xl rounded-sm text-white"
-					onClick={() => cart.remove(item.id)}
-				>
-					<Delete />
-				</button>
+					<button
+						type="button"
+						className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
+						onClick={() => cart.update(item.id, (item.quantity ?? 1) - 1)}
+					>
+						<Remove />
+					</button>
+					<p className="font-bold mx-3">{item.quantity}</p>
+					<button
+						type="button"
+						className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
+						onClick={() => cart.update(item.id, (item.quantity ?? 1) + 1)}
+					>
+						<Add />
+					</button>
+					<button
+						type="button"
+						className="bg-red-600 px-2 py-1 ml-2 text-xl rounded-sm text-white"
+						onClick={() => cart.remove(item.id)}
+					>
+						<Delete />
+					</button>
+				</div>
+				<div className={line === item.id ? "text-center" : "max-md:hidden"}>
+					{((item.quantity ?? 1) * item.price).toFixed(2)} $
+				</div>
 			</div>
 		</div>
 	);
