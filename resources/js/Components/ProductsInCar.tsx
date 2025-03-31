@@ -1,7 +1,7 @@
 import shoppingCart from "@/shoppingCart";
 import { imageUrl } from "@/utils";
 import { Remove, Add, Delete } from "@mui/icons-material";
-import { useState, type BaseSyntheticEvent, type HTMLAttributes } from "react";
+import { useState, type HTMLAttributes } from "react";
 
 type Props = HTMLAttributes<HTMLDivElement> & { item: Item };
 
@@ -10,6 +10,10 @@ export default function ProductsInCar({ item }: Props) {
 	const [line, setLine] = useState<number | null>(null);
 
 	function showCart(id: number | null) {
+		const remInPx = Number.parseFloat(
+			getComputedStyle(document.documentElement).fontSize, // mover a utils
+		);
+		if (window.innerWidth >= 45 * remInPx) return;
 		if (id === line) setLine(null);
 		else setLine(id);
 	}
@@ -31,7 +35,9 @@ export default function ProductsInCar({ item }: Props) {
 				<div className={line === item.id ? "max-md:hidden" : "flex w-full"}>
 					<div className="grow">
 						<p className="font-bold">{item.name}</p>
-						<p className="font-light">{item.price} $</p>
+						<p className="font-light">
+							{item.price} $ <b className="md:hidden">x{item.quantity}</b>
+						</p>
 					</div>
 					<div className="">
 						{((item.quantity ?? 1) * item.price).toFixed(2)} $
@@ -67,7 +73,11 @@ export default function ProductsInCar({ item }: Props) {
 						<Delete />
 					</button>
 				</div>
-				<div className={line === item.id ? "text-center" : "max-md:hidden"}>
+				<div
+					className={
+						line === item.id ? "text-center" : "hidden"
+					}
+				>
 					{((item.quantity ?? 1) * item.price).toFixed(2)} $
 				</div>
 			</div>
