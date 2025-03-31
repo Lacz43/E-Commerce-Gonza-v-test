@@ -1,28 +1,46 @@
 import shoppingCart from "@/shoppingCart";
 import { imageUrl } from "@/utils";
 import { Remove, Add, Delete } from "@mui/icons-material";
-import type { HTMLAttributes } from "react";
+import { useState, type BaseSyntheticEvent, type HTMLAttributes } from "react";
 
 type Props = HTMLAttributes<HTMLDivElement> & { item: Item };
 
 export default function ProductsInCar({ item }: Props) {
 	const cart = new shoppingCart();
+	const [line, setLine] = useState<number | null>(null);
+
+	function showCart(id: number | null) {
+		if (id === line) setLine(null);
+		else setLine(id);
+	}
 
 	return (
-		<div className="flex w-full items-center">
-			<div className="size-20 flex mr-2 p-1">
-				<img
-					src={imageUrl(item.image)}
-					alt=""
-					className="object-cover mx-auto"
-				/>
+		<div className="flex w-full">
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+			<div
+				onClick={() => showCart(item.id)}
+				className="flex w-full items-center"
+			>
+				<div className="size-20 flex mr-2 p-1">
+					<img
+						src={imageUrl(item.image)}
+						alt=""
+						className="object-cover mx-auto"
+					/>
+				</div>
+				<div className={`grow ${line === item.id ? "max-md:hidden" : ""}`}>
+					<p className="font-bold">{item.name}</p>
+					<p className="font-light">{item.price} $</p>
+				</div>
+				<div className="">
+					{((item.quantity ?? 1) * item.price).toFixed(2)} $
+				</div>
 			</div>
-			<div className="grow">
-				<p className="font-bold">{item.name}</p>
-				<p className="font-light">{item.price} $</p>
-			</div>
-			<div className="">{((item.quantity ?? 1) * item.price).toFixed(2)} $</div>
-			<div className="ml-2 flex items-center">
+			<div
+				className={`ml-2 flex items-center bg-white right-0 \
+					${line !== item.id ? "max-md:hidden" : ""}
+                    `}
+			>
 				<button
 					type="button"
 					className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
