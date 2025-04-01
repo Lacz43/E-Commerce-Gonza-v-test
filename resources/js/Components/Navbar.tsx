@@ -31,7 +31,7 @@ export default function Navbar({ openCar }: { openCar?: () => void }) {
 	}, []);
 
 	return (
-		<div className="bg-white w-full px-5 py-2 sm:px-20 sticky top-0 z-50 mb-4 flex justify-end items-center shadow-xl">
+		<div className="bg-white w-full px-5 py-2 max-md:py-1 sm:px-20 sticky top-0 z-50 mb-4 flex justify-end items-center shadow-xl">
 			<div className="mr-auto">
 				<IconButton id="shopping-cart" onClick={() => openCar?.()}>
 					<ShoppingCartIcon />
