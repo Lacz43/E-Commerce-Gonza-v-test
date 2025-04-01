@@ -51,9 +51,16 @@ export default function CartModal({
 			<div className="max-h-dvh flex flex-col">
 				<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
 					<h2 className="font-bold">Carrito</h2>
+					<span className="mx-auto">
+						{items
+							.reduce(
+								(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
+								0,
+							)
+							.toFixed(2)} $
+					</span>
 					<button
 						type="button"
-						className="ml-auto"
 						onClick={() => setOpen(false)}
 					>
 						<Close />
