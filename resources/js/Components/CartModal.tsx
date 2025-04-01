@@ -1,6 +1,6 @@
 import Modal from "@/Components/Modal";
 import ProductsInCar from "@/Components/ProductsInCar";
-import { Close, WhatsApp } from "@mui/icons-material";
+import { Close, ShoppingCart, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import shoppingCart from "@/shoppingCart";
 import { useEffect, useState } from "react";
@@ -35,12 +35,12 @@ export default function CartModal({
 	function sendMessage() {
 		let url = `https://wa.me/${import.meta.env.VITE_COMPANY_PHONE}`;
 
-        const cart = new shoppingCart();
-        let message = "";
+		const cart = new shoppingCart();
+		let message = "";
 
-        for(const item of cart.items){
-            message += `${item.name} \t${item.quantity}\n`;
-        }
+		for (const item of cart.items) {
+			message += `${item.name} \t${item.quantity}\n`;
+		}
 
 		url += `?text=${encodeURI(message)}`;
 		window.open(url);
@@ -67,13 +67,28 @@ export default function CartModal({
 				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
 					<Button
 						size="medium"
+						color="info"
 						variant="contained"
 						endIcon={<WhatsApp />}
 						onClick={() => sendMessage()}
-                        className="w-full md:w-auto"
+						className="w-full md:w-auto"
+						disabled={items.length <= 0}
 					>
-						<b>Enviar pedido por WhatsApp</b>
+						<b>Enviar por WhatsApp</b>
 					</Button>
+
+					<div className="md:ml-5 max-md:mt-2">
+						<Button
+							size="medium"
+							variant="contained"
+							endIcon={<ShoppingCart />}
+							onClick={() => sendMessage()}
+							className="w-auto max-md:w-full"
+							disabled={items.length <= 0}
+						>
+							<b>Comprar</b>
+						</Button>
+					</div>
 
 					<div className="ml-auto w-full mt-2 md:mt-0 md:w-auto">
 						<Button
@@ -81,6 +96,7 @@ export default function CartModal({
 							variant="contained"
 							onClick={() => emtyCart()}
 							className="w-full"
+							disabled={items.length <= 0}
 						>
 							<b>Vaciar</b>
 						</Button>
