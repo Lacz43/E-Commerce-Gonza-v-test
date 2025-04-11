@@ -3,14 +3,16 @@ import ApplicationLogo from "../ApplicationLogo";
 import { Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-function SideItem() {
+function SideNavItem() {
 	const [active, setActive] = useState("");
+
 	useEffect(() => {
 		const path = window.location.pathname.split("/").filter(Boolean);
 		setActive(path[0]);
 	}, []);
+
 	const list = Object.entries(paths).map(([clave, valor]) => {
-		if (valor.path === null) return;
+		if (valor.hide === true) return;
 		return (
 			<Link
 				key={clave}
@@ -26,7 +28,7 @@ function SideItem() {
 	return <>{list}</>;
 }
 
-export default function Aside() {
+export default function SideNav() {
 	return (
 		<aside className="w-[23rem] bg-[#121621] text-white flex flex-col max-md:hidden">
 			<header className="p-5 border-b border-b-gray-500 flex justify-center">
@@ -34,7 +36,7 @@ export default function Aside() {
 				<b className="ml-2">Gonza Go</b>
 			</header>
 			<div className="px-4 py-4">
-				<SideItem />
+				<SideNavItem />
 			</div>
 			<footer className="border-t border-t-gray-500 p-3 mt-auto">footer</footer>
 		</aside>
