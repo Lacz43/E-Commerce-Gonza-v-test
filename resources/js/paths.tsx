@@ -1,10 +1,11 @@
-import { Home } from "@mui/icons-material";
+import { Home, ShoppingCart } from "@mui/icons-material";
 import type { JSX } from "react";
 
 interface Route {
-	path: string | null;
+	path: string;
 	name: string;
 	icon?: JSX.Element;
+    hide?: boolean;
 	children?: Record<string, Route>;
 	params?: Record<string, string>;
 	permissions?: string[];
@@ -14,10 +15,16 @@ export const paths: Record<string, Route> = {
 	home: {
 		path: "dashboard",
 		name: "Principal",
-        icon: <Home/>,
+		icon: <Home />,
+	},
+	ecommerce: {
+		path: "welcome",
+		name: "Ecommerce",
+		icon: <ShoppingCart />,
 	},
 	auth: {
-		path: null,
+		path: "",
+        hide: true,
 		name: "Autentificar",
 		children: {
 			login: {
