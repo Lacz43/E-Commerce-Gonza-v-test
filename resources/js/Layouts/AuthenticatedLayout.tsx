@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import Navbar from "@/Components/Dashboard/Navbar";
-import Aside from "@/Components/Dashboard/Aside";
+import SideNav from "@/Components/Dashboard/Side-nav";
 
 export default function Authenticated({
 	header,
@@ -8,7 +8,7 @@ export default function Authenticated({
 }: PropsWithChildren<{ header?: ReactNode }>) {
 	return (
 		<div className="min-h-screen bg-gray-100 flex">
-			<Aside />
+			<SideNav />
 			<div className="w-full">
 				<Navbar />
 				{/* {header && ( */}
