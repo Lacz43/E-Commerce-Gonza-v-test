@@ -5,6 +5,7 @@ import Badge, { badgeClasses } from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import shoppingCart from "@/shoppingCart";
+import { paths } from "@/paths";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -40,10 +41,14 @@ export default function Navbar({ openCar }: { openCar?: () => void }) {
 			</div>
 			<ul className="flex gap-4">
 				<li>
-					<Link href="/login">Login</Link>
+					<Link href={route(paths.auth.children?.login.path ?? "")}>
+						{paths.auth.children?.login.name}
+					</Link>
 				</li>
 				<li>
-					<Link href="/register">Register</Link>
+					<Link href={route(paths.auth.children?.register.path ?? "")}>
+						{paths.auth.children?.register.name}
+					</Link>
 				</li>
 			</ul>
 		</div>
