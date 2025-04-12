@@ -32,7 +32,9 @@ export default function CartModal({
 		return () => removeEventListener("addCart", () => {});
 	}, []);
 
-	function sendMessage() {
+	function sendMessage() { // mover a otro componente
+
+        // construir el mensaje para enviar por whatsapp
 		let url = `https://wa.me/${import.meta.env.VITE_COMPANY_PHONE}`;
 
 		const cart = new shoppingCart();

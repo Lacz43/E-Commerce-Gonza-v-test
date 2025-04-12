@@ -1,7 +1,7 @@
 import { Home, ShoppingCart } from "@mui/icons-material";
 import type { JSX } from "react";
 
-interface Route {
+interface Route { // mover a otro archivo
 	path: string;
 	name: string;
 	icon?: JSX.Element;
@@ -11,6 +11,7 @@ interface Route {
 	permissions?: string[];
 }
 
+// rutas del sitio
 export const paths: Record<string, Route> = {
 	home: {
 		path: "dashboard",

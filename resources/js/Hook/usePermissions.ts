@@ -1,13 +1,14 @@
 import { usePage } from "@inertiajs/react";
 
+// hook que verifica si el usuario tiene permiso para ver el contenido
 export default function usePermissions() {
 	const { auth } = (usePage().props as unknown as Auth);
 
 	return {
-		hasPermission: (permission: string) => {
+		hasPermission: (permission: string) => { // obtiene si el usuario tiene permiso para ver el contenido
 			return auth.user?.permissions?.includes(permission);
 		},
-		hasRole: (role: string) => {
+		hasRole: (role: string) => { // obtiene si el usuario tiene un rol
 			return auth.user?.roles?.includes(role);
 		},
 	};

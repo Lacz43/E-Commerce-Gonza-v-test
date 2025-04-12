@@ -6,8 +6,9 @@ export default function SideNavItem() {
 	const [active, setActive] = useState("");
 
 	useEffect(() => {
+        // obtner el path actual
 		const path = window.location.pathname.split("/").filter(Boolean);
-		setActive(path[0]);
+		setActive(path[0]); // setear el path actual (solo el primer elemento)
 	}, []);
 
 	const list = Object.entries(paths).map(([clave, valor]) => {
