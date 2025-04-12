@@ -1,6 +1,7 @@
 import { Close } from "@mui/icons-material";
 import ApplicationLogo from "../ApplicationLogo";
 import SideNavItem from "./SideNavItem";
+import { Stack } from "@mui/material";
 
 export default function SideNav() {
 	function closeSideNav() {
@@ -19,9 +20,9 @@ export default function SideNav() {
 					<Close onClick={() => closeSideNav()} />
 				</div>
 			</header>
-			<div className="px-4 py-4">
+			<Stack spacing={0.4} direction="column" className="px-4 py-4">
 				<SideNavItem />
-			</div>
+			</Stack>
 			<footer className="border-t border-t-gray-500 p-3 mt-auto">footer</footer>
 		</aside>
 	);
