@@ -1,9 +1,8 @@
 import usePermissions from "@/Hook/usePermissions";
-import type React from "react";
+import type { PropsWithChildren } from "react";
 
-interface Props {
+interface Props extends PropsWithChildren{
     permission: string,
-    children: React.ReactNode,
 }
 
 export default function PermissionGate({permission, children}: Props) {
