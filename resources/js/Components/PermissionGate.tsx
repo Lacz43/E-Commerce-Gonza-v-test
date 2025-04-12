@@ -1,15 +1,19 @@
 import usePermissions from "@/Hook/usePermissions";
 import type { PropsWithChildren } from "react";
 
-interface Props extends PropsWithChildren{
-    permission: string,
+interface Props extends PropsWithChildren {
+	permission?: string;
+	role?: string;
 }
 
 // componente que verifica si el usuario tiene permiso para ver el contenido
-export default function PermissionGate({permission, children}: Props) {
-    const { hasPermission } = usePermissions();
+export default function PermissionGate({ permission, role, children }: Props) {
+	const { hasPermission, hasRole } = usePermissions();
 
-    if(!hasPermission(permission)) return null;
+	if (!role && !permission) return null;
 
-    return <>{children}</>
+	if (permission && !hasPermission(permission)) return null;
+	if (role && !hasRole(role)) return null;
+
+	return <>{children}</>;
 }
