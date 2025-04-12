@@ -1,6 +1,5 @@
 import Dropdown from "@/Components/Dropdown";
 import { usePage } from "@inertiajs/react";
-import type { Auth } from "@/Layouts/types";
 import { useState } from "react";
 import ResponsiveNavLink from "../ResponsiveNavLink";
 
