@@ -1,6 +1,7 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import Navbar from "@/Components/Dashboard/Navbar";
 import SideNav from "@/Components/Dashboard/Side-nav";
+import "../../css/dashboard.css";
 
 export default function Authenticated({
 	header,
