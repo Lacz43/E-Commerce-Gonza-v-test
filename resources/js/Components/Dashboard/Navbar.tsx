@@ -2,16 +2,28 @@ import Dropdown from "@/Components/Dropdown";
 import { usePage } from "@inertiajs/react";
 import { useState } from "react";
 import ResponsiveNavLink from "../ResponsiveNavLink";
+import { Menu } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 
 export default function Navbar() {
 	const user = (usePage().props as unknown as Auth).auth.user;
 	const [showingNavigationDropdown, setShowingNavigationDropdown] =
 		useState(false);
 
+	function openSideNav() {
+		const sideNav = document.getElementById("side-nav");
+		if (sideNav) sideNav.classList.add("show-sideNav");
+	}
+
 	return (
 		<nav className="border-b border-gray-300 bg-white">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 justify-end">
+					<div className="md:hidden mr-auto flex items-center">
+						<IconButton onClick={() => openSideNav()}>
+							<Menu />
+						</IconButton>
+					</div>
 					<div className="hidden sm:ms-6 sm:flex sm:items-center">
 						<div className="relative ms-3">
 							<Dropdown>
