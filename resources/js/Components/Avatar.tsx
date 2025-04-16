@@ -1,4 +1,4 @@
-import Avatar from "@mui/material/Avatar";
+import Avatar, { type AvatarProps } from "@mui/material/Avatar";
 
 function stringToColor(string: string) {
 	let hash = 0;
@@ -31,6 +31,7 @@ function stringAvatar(name: string) {
 
 export default function BackgroundLetterAvatars({
 	children,
-}: { children: string }) {
-	return <Avatar {...stringAvatar(children)} />;
+	...props
+}: AvatarProps & { children: string }) {
+	return <Avatar {...stringAvatar(children)} {...props} />;
 }
