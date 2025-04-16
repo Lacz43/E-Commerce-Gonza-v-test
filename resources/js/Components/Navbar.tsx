@@ -1,11 +1,12 @@
-import { Link } from "@inertiajs/react";
-import { IconButton } from "@mui/material";
+import { Link, usePage } from "@inertiajs/react";
+import { IconButton, type IconButtonProps } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import shoppingCart from "@/shoppingCart";
 import { paths } from "@/paths";
+import Avatar from "@/Components/Avatar";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -14,7 +15,12 @@ const CartBadge = styled(Badge)`
   }
 `;
 
+const AvatarIcon = styled(IconButton)<IconButtonProps>(() => ({
+	padding: "0",
+}));
+
 export default function Navbar({ openCar }: { openCar?: () => void }) {
+	const user = (usePage().props as unknown as Auth).auth.user;
 	const [total, setTotal] = useState(0);
 
 	function updateQuantity() {
@@ -40,16 +46,26 @@ export default function Navbar({ openCar }: { openCar?: () => void }) {
 				</IconButton>
 			</div>
 			<ul className="flex gap-4">
-				<li>
-					<Link href={route(paths.auth.children?.login.path ?? "")}>
-						{paths.auth.children?.login.name}
+				{!user ? (
+					<>
+						<li>
+							<Link href={route(paths.auth.children?.login.path ?? "")}>
+								{paths.auth.children?.login.name}
+							</Link>
+						</li>
+						<li>
+							<Link href={route(paths.auth.children?.register.path ?? "")}>
+								{paths.auth.children?.register.name}
+							</Link>
+						</li>
+					</>
+				) : (
+					<Link href={route(paths.home.path)}>
+						<AvatarIcon>
+							<Avatar>{user.name}</Avatar>
+						</AvatarIcon>
 					</Link>
-				</li>
-				<li>
-					<Link href={route(paths.auth.children?.register.path ?? "")}>
-						{paths.auth.children?.register.name}
-					</Link>
-				</li>
+				)}
 			</ul>
 		</div>
 	);
