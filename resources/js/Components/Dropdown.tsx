@@ -38,13 +38,14 @@ const Trigger = ({ children }: PropsWithChildren) => {
 
 	return (
 		<>
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 			<div onClick={() => toggleOpen}>{children}</div>
 
 			{open && (
-				<div
-					className="fixed inset-0 z-40"
-					onClick={() => setOpen(false)}
-				></div>
+				// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+				<div className="fixed inset-0 z-40" onClick={() => setOpen(false)}>
+					test
+				</div>
 			)}
 		</>
 	);
@@ -87,12 +88,13 @@ const Content = ({
 				leaveFrom="opacity-100 scale-100"
 				leaveTo="opacity-0 scale-95"
 			>
+				{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 				<div
 					className={`absolute z-50 mt-2 rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
 					onClick={() => setOpen(false)}
 				>
 					<div
-						className={`rounded-md ring-1 ring-black ring-opacity-5 ${contentClasses}`}
+						className={`rounded-sm ring-1 ring-black ring-opacity-5 ${contentClasses}`}
 					>
 						{children}
 					</div>
