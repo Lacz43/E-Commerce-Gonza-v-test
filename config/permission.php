@@ -199,4 +199,11 @@ return [
 
         'store' => 'default',
     ],
+
+    'permissions' => [
+        'show',
+        'create',
+        'edit',
+        'delete'
+    ]
 ];
