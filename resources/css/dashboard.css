@@ -10,3 +10,15 @@
 .show-sideNav {
     transform: translateX(0);
 }
+
+.menu-item {
+    transform: translateY(100%);
+    transition:
+        display 1.5s ease,
+        transform 1.5s ease;
+}
+
+.menu-item.visible {
+    display: block;
+    transform: translateY(0);
+}

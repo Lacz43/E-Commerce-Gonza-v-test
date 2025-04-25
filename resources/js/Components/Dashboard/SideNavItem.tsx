@@ -5,6 +5,8 @@ import { paths } from "@/paths";
 import { styled } from "@mui/material/styles";
 import Button, { type ButtonProps } from "@mui/material/Button";
 import { blue } from "@mui/material/colors";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { Stack } from "@mui/material";
 
 interface ColorButtonProps extends ButtonProps {
 	active?: boolean;
@@ -36,17 +38,53 @@ export default function SideNavItem() {
 	}, []);
 
 	const list = Object.entries(paths).map(([clave, valor]) => {
+		const [display, setDisplay] = useState(false);
+
 		if (valor.hide === true) return;
 		return (
-			<Link key={clave} href={route(valor.path)}>
-				<ColorButton
-					variant="contained"
-					startIcon={valor.icon}
-					active={active === valor.path}
-				>
-					{valor.name}
-				</ColorButton>
-			</Link>
+			<div key={clave}>
+				{!valor.children ? (
+					<Link href={route(valor.path)}>
+						<ColorButton
+							variant="contained"
+							startIcon={valor.icon}
+							active={active === valor.path}
+						>
+							{valor.name}
+						</ColorButton>
+					</Link>
+				) : (
+					<>
+						<ColorButton
+							variant="contained"
+							startIcon={valor.icon}
+							endIcon={
+								<KeyboardArrowDownIcon
+									className={display ? "rotate-180" : "rotate-0"}
+								/>
+							}
+							active={active === valor.path}
+							onClick={() => {
+								setDisplay(!display);
+							}}
+						>
+							{valor.name}
+						</ColorButton>
+						<Stack
+							direction="column"
+							spacing={0.5}
+							display={"none"}
+							className={`ml-5 mt-1 border border-blue-900 p-1 rounded-md menu-item ${display ? "visible" : ""}`}
+						>
+							{Object.entries(valor.children).map(([key, value]) => (
+								<Link key={key} href={route(value.path)}>
+									<ColorButton startIcon={valor.icon}>{value.name}</ColorButton>
+								</Link>
+							))}
+						</Stack>
+					</>
+				)}
+			</div>
 		);
 	});
 
