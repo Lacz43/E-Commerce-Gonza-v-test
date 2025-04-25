@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { paths } from "@/paths";
 
@@ -28,14 +28,22 @@ const ColorButton = styled(Button)<ColorButtonProps>(({ theme, active }) => ({
 	},
 }));
 
+function subPath(url: string){
+    const urls = new URL(route(url));
+    return urls.pathname.split("/").filter(Boolean);
+}
+
 export default function SideNavItem() {
 	const [active, setActive] = useState("");
+	const [toggle, setToggle] = useState("");
+	const { url } = usePage();
 
 	useEffect(() => {
 		// obtner el path actual
-		const path = window.location.pathname.split("/").filter(Boolean);
+		const path = url.split("/").filter(Boolean);
 		setActive(path[0]); // setear el path actual (solo el primer elemento)
-	}, []);
+		if (path[1]) setToggle(path[1]);
+	}, [url]);
 
 	const list = Object.entries(paths).map(([clave, valor]) => {
 		const [display, setDisplay] = useState(false);
@@ -48,7 +56,7 @@ export default function SideNavItem() {
 						<ColorButton
 							variant="contained"
 							startIcon={valor.icon}
-							active={active === valor.path}
+							active={active === subPath(valor.path)[0]}
 						>
 							{valor.name}
 						</ColorButton>
@@ -63,7 +71,7 @@ export default function SideNavItem() {
 									className={display ? "rotate-180" : "rotate-0"}
 								/>
 							}
-							active={active === valor.path}
+							active={active === subPath(valor.path)[0]}
 							onClick={() => {
 								setDisplay(!display);
 							}}
@@ -78,7 +86,12 @@ export default function SideNavItem() {
 						>
 							{Object.entries(valor.children).map(([key, value]) => (
 								<Link key={key} href={route(value.path)}>
-									<ColorButton startIcon={valor.icon}>{value.name}</ColorButton>
+									<ColorButton
+										startIcon={valor.icon}
+										active={subPath(value.path)[1] === toggle}
+									>
+										{value.name}
+									</ColorButton>
 								</Link>
 							))}
 						</Stack>
