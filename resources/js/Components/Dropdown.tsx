@@ -39,7 +39,7 @@ const Trigger = ({ children }: PropsWithChildren) => {
 	return (
 		<>
 			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-			<div onClick={() => toggleOpen}>{children}</div>
+			<div onClick={() => toggleOpen()}>{children}</div>
 
 			{open && (
 				// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
