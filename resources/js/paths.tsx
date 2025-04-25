@@ -38,4 +38,9 @@ export const paths: Record<string, Route> = {
 			},
 		},
 	},
+    products: {
+        path: "products.index",
+        name: "Productos",
+        icon: <Home />,
+    }
 };
