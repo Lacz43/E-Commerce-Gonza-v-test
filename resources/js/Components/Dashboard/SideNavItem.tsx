@@ -17,13 +17,13 @@ const ColorButton = styled(Button)<ColorButtonProps>(({ theme, active }) => ({
 	justifyContent: "start",
 	padding: "0.5rem 1.5rem",
 	boxShadow: "none",
-    textTransform: "none",
+	textTransform: "none",
 	"&:hover": {
 		backgroundColor: blue[900],
 	},
-    "& .MuiButton-endIcon": {
-        marginLeft: "auto",
-    }
+	"& .MuiButton-endIcon": {
+		marginLeft: "auto",
+	},
 }));
 
 export default function SideNavItem() {
