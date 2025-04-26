@@ -1,14 +1,16 @@
 import { Home, ShoppingCart } from "@mui/icons-material";
 import type { JSX } from "react";
 
-interface Route { // mover a otro archivo
+interface Route {
+	// mover a otro archivo
 	path: string;
 	name: string;
 	icon?: JSX.Element;
-    hide?: boolean;
+	hide?: boolean;
 	children?: Record<string, Route>;
 	params?: Record<string, string>;
 	permissions?: string[];
+    roles?: string[];
 }
 
 // rutas del sitio
@@ -25,7 +27,7 @@ export const paths: Record<string, Route> = {
 	},
 	auth: {
 		path: "",
-        hide: true,
+		hide: true,
 		name: "Autentificar",
 		children: {
 			login: {
@@ -38,9 +40,10 @@ export const paths: Record<string, Route> = {
 			},
 		},
 	},
-    products: {
-        path: "products.index",
-        name: "Productos",
-        icon: <Home />,
-    }
+	products: {
+		path: "products.index",
+		name: "Productos",
+		icon: <Home />,
+		roles: ["admin"],
+	},
 };
