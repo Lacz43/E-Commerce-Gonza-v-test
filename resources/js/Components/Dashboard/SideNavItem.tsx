@@ -7,6 +7,7 @@ import Button, { type ButtonProps } from "@mui/material/Button";
 import { blue } from "@mui/material/colors";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Stack } from "@mui/material";
+import PermissionGate from "../PermissionGate";
 
 interface ColorButtonProps extends ButtonProps {
 	active?: boolean;
@@ -28,9 +29,9 @@ const ColorButton = styled(Button)<ColorButtonProps>(({ theme, active }) => ({
 	},
 }));
 
-function subPath(url: string){
-    const urls = new URL(route(url));
-    return urls.pathname.split("/").filter(Boolean);
+function subPath(url: string) {
+	const urls = new URL(route(url));
+	return urls.pathname.split("/").filter(Boolean);
 }
 
 export default function SideNavItem() {
@@ -51,52 +52,56 @@ export default function SideNavItem() {
 		if (valor.hide === true) return;
 		return (
 			<div key={clave}>
-				{!valor.children ? (
-					<Link href={route(valor.path)}>
-						<ColorButton
-							variant="contained"
-							startIcon={valor.icon}
-							active={active === subPath(valor.path)[0]}
-						>
-							{valor.name}
-						</ColorButton>
-					</Link>
-				) : (
-					<>
-						<ColorButton
-							variant="contained"
-							startIcon={valor.icon}
-							endIcon={
-								<KeyboardArrowDownIcon
-									className={display ? "rotate-180" : "rotate-0"}
-								/>
-							}
-							active={active === subPath(valor.path)[0]}
-							onClick={() => {
-								setDisplay(!display);
-							}}
-						>
-							{valor.name}
-						</ColorButton>
-						<Stack
-							direction="column"
-							spacing={0.5}
-							display={"none"}
-							className={`ml-5 mt-1 border border-blue-900 p-1 rounded-md menu-item ${display ? "visible" : ""}`}
-						>
-							{Object.entries(valor.children).map(([key, value]) => (
-								<Link key={key} href={route(value.path)}>
-									<ColorButton
-										startIcon={valor.icon}
-										active={subPath(value.path)[1] === toggle}
-									>
-										{value.name}
-									</ColorButton>
-								</Link>
-							))}
-						</Stack>
-					</>
-				)}
+				<PermissionGate roles={valor?.roles ?? undefined}>
+					{!valor.children ? (
+						<Link href={route(valor.path)}>
+							<ColorButton
+								variant="contained"
+								startIcon={valor.icon}
+								active={active === subPath(valor.path)[0]}
+							>
+								{valor.name}
+							</ColorButton>
+						</Link>
+					) : (
+						<>
+							<ColorButton
+								variant="contained"
+								startIcon={valor.icon}
+								endIcon={
+									<KeyboardArrowDownIcon
+										className={display ? "rotate-180" : "rotate-0"}
+									/>
+								}
+								active={active === subPath(valor.path)[0]}
+								onClick={() => {
+									setDisplay(!display);
+								}}
+							>
+								{valor.name}
+							</ColorButton>
+							<Stack
+								direction="column"
+								spacing={0.5}
+								display={"none"}
+								className={`ml-5 mt-1 border border-blue-900 p-1 rounded-md menu-item ${display ? "visible" : ""}`}
+							>
+								{Object.entries(valor.children).map(([key, value]) => (
+									<PermissionGate key={key} roles={value.roles}>
+										<Link href={route(value.path)}>
+											<ColorButton
+												startIcon={valor.icon}
+												active={subPath(value.path)[1] === toggle}
+											>
+												{value.name}
+											</ColorButton>
+										</Link>
+									</PermissionGate>
+								))}
+							</Stack>
+						</>
+					)}
+				</PermissionGate>
 			</div>
 		);
 	});
