@@ -52,7 +52,7 @@ export default function SideNavItem() {
 		if (valor.hide === true) return;
 		return (
 			<div key={clave}>
-				<PermissionGate roles={valor?.roles ?? undefined}>
+				<PermissionGate roles={valor?.roles} permission={valor?.permissions}>
 					{!valor.children ? (
 						<Link href={route(valor.path)}>
 							<ColorButton
@@ -87,7 +87,7 @@ export default function SideNavItem() {
 								className={`ml-5 mt-1 border border-blue-900 p-1 rounded-md menu-item ${display ? "visible" : ""}`}
 							>
 								{Object.entries(valor.children).map(([key, value]) => (
-									<PermissionGate key={key} roles={value.roles}>
+									<PermissionGate key={key} roles={value?.roles} permission={value?.permissions}>
 										<Link href={route(value.path)}>
 											<ColorButton
 												startIcon={valor.icon}
