@@ -87,7 +87,11 @@ export default function SideNavItem() {
 								className={`ml-5 mt-1 border border-blue-900 p-1 rounded-md menu-item ${display ? "visible" : ""}`}
 							>
 								{Object.entries(valor.children).map(([key, value]) => (
-									<PermissionGate key={key} roles={value?.roles} permission={value?.permissions}>
+									<PermissionGate
+										key={key}
+										roles={value?.roles}
+										permission={value?.permissions}
+									>
 										<Link href={route(value.path)}>
 											<ColorButton
 												startIcon={valor.icon}
