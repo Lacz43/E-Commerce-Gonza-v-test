@@ -24,7 +24,7 @@ export default function DataTable<T>({ columns, response }: tableProps<T>) {
 	useEffect(() => {
 		setPaginationModel({
 			page: Number(url.searchParams.get("page")) ?? 0,
-			pageSize: Number(url.searchParams.get("perPage")) ?? 0,
+			pageSize: Number(url.searchParams.get("perPage") ?? 20),
 		});
 	}, []);
 
@@ -37,7 +37,7 @@ export default function DataTable<T>({ columns, response }: tableProps<T>) {
 		setPaginationModel(newModel);
 
 		url.searchParams.set("page", (page + 1).toString());
-		url.searchParams.set("perPage", pageSize.toString());
+		url.searchParams.set("perPage", (pageSize ? pageSize : 20).toString());
 
 		setLoading(true);
 		router.visit(url, {
