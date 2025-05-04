@@ -7,7 +7,7 @@ declare interface paginateResponse<T> {
 	last_page_url: string;
 	links: [
 		{
-			url: null | string;
+			url:  string | URL;
 			label: string;
 			active: boolean;
 		},
