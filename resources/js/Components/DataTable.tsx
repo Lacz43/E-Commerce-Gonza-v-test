@@ -1,58 +1,64 @@
 import {
 	DataGrid,
-	type GridRowsProp,
+	type GridPaginationModel,
 	type GridColDef,
-	type GridValidRowModel,
 } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { router } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const paginationModel = { page: 1, pageSize: 5 };
-
-export type tableProps = {
-	content: GridRowsProp;
+export type tableProps<T> = {
 	columns: GridColDef[];
-	rows: number;
-	links: [
-		{
-			url: string | URL;
-			label: string;
-			active: boolean;
-		},
-	];
+	response: paginateResponse<T>;
 };
 
-export type TableContent<T extends GridValidRowModel> = T[];
-
-export default function DataTable({
-	content,
-	columns,
-	rows,
-	links,
-}: tableProps) {
+export default function DataTable<T>({ columns, response }: tableProps<T>) {
 	const [loading, setLoading] = useState(false);
+	const [paginationModel, setPaginationModel] = useState({
+		page: 0,
+		pageSize: 20,
+	});
+
+	const url = new URL(window.location.href);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		setPaginationModel({
+			page: Number(url.searchParams.get("page")) ?? 0,
+			pageSize: Number(url.searchParams.get("perPage")) ?? 0,
+		});
+	}, []);
+
+	const handlePaginationChange = (newModel: GridPaginationModel) => {
+		const { page, pageSize } = newModel;
+
+		if (page === paginationModel.page && pageSize === paginationModel.pageSize)
+			return;
+
+		setPaginationModel(newModel);
+
+		url.searchParams.set("page", (page + 1).toString());
+		url.searchParams.set("perPage", pageSize.toString());
+
+		setLoading(true);
+		router.visit(url, {
+			preserveState: true,
+			preserveScroll: true,
+			onFinish: () => setLoading(false),
+		});
+	};
 
 	return (
 		<Paper sx={{ width: "100%" }}>
 			<DataGrid
-				rows={content}
+				rows={response.data}
 				columns={columns}
-				rowCount={rows}
+				rowCount={response.total}
 				loading={loading}
-				onPaginationModelChange={(model) => {
-					setLoading(true);
-					router.visit(links[model.page].url, {
-						preserveState: true,
-						preserveScroll: true,
-						onFinish: () => {
-							setLoading(false);
-						},
-					});
-				}}
-				initialState={{ pagination: { paginationModel } }}
+				onPaginationModelChange={handlePaginationChange}
+				paginationModel={paginationModel}
 				pageSizeOptions={[5, 10, 20]}
 				paginationMode="server"
+				sortingMode="client"
 				checkboxSelection
 				sx={{ border: 0 }}
 			/>
