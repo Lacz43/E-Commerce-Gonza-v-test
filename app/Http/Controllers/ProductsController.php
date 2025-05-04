@@ -9,9 +9,10 @@ use Inertia\Inertia;
 
 class ProductsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Products/Index');
+        $products = Products::paginate($request->query("perPage", 20));
+        return Inertia::render('Products/Index', ['products' => $products]);
     }
 
     public function products(Request $request)
