@@ -10,7 +10,7 @@ interface Route {
 	children?: Record<string, Route>;
 	params?: Record<string, string>;
 	permissions?: string[];
-    roles?: string[];
+	roles?: string[];
 }
 
 // rutas del sitio
@@ -44,6 +44,12 @@ export const paths: Record<string, Route> = {
 		path: "products.index",
 		name: "Productos",
 		icon: <Category />,
+		roles: ["admin"],
+	},
+	users: {
+		path: "users.index",
+		name: "Usuarios",
+		icon: <Person />,
 		roles: ["admin"],
 	},
 };
