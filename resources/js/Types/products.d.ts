@@ -1,5 +1,5 @@
 declare interface Item<T = unknown> {
-	id: number;
+	id: number | string;
 	name: string;
 	image: string;
 	barcode: number;
