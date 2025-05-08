@@ -1,4 +1,4 @@
-import { Home, ShoppingCart } from "@mui/icons-material";
+import { Home, ShoppingCart, Person, Category } from "@mui/icons-material";
 import type { JSX } from "react";
 
 interface Route {
@@ -43,7 +43,7 @@ export const paths: Record<string, Route> = {
 	products: {
 		path: "products.index",
 		name: "Productos",
-		icon: <Home />,
+		icon: <Category />,
 		roles: ["admin"],
 	},
 };
