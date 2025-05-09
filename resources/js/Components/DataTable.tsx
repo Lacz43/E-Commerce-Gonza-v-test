@@ -3,6 +3,7 @@ import {
 	type GridPaginationModel,
 	type GridColDef,
 } from "@mui/x-data-grid";
+import { esES } from "@mui/x-data-grid/locales";
 import Paper from "@mui/material/Paper";
 import { router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
@@ -56,6 +57,7 @@ export default function DataTable<T>({ columns, response }: tableProps<T>) {
 				loading={loading}
 				onPaginationModelChange={handlePaginationChange}
 				paginationModel={paginationModel}
+				localeText={esES.components.MuiDataGrid.defaultProps.localeText}
 				pageSizeOptions={[5, 10, 20]}
 				paginationMode="server"
 				sortingMode="client"
