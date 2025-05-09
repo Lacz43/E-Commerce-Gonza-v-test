@@ -31,8 +31,9 @@ export default function Products({ users }: Props) {
 										field: "roles",
 										headerName: "Roles",
 										valueGetter: (_value, row) =>
-											`${row.roles.map((val: {name: string}) => `${val.name}\n`)}`,
+											`${row.roles.map((val: { name: string }) => `${val.name}\n`)}`,
 									},
+									{ field: "created_at", headerName: "Creado", width: 200 },
 								]}
 								response={users}
 							/>
