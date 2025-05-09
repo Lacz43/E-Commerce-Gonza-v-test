@@ -7,6 +7,7 @@ type Props = {
 };
 
 export default function Products({ users }: Props) {
+	console.log(users);
 	return (
 		<AuthenticatedLayout
 			header={
@@ -26,6 +27,12 @@ export default function Products({ users }: Props) {
 									{ field: "id", headerName: "ID" },
 									{ field: "name", headerName: "Nombre" },
 									{ field: "email", headerName: "Correo", width: 200 },
+									{
+										field: "roles",
+										headerName: "Roles",
+										valueGetter: (_value, row) =>
+											`${row.roles.map((val: {name: string}) => `${val.name}\n`)}`,
+									},
 								]}
 								response={users}
 							/>
