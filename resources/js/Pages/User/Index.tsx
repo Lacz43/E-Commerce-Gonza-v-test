@@ -1,6 +1,7 @@
 import DataTable from "@/Components/DataTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
+import { formatDate } from "@/utils";
 
 type Props = {
 	users: paginateResponse<User>;
@@ -33,7 +34,12 @@ export default function Products({ users }: Props) {
 										valueGetter: (_value, row) =>
 											`${row.roles.map((val: { name: string }) => `${val.name}\n`)}`,
 									},
-									{ field: "created_at", headerName: "Creado", width: 200 },
+									{
+										field: "created_at",
+										headerName: "Creado",
+										width: 200,
+										valueGetter: (value, _row) => `${formatDate(value)}`,
+									},
 								]}
 								response={users}
 							/>
