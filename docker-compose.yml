@@ -1,10 +1,36 @@
 services:
     app:
         build: .
-        container_name: gonzaplus_development
+        container_name: gonzaplus_app
         ports:
             - "8000:8000"
         volumes:
             - .:/var/www/html
         working_dir: /var/www/html
         tty: true # Permite usar la consola interactiva
+        depends_on:
+            - db
+        networks:
+            - network  # 👈 Asegúrate de que el app esté en la misma red que db
+
+    db:
+        image: mariadb:11.7.2-noble
+        container_name: gonzaplus_db
+        environment:
+            MARIADB_ROOT_PASSWORD: password
+            MARIADB_DATABASE: gonza
+            MARIADB_USER: admin
+            MARIADB_PASSWORD: password
+        volumes:
+            - db_data:/var/lib/mysql
+        ports:
+            - "3306:3306" # Puerto local:puerto contenedor
+        networks:
+            - network
+
+volumes:
+    db_data:
+
+networks:
+    network:
+        driver: bridge
