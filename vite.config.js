@@ -12,4 +12,9 @@ export default defineConfig({
         react(),
         tailwind_vite(),
     ],
+    server: {
+        hmr: {
+            host: 'localhost',
+        }
+    }
 });
