@@ -18,6 +18,14 @@ RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer  | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Instalar nodejs (solo para desarrollo)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+RUN apt-get install -y nodejs
+
+# Instalar pnpm
+RUN corepack enable pnpm
+RUN corepack use pnpm@10.9
+
 # Opcional: establece el directorio de trabajo
 WORKDIR /var/www
 
