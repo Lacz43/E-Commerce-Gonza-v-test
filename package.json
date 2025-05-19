@@ -6,14 +6,14 @@
         "dev": "vite"
     },
     "devDependencies": {
-        "@headlessui/react": "^2.2.2",
-        "@inertiajs/react": "^2.0.8",
+        "@headlessui/react": "^2.2.3",
+        "@inertiajs/react": "^2.0.11",
         "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/postcss": "^4.1.4",
-        "@tailwindcss/vite": "^4.1.4",
-        "@types/node": "^22.15.2",
-        "@types/react": "^19.1.2",
-        "@types/react-dom": "^19.1.2",
+        "@tailwindcss/postcss": "^4.1.7",
+        "@tailwindcss/vite": "^4.1.7",
+        "@types/node": "^22.15.18",
+        "@types/react": "^19.1.4",
+        "@types/react-dom": "^19.1.5",
         "@vitejs/plugin-react": "^4.4.1",
         "autoprefixer": "^10.4.21",
         "axios": "^1.9.0",
@@ -22,9 +22,9 @@
         "postcss": "^8.5.3",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "tailwindcss": "^4.1.4",
+        "tailwindcss": "^4.1.7",
         "typescript": "^5.8.3",
-        "vite": "^6.3.3"
+        "vite": "^6.3.5"
     },
     "packageManager": "pnpm@10.9.0",
     "pnpm": {
@@ -32,15 +32,16 @@
             "esbuild"
         ],
         "onlyBuiltDependencies": [
+            "@tailwindcss/oxide",
             "esbuild"
         ]
     },
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
-        "@mui/icons-material": "^7.0.2",
-        "@mui/material": "^7.0.2",
-        "@mui/x-data-grid": "8.0.0-beta.3",
+        "@mui/icons-material": "^7.1.0",
+        "@mui/material": "^7.1.0",
+        "@mui/x-data-grid": "8.3.1",
         "date-fns": "^4.1.0"
     }
 }
