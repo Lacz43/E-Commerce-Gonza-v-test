@@ -14,7 +14,7 @@ services:
             - network  # 👈 Asegúrate de que el app esté en la misma red que db
 
     db:
-        image: mariadb:11.7.2-noble
+        image: mariadb:11.7.2
         container_name: gonzaplus_db
         environment:
             MARIADB_ROOT_PASSWORD: password
