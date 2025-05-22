@@ -1,7 +1,9 @@
 services:
-    app:
-        build: .
-        container_name: gonzaplus_app
+    dev:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        container_name: gonzaplus_dev
         ports:
             - "8000:8000"
             - "5173:5173"
@@ -12,7 +14,34 @@ services:
         depends_on:
             - db
         networks:
-            - network  # 👈 Asegúrate de que el app esté en la misma red que db
+            - network # 👈 Asegúrate de que el app esté en la misma red que db
+
+    prod:
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+        container_name: gonzaplus_prod
+        ports:
+            - "80:80"
+        volumes:
+            - .:/var/www/html
+        working_dir: /var/www/html
+        tty: true # Permite usar la consola interactiva
+        depends_on:
+            - db
+            - web
+        networks:
+            - network # 👈 Asegúrate de que el app esté en la misma red que db
+
+    web:
+        image: nginx:1.27.5
+        volumes:
+            - ./templates:/etc/nginx/templates
+        ports:
+            - "80:80"
+        environment:
+            - NGINX_HOST=foobar.com
+            - NGINX_PORT=80
 
     db:
         image: mariadb:11.7.2
