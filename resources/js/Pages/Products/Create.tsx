@@ -8,6 +8,7 @@ import {
 	Select,
 	MenuItem,
 } from "@mui/material";
+import ImageUpload from "@/Components/ImageUpload"
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -94,14 +95,7 @@ export default function Products({ products }: Props) {
 									</div>
 								</div>
 								<div className="">
-									<TextField
-										className="w-full"
-										error={false}
-                                        type="image"
-										id="outlined-error-helper-text"
-										label="Imagenes"
-										variant="filled"
-									/>
+                                    <ImageUpload />
 								</div>
 							</div>
 						</div>
