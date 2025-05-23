@@ -24,4 +24,9 @@ class ProductsController extends Controller
             'products' => $products,
         ]);
     }
+
+    public function create()
+    {
+        return Inertia::render('Products/Create');
+    }
 }
