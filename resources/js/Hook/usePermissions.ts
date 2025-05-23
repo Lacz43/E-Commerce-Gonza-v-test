@@ -7,11 +7,11 @@ export default function usePermissions() {
 	return {
 		hasPermission: (permission: string[]) => {
 			// obtiene si el usuario tiene permiso para ver el contenido
-			return permission.every((element) => auth.permissions?.includes(element));
+			return permission.some((element) => auth.permissions?.includes(element));
 		},
 		hasRole: (role: string[]) => {
 			// obtiene si el usuario tiene un rol
-			return role.every((element) => auth.roles?.includes(element));
+			return role.some((element) => auth.roles?.includes(element));
 		},
 	};
 }
