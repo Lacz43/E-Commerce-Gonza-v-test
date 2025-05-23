@@ -1,6 +1,8 @@
 import DataTable from "@/Components/DataTable";
+import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
+import { Button } from "@mui/material";
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -21,7 +23,16 @@ export default function Products({ products }: Props) {
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-					<div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+					<div className="flex justify-end mb-3">
+						<PermissionGate permission={["create products"]}>
+							<Link href={route("products.create")}>
+								<Button variant="contained" size="small">
+									<b>Nuevo</b>
+								</Button>
+							</Link>
+						</PermissionGate>
+					</div>
+					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
 							<DataTable<Item>
 								columns={[
@@ -37,7 +48,11 @@ export default function Products({ products }: Props) {
 										headerName: "Precio",
 										valueGetter: (_value, row) => `${row.price} $`,
 									},
-									{ field: "description", headerName: "Descripción" },
+									{
+										field: "description",
+										headerName: "Descripción",
+										width: 300,
+									},
 								]}
 								response={products}
 							/>
