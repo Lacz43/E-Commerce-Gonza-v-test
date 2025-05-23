@@ -87,7 +87,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 
 			{/* Previsualización de imágenes */}
 			{images.length > 0 && (
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+				<div className="">
 					{/* Imagen principal */}
 					{mainImageIndex !== null && (
 						<div className="relative">
@@ -102,25 +102,27 @@ const ImageUpload: FC<ImageUploadProps> = ({
 						</div>
 					)}
 
-					{/* Miniaturas */}
-					{images.map((image, index) => (
-						// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-						<div
-							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-							key={index}
-							className={`relative group cursor-pointer ${index === mainImageIndex ? "opacity-50" : ""}`}
-							onClick={() => handleImageSelect(index)}
-						>
-							<img
-								src={URL.createObjectURL(image)}
-								alt={`Miniatura ${index}`}
-								className="w-full h-48 object-cover rounded border border-gray-300 transition-transform group-hover:scale-105"
-							/>
-							<div className="absolute bottom-1 right-1 bg-white bg-opacity-75 rounded-full p-1">
-								{index + 1}
+					<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+						{/* Miniaturas */}
+						{images.map((image, index) => (
+							// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+							<div
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								key={index}
+								className={`relative group cursor-pointer ${index === mainImageIndex ? "opacity-50" : ""}`}
+								onClick={() => handleImageSelect(index)}
+							>
+								<img
+									src={URL.createObjectURL(image)}
+									alt={`Miniatura ${index}`}
+									className="w-full h-48 object-cover rounded border border-gray-300 transition-transform group-hover:scale-105"
+								/>
+								<div className="absolute bottom-1 right-1 bg-white bg-opacity-75 rounded-full p-1">
+									{index + 1}
+								</div>
 							</div>
-						</div>
-					))}
+						))}
+					</div>
 				</div>
 			)}
 		</div>
