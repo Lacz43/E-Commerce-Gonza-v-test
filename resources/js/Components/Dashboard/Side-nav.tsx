@@ -10,7 +10,7 @@ export default function SideNav() {
 	}
 	return (
 		<aside
-			className="w-[23rem] bg-[#121621] text-white flex flex-col z-1100 side-nav max-sm:w-full"
+			className="w-[20rem] bg-[#121621] text-white flex flex-col z-1100 fixed top-0 h-screen side-nav max-sm:w-full"
 			id="side-nav"
 		>
 			<header className="p-5 border-b border-b-gray-500 flex justify-center">

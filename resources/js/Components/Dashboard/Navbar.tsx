@@ -13,7 +13,7 @@ export default function Navbar() {
 	}
 
 	return (
-		<nav className="border-b border-gray-300 bg-white">
+		<nav className="border-b border-gray-300 bg-white sticky top-0 z-1000">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 justify-end">
 					<div className="md:hidden mr-auto flex items-center">
