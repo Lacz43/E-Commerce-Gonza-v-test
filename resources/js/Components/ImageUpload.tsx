@@ -34,11 +34,14 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			});
 
 			setImages((prev) => [...prev, ...validFiles]);
+            if(onImagesSelected){
+                onImagesSelected(images);
+            }
 			if (validFiles.length > 0 && mainImageIndex === null) {
 				setMainImageIndex((prev) => (prev === null ? 0 : prev));
 			}
 		},
-		[mainImageIndex],
+		[mainImageIndex, onImagesSelected, images],
 	);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -46,7 +49,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 		accept: {
 			"image/*": [],
 		},
-		maxFiles: 10,
+		maxFiles: 5,
 		multiple: true,
 	});
 
