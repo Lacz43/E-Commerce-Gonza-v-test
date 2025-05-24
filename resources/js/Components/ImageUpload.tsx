@@ -1,4 +1,4 @@
-import { useState, useCallback, type FC } from "react";
+import { useState, useCallback, type FC, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 
 interface ImageUploadProps {
@@ -34,15 +34,18 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			});
 
 			setImages((prev) => [...prev, ...validFiles]);
-            if(onImagesSelected){
-                onImagesSelected(images);
-            }
 			if (validFiles.length > 0 && mainImageIndex === null) {
 				setMainImageIndex((prev) => (prev === null ? 0 : prev));
 			}
 		},
-		[mainImageIndex, onImagesSelected, images],
+		[mainImageIndex],
 	);
+
+	useEffect(() => {
+		if (onImagesSelected) {
+			onImagesSelected(images);
+		}
+	}, [images, onImagesSelected]);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
