@@ -8,13 +8,32 @@ import {
 	Select,
 	MenuItem,
 } from "@mui/material";
-import ImageUpload from "@/Components/ImageUpload"
+import ImageUpload from "@/Components/ImageUpload";
+import { useForm, Controller } from "react-hook-form";
 
 type Props = {
 	products: paginateResponse<Item>;
 };
 
+interface FormData extends Item {
+	images: File[];
+	default: File;
+	category: number;
+}
+
 export default function Products({ products }: Props) {
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		control,
+		formState: { errors, isSubmitting },
+	} = useForm<FormData>();
+
+	function onSubmit(data: FormData) {
+		console.log(data);
+	}
+
 	return (
 		<AuthenticatedLayout
 			header={
@@ -43,6 +62,7 @@ export default function Products({ products }: Props) {
 										label="Nombre del producto"
 										variant="filled"
 										required
+										{...register("name", { required: true })}
 									/>
 									<div className="mt-3 flex gap-3">
 										<TextField
@@ -53,6 +73,7 @@ export default function Products({ products }: Props) {
 											label="Codigo de barras"
 											variant="filled"
 											required
+											{...register("barcode", { required: true })}
 										/>
 										<TextField
 											className="w-full"
@@ -62,6 +83,7 @@ export default function Products({ products }: Props) {
 											type="number"
 											variant="filled"
 											required
+											{...register("price", { required: true, min: 0 })}
 										/>
 									</div>
 									<div className="mt-3">
@@ -76,6 +98,7 @@ export default function Products({ products }: Props) {
 											<Select
 												labelId="demo-simple-select-filled-label"
 												id="demo-simple-select-filled"
+												{...register("category", { required: true })}
 											>
 												<MenuItem value={10}>Ten</MenuItem>
 												<MenuItem value={20}>Twenty</MenuItem>
@@ -91,14 +114,29 @@ export default function Products({ products }: Props) {
 											label="Descripcion"
 											variant="filled"
 											multiline
+											{...register("description")}
 										/>
 									</div>
 								</div>
 								<div className="">
-                                    <ImageUpload />
+									<Controller
+										name="images"
+										control={control}
+										rules={{ required: true }}
+										render={({ fieldState: { error } }) =>
+											error && <p>Es necesario una imagen</p>
+										}
+									/>
+									<ImageUpload
+										onImagesSelected={(data) => setValue("images", data)}
+										onMainImageSelected={(file) => setValue("default", file)}
+									/>
 								</div>
 							</div>
 						</div>
+						<Button variant="contained" onClick={handleSubmit(onSubmit)}>
+							<b>Crear</b>
+						</Button>
 					</div>
 				</div>
 			</div>
