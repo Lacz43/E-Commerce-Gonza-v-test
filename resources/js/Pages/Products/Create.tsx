@@ -27,7 +27,7 @@ export default function Products({ products }: Props) {
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-					<div className="flex mb-3">
+					<div className="flex mb-3 mx-3">
 						<Button variant="contained" size="small">
 							<b>Atras</b>
 						</Button>

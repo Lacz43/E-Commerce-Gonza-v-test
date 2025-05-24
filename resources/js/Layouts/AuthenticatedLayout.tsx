@@ -8,9 +8,9 @@ export default function Authenticated({
 	children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
 	return (
-		<div className="bg-gray-100 flex h-full">
+		<div className="bg-gray-100 h-full max-w-[100vw] ">
 			<SideNav />
-			<div className="w-full sm:ml-[20rem]">
+			<div className="md:ml-[20rem]">
 				<Navbar />
 				{/* {header && ( */}
 				{/* 	<header className="bg-white shadow"> */}

@@ -23,7 +23,7 @@ export default function Products({ products }: Props) {
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-					<div className="flex justify-end mb-3">
+					<div className="flex justify-end mb-3 mx-3">
 						<PermissionGate permission={["create products"]}>
 							<Link href={route("products.create")}>
 								<Button variant="contained" size="small">
