@@ -73,7 +73,7 @@ export default function SideNavItem() {
 										className={display ? "rotate-180" : "rotate-0"}
 									/>
 								}
-								active={active === subPath(valor.path)[0]}
+								selected={active === subPath(valor.path)[0]}
 								onClick={() => {
 									setDisplay(!display);
 								}}
