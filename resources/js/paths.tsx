@@ -45,6 +45,12 @@ export const paths: Record<string, Route> = {
 		name: "Productos",
 		icon: <Category />,
 		roles: ["admin"],
+		children: {
+			register: {
+				path: "products.index",
+				name: "Registro",
+			},
+		},
 	},
 	users: {
 		path: "users.index",
