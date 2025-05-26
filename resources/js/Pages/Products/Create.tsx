@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import ImageUpload from "@/Components/ImageUpload";
 import { useForm, Controller } from "react-hook-form";
+import axios from "axios";
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -30,8 +31,12 @@ export default function Products({ products }: Props) {
 		formState: { errors, isSubmitting },
 	} = useForm<FormData>();
 
-	function onSubmit(data: FormData) {
-		console.log(data);
+	async function onSubmit(data: FormData) {
+		try {
+			await axios.post(route("products.storage"), data);
+		} catch (e) {
+			console.log(e);
+		}
 	}
 
 	return (
