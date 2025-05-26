@@ -84,12 +84,14 @@ export default function Products({ products }: Props) {
 									<TextField
 										className="w-full"
 										error={errors.name !== undefined}
-                                        helperText={errors.name?.message}
+										helperText={errors.name?.message}
 										id="outlined-error-helper-text"
 										label="Nombre del producto"
 										variant="filled"
 										required
-										{...register("name", { required: "Este campo es obligatorio" })}
+										{...register("name", {
+											required: "Este campo es obligatorio",
+										})}
 									/>
 									<div className="mt-3 flex gap-3">
 										<TextField
@@ -166,9 +168,15 @@ export default function Products({ products }: Props) {
 										name="images"
 										control={control}
 										rules={{ required: true }}
-										render={({ fieldState: { error } }) =>
-											<>{error ? <FormHelperText>Es necesario una imagen</FormHelperText> : null}</>
-										}
+										render={({ fieldState: { error } }) => (
+											<>
+												{error ? (
+													<FormHelperText className="red text-center">
+														Es necesario una imagen
+													</FormHelperText>
+												) : null}
+											</>
+										)}
 									/>
 									<ImageUpload
 										onImagesSelected={(data) => setValue("images", data)}
