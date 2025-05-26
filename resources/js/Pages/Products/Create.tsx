@@ -11,6 +11,7 @@ import {
 import ImageUpload from "@/Components/ImageUpload";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
+import { isValidUPC, isValidEAN8, isValidEAN13, isValidGTIN14 } from "@/utils";
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -30,6 +31,25 @@ export default function Products({ products }: Props) {
 		control,
 		formState: { errors, isSubmitting },
 	} = useForm<FormData>();
+
+	const validateBarcode = (value: string) => {
+		const code = value.trim();
+		if (!/^\d+$/.test(code)) {
+			return "El código debe contener solo números.";
+		}
+		switch (code.length) {
+			case 8:
+				return isValidEAN8(code) ? true : "El código EAN-8 no es válido.";
+			case 12:
+				return isValidUPC(code) ? true : "El código UPC-A no es válido.";
+			case 13:
+				return isValidEAN13(code) ? true : "El código EAN-13 no es válido.";
+			case 14:
+				return isValidGTIN14(code) ? true : "El código GTIN-14 no es válido.";
+			default:
+				return "El código debe tener 8, 12, 13 o 14 dígitos.";
+		}
+	};
 
 	async function onSubmit(data: FormData) {
 		try {
@@ -72,13 +92,17 @@ export default function Products({ products }: Props) {
 									<div className="mt-3 flex gap-3">
 										<TextField
 											className="w-full"
-											error={false}
+											error={errors.barcode !== undefined}
+                                            helperText={errors.barcode?.message}
 											type="number"
 											id="outlined-error-helper-text"
 											label="Codigo de barras"
 											variant="filled"
 											required
-											{...register("barcode", { required: true })}
+											{...register("barcode", {
+												required: true,
+												validate: validateBarcode,
+											})}
 										/>
 										<TextField
 											className="w-full"
@@ -103,7 +127,7 @@ export default function Products({ products }: Props) {
 											<Select
 												labelId="demo-simple-select-filled-label"
 												id="demo-simple-select-filled"
-                                                defaultValue=""
+												defaultValue=""
 												{...register("category", { required: true })}
 											>
 												<MenuItem value="">None</MenuItem>
