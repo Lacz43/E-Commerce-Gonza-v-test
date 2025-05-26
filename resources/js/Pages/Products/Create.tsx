@@ -7,6 +7,7 @@ import {
 	InputLabel,
 	Select,
 	MenuItem,
+	FormHelperText,
 } from "@mui/material";
 import ImageUpload from "@/Components/ImageUpload";
 import { useForm, Controller } from "react-hook-form";
@@ -47,7 +48,7 @@ export default function Products({ products }: Props) {
 			case 14:
 				return isValidGTIN14(code) ? true : "El código GTIN-14 no es válido.";
 			default:
-				return "El código debe tener 8, 12, 13 o 14 dígitos.";
+				return "El código debe tener de 8 a 14 dígitos.";
 		}
 	};
 
@@ -82,37 +83,42 @@ export default function Products({ products }: Props) {
 								<div className="">
 									<TextField
 										className="w-full"
-										error={false}
+										error={errors.name !== undefined}
+                                        helperText={errors.name?.message}
 										id="outlined-error-helper-text"
 										label="Nombre del producto"
 										variant="filled"
 										required
-										{...register("name", { required: true })}
+										{...register("name", { required: "Este campo es obligatorio" })}
 									/>
 									<div className="mt-3 flex gap-3">
 										<TextField
 											className="w-full"
 											error={errors.barcode !== undefined}
-                                            helperText={errors.barcode?.message}
+											helperText={errors.barcode?.message}
 											type="number"
 											id="outlined-error-helper-text"
 											label="Codigo de barras"
 											variant="filled"
 											required
 											{...register("barcode", {
-												required: true,
+												required: "Este campo es obligatorio",
 												validate: validateBarcode,
 											})}
 										/>
 										<TextField
 											className="w-full"
-											error={false}
+											error={errors.price !== undefined}
+											helperText={errors.price?.message}
 											id="outlined-error-helper-text"
 											label="Precio"
 											type="number"
 											variant="filled"
 											required
-											{...register("price", { required: true, min: 0 })}
+											{...register("price", {
+												required: "Este campo es obligatorio",
+												validate: (value) => value > 0 || "Debe ser mayor de 0",
+											})}
 										/>
 									</div>
 									<div className="mt-3">
@@ -120,6 +126,7 @@ export default function Products({ products }: Props) {
 											variant="filled"
 											className="mt-3 w-full"
 											required
+											error={errors.category !== undefined}
 										>
 											<InputLabel id="demo-simple-select-filled-label">
 												Categoria
@@ -128,13 +135,18 @@ export default function Products({ products }: Props) {
 												labelId="demo-simple-select-filled-label"
 												id="demo-simple-select-filled"
 												defaultValue=""
-												{...register("category", { required: true })}
+												{...register("category", {
+													required: "Este campo es obligatorio",
+												})}
 											>
 												<MenuItem value="">None</MenuItem>
 												<MenuItem value={10}>Ten</MenuItem>
 												<MenuItem value={20}>Twenty</MenuItem>
 												<MenuItem value={30}>Thirty</MenuItem>
 											</Select>
+											<FormHelperText>
+												{errors.category?.message}
+											</FormHelperText>
 										</FormControl>
 									</div>
 									<div className="mt-3">
@@ -155,7 +167,7 @@ export default function Products({ products }: Props) {
 										control={control}
 										rules={{ required: true }}
 										render={({ fieldState: { error } }) =>
-											error && <p>Es necesario una imagen</p>
+											<>{error ? <FormHelperText>Es necesario una imagen</FormHelperText> : null}</>
 										}
 									/>
 									<ImageUpload
