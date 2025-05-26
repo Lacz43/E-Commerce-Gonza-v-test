@@ -103,8 +103,10 @@ export default function Products({ products }: Props) {
 											<Select
 												labelId="demo-simple-select-filled-label"
 												id="demo-simple-select-filled"
+                                                defaultValue=""
 												{...register("category", { required: true })}
 											>
+												<MenuItem value="">None</MenuItem>
 												<MenuItem value={10}>Ten</MenuItem>
 												<MenuItem value={20}>Twenty</MenuItem>
 												<MenuItem value={30}>Thirty</MenuItem>
