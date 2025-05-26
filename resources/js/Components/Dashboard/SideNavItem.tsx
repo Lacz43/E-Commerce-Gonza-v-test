@@ -10,12 +10,12 @@ import { Stack } from "@mui/material";
 import PermissionGate from "../PermissionGate";
 
 interface ColorButtonProps extends ButtonProps {
-	active?: boolean;
+	selected: boolean;
 }
 
-const ColorButton = styled(Button)<ColorButtonProps>(({ theme, active }) => ({
+const ColorButton = styled(Button)<ColorButtonProps>(({ theme, selected }) => ({
 	color: theme.palette.getContrastText(blue[500]),
-	backgroundColor: active ? blue[900] : "#00000000",
+	backgroundColor: selected ? blue[900] : "#00000000",
 	width: "100%",
 	justifyContent: "start",
 	padding: "0.5rem 1.5rem",
@@ -58,7 +58,7 @@ export default function SideNavItem() {
 							<ColorButton
 								variant="contained"
 								startIcon={valor.icon}
-								active={active === subPath(valor.path)[0]}
+								selected={active === subPath(valor.path)[0]}
 							>
 								{valor.name}
 							</ColorButton>
