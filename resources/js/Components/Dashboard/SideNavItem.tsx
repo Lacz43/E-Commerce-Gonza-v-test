@@ -30,6 +30,7 @@ const ColorButton = styled(Button)<ColorButtonProps>(({ theme, selected }) => ({
 }));
 
 function subPath(url: string) {
+	if (!url) return [];
 	const urls = new URL(route(url));
 	return urls.pathname.split("/").filter(Boolean);
 }
@@ -48,6 +49,11 @@ export default function SideNavItem() {
 
 	const list = Object.entries(paths).map(([clave, valor]) => {
 		const [display, setDisplay] = useState(false);
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+		useEffect(() => {
+			// revisa que la ruta q se abra este activa si es selecionada esto solo cuando cambien "active"
+			setDisplay(active === subPath(valor.path)[0]);
+		}, [active]);
 
 		if (valor.hide === true) return;
 		return (
@@ -94,8 +100,8 @@ export default function SideNavItem() {
 									>
 										<Link href={route(value.path)}>
 											<ColorButton
-												startIcon={valor.icon}
-												active={subPath(value.path)[1] === toggle}
+												startIcon={value.icon ?? null}
+												selected={subPath(value.path)[1] === toggle}
 											>
 												{value.name}
 											</ColorButton>
