@@ -29,4 +29,10 @@ class ProductsController extends Controller
     {
         return Inertia::render('Products/Create');
     }
+
+    public function storage(Request $request)
+    {
+        Debugbar::info($request);
+        return json_encode(["test" => "test"]);
+    }
 }

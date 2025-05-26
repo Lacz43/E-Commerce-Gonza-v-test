@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth', 'permission:show products')->get('/products/index', [ProductsController::class, 'index'])->name('products.index');
 
-Route::middleware('auth', 'permission:create products')->get('/products/create', [ProductsController::class, 'create'])->name('products.create');
+Route::middleware('auth', 'permission:create products')->group(function () {
+    Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
+    Route::post('/products/storage', [ProductsController::class, 'create'])->name('products.storage');
+});
 
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
