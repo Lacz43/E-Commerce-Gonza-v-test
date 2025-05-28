@@ -1,5 +1,7 @@
 import { useState, useCallback, type FC, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton } from "@mui/material";
 
 interface ImageUploadProps {
 	onImagesSelected?: (images: File[]) => void;
@@ -63,6 +65,22 @@ const ImageUpload: FC<ImageUploadProps> = ({
 		}
 	};
 
+	const removeImage = (index: number) => {
+		if (images[index]) {
+			// Esto borra la imagen y conserva la imagen por defecto
+			if (images.length - 1 === mainImageIndex)
+				setMainImageIndex(mainImageIndex - 1);
+			if (mainImageIndex && index < mainImageIndex)
+				setMainImageIndex(mainImageIndex - 1);
+			setImages((prev) => prev.filter((i) => images[index] !== i));
+		}
+	};
+
+	useEffect(() => {
+		// setea a null si ya no hay images
+		if (images.length <= 0) setMainImageIndex(null);
+	}, [images]);
+
 	return (
 		<div className="space-y-4">
 			{/* Zona de arrastrar y soltar */}
@@ -95,7 +113,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			{images.length > 0 && (
 				<div className="">
 					{/* Imagen principal */}
-					{mainImageIndex !== null && (
+					{mainImageIndex !== null && images[mainImageIndex] && (
 						<div className="relative">
 							<img
 								src={URL.createObjectURL(images[mainImageIndex])}
@@ -118,6 +136,16 @@ const ImageUpload: FC<ImageUploadProps> = ({
 								className={`relative group cursor-pointer ${index === mainImageIndex ? "opacity-50" : ""}`}
 								onClick={() => handleImageSelect(index)}
 							>
+								<div className="absolute right-0 z-200">
+									<IconButton
+										onClick={(e) => {
+											e.stopPropagation();
+											removeImage(index);
+										}}
+									>
+										<DeleteIcon className="text-white transition-transform group-hover:scale-105" />
+									</IconButton>
+								</div>
 								<img
 									src={URL.createObjectURL(image)}
 									alt={`Miniatura ${index}`}
