@@ -1,15 +1,8 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import {
-	Button,
-	TextField,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	FormHelperText,
-} from "@mui/material";
+import { Button, TextField, FormHelperText } from "@mui/material";
 import ImageUpload from "@/Components/ImageUpload";
+import CategoriesInput from "@/Components/Products/CategoriesInput";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { isValidUPC, isValidEAN8, isValidEAN13, isValidGTIN14 } from "@/utils";
@@ -124,32 +117,12 @@ export default function Products({ products }: Props) {
 										/>
 									</div>
 									<div className="mt-3">
-										<FormControl
-											variant="filled"
-											className="mt-3 w-full"
-											required
-											error={errors.category !== undefined}
-										>
-											<InputLabel id="demo-simple-select-filled-label">
-												Categoria
-											</InputLabel>
-											<Select
-												labelId="demo-simple-select-filled-label"
-												id="demo-simple-select-filled"
-												defaultValue=""
-												{...register("category", {
-													required: "Este campo es obligatorio",
-												})}
-											>
-												<MenuItem value="">None</MenuItem>
-												<MenuItem value={10}>Ten</MenuItem>
-												<MenuItem value={20}>Twenty</MenuItem>
-												<MenuItem value={30}>Thirty</MenuItem>
-											</Select>
-											<FormHelperText>
-												{errors.category?.message}
-											</FormHelperText>
-										</FormControl>
+										<CategoriesInput
+											errors={errors.category}
+											register={register("category", {
+												required: "Este campo es obligatorio",
+											})}
+										/>
 									</div>
 									<div className="mt-3">
 										<TextField
