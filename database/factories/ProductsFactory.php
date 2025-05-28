@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProductCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class ProductsFactory extends Factory
             'name' => $this->faker->word(),
             'image' => 'https://picsum.photos/' . $this->faker->numberBetween(400, 800) . '/' . $this->faker->numberBetween(300, 600),
             'barcode' => $this->faker->unique()->numberBetween(000000000000000, 9999999999999),
+            'category_id' => ProductCategory::inRandomOrder()->first()->id,
             'description' => $this->faker->text(),
             'price' => $this->faker->randomFloat(2, 60, 600),
         ];
