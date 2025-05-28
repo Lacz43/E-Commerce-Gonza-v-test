@@ -5,6 +5,8 @@ import {
 	MenuItem,
 	FormHelperText,
 } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
 type Props = {
@@ -12,7 +14,25 @@ type Props = {
 	register: UseFormRegisterReturn<string>;
 };
 
+type Category = { id: number; name: string };
+
 export default function CategoryInput({ errors, register }: Props) {
+	const [categories, setCategories] = useState<Category[]>([]);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const { data } = await axios.get<Category[]>(
+					route("products.categories"),
+				);
+				setCategories(data);
+			} catch (e) {
+				console.log(e);
+			}
+		};
+		fetchData();
+	}, []);
+
 	return (
 		<FormControl
 			variant="filled"
@@ -28,9 +48,11 @@ export default function CategoryInput({ errors, register }: Props) {
 				{...register}
 			>
 				<MenuItem value="">None</MenuItem>
-				<MenuItem value={10}>Ten</MenuItem>
-				<MenuItem value={20}>Twenty</MenuItem>
-				<MenuItem value={30}>Thirty</MenuItem>
+				{categories.map((item) => (
+					<MenuItem key={item.id} value={item.id}>
+						{item.name}
+					</MenuItem>
+				))}
 			</Select>
 			<FormHelperText>{errors?.message}</FormHelperText>
 		</FormControl>
