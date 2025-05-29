@@ -8,7 +8,7 @@ Route::middleware('auth', 'permission:show products')->get('/products/index', [P
 
 Route::middleware('auth', 'permission:create products')->group(function () {
     Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
-    Route::post('/products/storage', [ProductsController::class, 'create'])->name('products.storage');
+    Route::post('/products/storage', [ProductsController::class, 'storage'])->name('products.storage');
 });
 
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
