@@ -4,7 +4,7 @@ import { Button, TextField, FormHelperText } from "@mui/material";
 import ImageUpload from "@/Components/ImageUpload";
 import CategoriesInput from "@/Components/Products/CategoriesInput";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
+import axios, { toFormData } from "axios";
 import { isValidUPC, isValidEAN8, isValidEAN13, isValidGTIN14 } from "@/utils";
 
 type Props = {
@@ -47,7 +47,9 @@ export default function Products({ products }: Props) {
 
 	async function onSubmit(data: FormStruture) {
 		try {
-			await axios.post(route("products.storage"), data);
+            const formData = new FormData();
+            toFormData(data, formData);
+			await axios.post(route("products.storage"), formData);
 		} catch (e) {
 			console.log(e);
 		}
