@@ -80,7 +80,7 @@ export default function Products({ products }: Props) {
 										className="w-full"
 										error={errors.name !== undefined}
 										helperText={errors.name?.message}
-										id="outlined-error-helper-text"
+										id="product_name"
 										label="Nombre del producto"
 										variant="filled"
 										required
@@ -94,7 +94,7 @@ export default function Products({ products }: Props) {
 											error={errors.barcode !== undefined}
 											helperText={errors.barcode?.message}
 											type="number"
-											id="outlined-error-helper-text"
+											id="product_barcode"
 											label="Codigo de barras"
 											variant="filled"
 											required
@@ -107,7 +107,7 @@ export default function Products({ products }: Props) {
 											className="w-full"
 											error={errors.price !== undefined}
 											helperText={errors.price?.message}
-											id="outlined-error-helper-text"
+											id="product_price"
 											label="Precio"
 											type="number"
 											variant="filled"
@@ -130,7 +130,7 @@ export default function Products({ products }: Props) {
 										<TextField
 											className="w-full"
 											error={false}
-											id="outlined-error-helper-text"
+											id="product_description"
 											label="Descripcion"
 											variant="filled"
 											multiline
