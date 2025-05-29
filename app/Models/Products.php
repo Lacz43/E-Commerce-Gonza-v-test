@@ -4,10 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Products extends Model
 {
     use HasFactory;
 
     protected $fillable = ['name', 'barcode', 'category_id', 'image', 'description', 'price'];
+
+    public function images(): HasMany
+    {
+        return $this->hasMany('product_images', 'product_id', 'id');
+    }
 }
