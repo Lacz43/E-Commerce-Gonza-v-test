@@ -15,7 +15,6 @@ return new class () extends Migration {
             $table->string('name');
             $table->unsignedBigInteger('barcode')->unique();
             $table->foreignId('category_id')->constrained('product_categories')->onUpdate('cascade');
-            $table->string('image');
             $table->string('description')->nullable();
             $table->float('price', 2);
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null')->onUpdate('cascade');
