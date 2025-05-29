@@ -11,7 +11,7 @@ type Props = {
 	products: paginateResponse<Item>;
 };
 
-interface FormData extends Item {
+interface FormStruture extends Item {
 	images: File[];
 	default: File;
 	category: number;
@@ -24,7 +24,7 @@ export default function Products({ products }: Props) {
 		setValue,
 		control,
 		formState: { errors, isSubmitting },
-	} = useForm<FormData>();
+	} = useForm<FormStruture>();
 
 	const validateBarcode = (value: string) => {
 		const code = value.trim();
@@ -45,7 +45,7 @@ export default function Products({ products }: Props) {
 		}
 	};
 
-	async function onSubmit(data: FormData) {
+	async function onSubmit(data: FormStruture) {
 		try {
 			await axios.post(route("products.storage"), data);
 		} catch (e) {
