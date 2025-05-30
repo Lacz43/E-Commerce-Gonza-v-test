@@ -29,6 +29,6 @@ class ProductsFactory extends Factory
 
     public function withImages(int $count = 3)
     {
-        return $this->has(ProductImage::factory()->count($count));
+        return $this->has(ProductImage::factory()->count($count), 'images');
     }
 }
