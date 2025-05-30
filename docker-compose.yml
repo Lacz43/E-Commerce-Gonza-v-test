@@ -9,6 +9,8 @@ services:
             - "5173:5173"
         volumes:
             - .:/var/www/html
+            - ./storage:/var/www/html/storage
+            - ./public/storage:/var/www/html/public/storage
         working_dir: /var/www/html
         tty: true # Permite usar la consola interactiva
         depends_on:
