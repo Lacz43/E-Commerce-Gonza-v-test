@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\ProductCategory;
-use App\Models\ProductImage;
-use App\Models\ProductImages;
 use App\Models\Products;
 use Illuminate\Database\Seeder;
 
