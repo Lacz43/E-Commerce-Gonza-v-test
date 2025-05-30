@@ -21,7 +21,7 @@ export default function ProductCard({
 		>
 			<div className="flex justify-center items-center rounded-2xl">
 				<img
-					src={imageUrl(item.image)}
+					src={imageUrl(item.default_image.image)}
 					alt="Card Preview"
 					className="rounded-t-2xl w-full h-full object-cover"
 				/>
