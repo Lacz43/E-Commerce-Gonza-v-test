@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductImage;
 use App\Models\Products;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class ProductsController extends Controller
 {
@@ -42,23 +44,29 @@ class ProductsController extends Controller
             'category' => 'required|exists:product_categories,id',
             'description' => 'nullable|string',
             'images' => 'required|array',
-            'images.*' => ['sometimes', function ($attribute, $value, $fail) {
-                Debugbar::info($value);
-                if (!is_file($value) && !is_string($value)) {
-                    $fail("El elemento {$attribute} debe ser un archivo o una cadena.");
-                }
-            }],
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        Products::create([
+        $product = Products::create([
             'name' => $data['name'],
             'barcode' => $data['barcode'],
             'price' => $data['price'],
             'category_id' => $data['category'],
             'description' => $data['description'],
-            'image' => 'http://test.com',
             'created_by' => Auth::user()->id,
         ]);
+
+        foreach ($request->file('images') as $index => $image) {
+            $filename = Str::uuid() . '.' . $image->getClientOriginalExtension(); // Nombre único
+            $path = $image->storeAs('products/' . $product->id, $filename, 'public'); // Almacenar en storage/app/public/products/{id_producto}
+
+            // Guardar en la base de datos
+            ProductImage::create([
+                'product_id' => $product->id,
+                'image' => $path,
+                'default' => $index === 0, // Marcar la primera como default
+            ]);
+        }
         return json_encode(["test" => "test"]);
     }
 }
