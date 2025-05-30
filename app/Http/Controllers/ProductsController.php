@@ -18,7 +18,8 @@ class ProductsController extends Controller
 
     public function products(Request $request)
     {
-        $products = Products::paginate(20);
+        $products = Products::with(['defaultImage:product_id,image'])->paginate(20);
+
         Debugbar::info($products);
 
         return json_encode([
