@@ -6,8 +6,7 @@ export const imageUrl = (file: string): string => {
 		new URL(file);
 		return file;
 	} catch (e) {
-		return "nome";
-		//falta ruta local
+		return `./storage/${file}`;
 	}
 };
 
