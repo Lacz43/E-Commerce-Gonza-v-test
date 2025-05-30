@@ -20,6 +20,6 @@ class FakeDataSeeder extends Seeder
         $this->call([AdminSeeder::class]);
 
         ProductCategory::factory()->count(5)->create();
-        Products::factory()->withImages(3)->count(20)->create();
+        Products::factory()->count(20)->withImages(3)->create();
     }
 }
