@@ -153,6 +153,23 @@ export default function Products({ products }: Props) {
 											</>
 										)}
 									/>
+									<div className="mb-3 flex">
+										<TextField
+											className="w-full"
+											error={false}
+											id="product_image_url"
+											label="URL de la imagen"
+											variant="filled"
+											size="small"
+											sx={{ borderEndEndRadius: 0, borderTopRightRadius: 0 }}
+										/>
+										<Button
+											variant="contained"
+											sx={{ borderEndStartRadius: 0, borderTopLeftRadius: 0 }}
+										>
+											<b>Añadir</b>
+										</Button>
+									</div>
 									<ImageUpload
 										onImagesSelected={(data) => setValue("images", data)}
 										onMainImageSelected={(index) => setValue("image_used", index)}
