@@ -9,13 +9,14 @@ export default function ProductsInCar({ item }: Props) {
 	const cart = new shoppingCart();
 	const [line, setLine] = useState<number | null>(null);
 
-	function showCart(id: number | null) {
+	function showCart(id: number | string | null) {
 		const remInPx = Number.parseFloat(
 			getComputedStyle(document.documentElement).fontSize, // mover a utils
 		);
+		const idx = Number(id);
 		if (window.innerWidth >= 45 * remInPx) return;
-		if (id === line) setLine(null);
-		else setLine(id);
+		if (idx === line) setLine(null);
+		else setLine(idx);
 	}
 
 	return (
@@ -27,7 +28,7 @@ export default function ProductsInCar({ item }: Props) {
 			>
 				<div className="size-20 flex mr-2 p-1">
 					<img
-						src={imageUrl(item.image)}
+						src={imageUrl(item.default_image?.image ?? "")}
 						alt=""
 						className="object-cover mx-auto"
 					/>
