@@ -54,7 +54,9 @@ export default function ProductsInCar({ item }: Props) {
 					<button
 						type="button"
 						className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
-						onClick={() => cart.update(item.id, (item.quantity ?? 1) - 1)}
+						onClick={() =>
+							cart.update(Number(item.id), (item.quantity ?? 1) - 1)
+						}
 					>
 						<Remove />
 					</button>
@@ -62,23 +64,21 @@ export default function ProductsInCar({ item }: Props) {
 					<button
 						type="button"
 						className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
-						onClick={() => cart.update(item.id, (item.quantity ?? 1) + 1)}
+						onClick={() =>
+							cart.update(Number(item.id), (item.quantity ?? 1) + 1)
+						}
 					>
 						<Add />
 					</button>
 					<button
 						type="button"
 						className="bg-red-600 px-2 py-1 ml-2 text-xl rounded-sm text-white"
-						onClick={() => cart.remove(item.id)}
+						onClick={() => cart.remove(Number(item.id))}
 					>
 						<Delete />
 					</button>
 				</div>
-				<div
-					className={
-						line === item.id ? "text-center" : "hidden"
-					}
-				>
+				<div className={line === item.id ? "text-center" : "hidden"}>
 					{((item.quantity ?? 1) * item.price).toFixed(2)} $
 				</div>
 			</div>
