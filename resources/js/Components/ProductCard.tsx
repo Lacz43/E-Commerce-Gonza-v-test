@@ -14,6 +14,7 @@ export default function ProductCard({
 	addCart,
 	...props
 }: CardProps) {
+    if(!item.default_image) return null;
 	return (
 		<div
 			{...props}
@@ -45,7 +46,7 @@ export default function ProductCard({
 						onClick={() =>
 							addCart({
 								id: item.id,
-								image: item.image,
+								default_image: item.default_image,
 								name: item.name,
 								price: item.price,
 								barcode: item.barcode,
