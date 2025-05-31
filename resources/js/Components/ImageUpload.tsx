@@ -5,7 +5,7 @@ import { IconButton } from "@mui/material";
 
 interface ImageUploadProps {
 	onImagesSelected?: (images: File[]) => void;
-	onMainImageSelected?: (image: File) => void;
+	onMainImageSelected?: (image: number | null) => void;
 }
 
 const ImageUpload: FC<ImageUploadProps> = ({
@@ -60,8 +60,8 @@ const ImageUpload: FC<ImageUploadProps> = ({
 
 	const handleImageSelect = (index: number) => {
 		setMainImageIndex(index);
-		if (onMainImageSelected && images[index]) {
-			onMainImageSelected(images[index]);
+		if (onMainImageSelected && index) {
+			onMainImageSelected(index);
 		}
 	};
 

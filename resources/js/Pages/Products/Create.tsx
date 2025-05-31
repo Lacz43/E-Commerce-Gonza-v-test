@@ -13,7 +13,7 @@ type Props = {
 
 interface FormStruture extends Item {
 	images: File[];
-	default: File;
+	image_used: number | null;
 	category: number;
 }
 
@@ -155,7 +155,7 @@ export default function Products({ products }: Props) {
 									/>
 									<ImageUpload
 										onImagesSelected={(data) => setValue("images", data)}
-										onMainImageSelected={(file) => setValue("default", file)}
+										onMainImageSelected={(index) => setValue("image_used", index)}
 									/>
 								</div>
 							</div>
