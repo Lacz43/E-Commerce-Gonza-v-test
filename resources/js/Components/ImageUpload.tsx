@@ -1,4 +1,4 @@
-import { useState, useCallback, type FC, useEffect } from "react";
+import { useState, useCallback, type FC, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@mui/material";
@@ -6,15 +6,45 @@ import { IconButton } from "@mui/material";
 interface ImageUploadProps {
 	onImagesSelected?: (images: File[]) => void;
 	onMainImageSelected?: (image: number | null) => void;
+	setImagesInit?: File[];
+	appendImages?: File[];
 }
 
 const ImageUpload: FC<ImageUploadProps> = ({
 	onImagesSelected,
 	onMainImageSelected,
+	setImagesInit,
+	appendImages,
 }) => {
 	const [images, setImages] = useState<File[]>([]);
 	const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
+
+	// Ref para memorizar el appendImages “anterior”
+	const prevAppendRef = useRef<File[]>([]);
+
+	if (setImagesInit) {
+		setImages(setImagesInit);
+		if (mainImageIndex === null) setMainImageIndex(0);
+	}
+
+	// Sólo añadir si appendImages cambió (y no es el mismo array vacío, por ejemplo)
+	useEffect(() => {
+		const prev = prevAppendRef.current;
+		const curr = appendImages || [];
+
+		// Comparamos referencias o bien lo que prefieras:
+		const isDifferent =
+			!prev ||
+			prev.length !== curr.length ||
+			prev.some((f, i) => f.name !== curr[i]?.name || f.size !== curr[i]?.size);
+
+		if (isDifferent && curr.length > 0) {
+			setImages((prevState) => [...prevState, ...curr]);
+		}
+
+		prevAppendRef.current = curr;
+	}, [appendImages]);
 
 	const onDrop = useCallback(
 		(acceptedFiles: File[]) => {
@@ -43,11 +73,12 @@ const ImageUpload: FC<ImageUploadProps> = ({
 		[mainImageIndex],
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (onImagesSelected) {
 			onImagesSelected(images);
 		}
-	}, [images, onImagesSelected]);
+	}, [images]);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
@@ -73,6 +104,9 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			if (mainImageIndex && index < mainImageIndex)
 				setMainImageIndex(mainImageIndex - 1);
 			setImages((prev) => prev.filter((i) => images[index] !== i));
+
+			const prev = prevAppendRef.current;
+            prevAppendRef.current = prev.filter((i) => images[index] !== i);
 		}
 	};
 
