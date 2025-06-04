@@ -3,9 +3,11 @@ import { Head } from "@inertiajs/react";
 import { Button, TextField, FormHelperText } from "@mui/material";
 import ImageUpload from "@/Components/ImageUpload";
 import CategoriesInput from "@/Components/Products/CategoriesInput";
+import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import { useForm, Controller } from "react-hook-form";
 import axios, { toFormData } from "axios";
 import { isValidUPC, isValidEAN8, isValidEAN13, isValidGTIN14 } from "@/utils";
+import { useState } from "react";
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -18,6 +20,8 @@ interface FormStruture extends Item {
 }
 
 export default function Products({ products }: Props) {
+	const [newImage, addNewImage] = useState<File[]>([]);
+
 	const {
 		register,
 		handleSubmit,
@@ -47,8 +51,8 @@ export default function Products({ products }: Props) {
 
 	async function onSubmit(data: FormStruture) {
 		try {
-            const formData = new FormData();
-            toFormData(data, formData);
+			const formData = new FormData();
+			toFormData(data, formData);
 			await axios.post(route("products.storage"), formData);
 		} catch (e) {
 			console.log(e);
@@ -153,26 +157,15 @@ export default function Products({ products }: Props) {
 											</>
 										)}
 									/>
-									<div className="mb-3 flex">
-										<TextField
-											className="w-full"
-											error={false}
-											id="product_image_url"
-											label="URL de la imagen"
-											variant="filled"
-											size="small"
-											sx={{ borderEndEndRadius: 0, borderTopRightRadius: 0 }}
-										/>
-										<Button
-											variant="contained"
-											sx={{ borderEndStartRadius: 0, borderTopLeftRadius: 0 }}
-										>
-											<b>Añadir</b>
-										</Button>
-									</div>
+									<ImageUrlInput
+										imageResponse={(image) => addNewImage([image])}
+									/>
 									<ImageUpload
+										appendImages={newImage}
 										onImagesSelected={(data) => setValue("images", data)}
-										onMainImageSelected={(index) => setValue("image_used", index)}
+										onMainImageSelected={(index) =>
+											setValue("image_used", index)
+										}
 									/>
 								</div>
 							</div>
