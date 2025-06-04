@@ -106,7 +106,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			setImages((prev) => prev.filter((i) => images[index] !== i));
 
 			const prev = prevAppendRef.current;
-            prevAppendRef.current = prev.filter((i) => images[index] !== i);
+			prevAppendRef.current = prev.filter((i) => images[index] !== i);
 		}
 	};
 
