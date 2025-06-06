@@ -16,6 +16,7 @@ export default function Register() {
 	const {
 		register,
 		handleSubmit,
+		control,
 		formState: { errors, isSubmitting },
 	} = useForm<FormStruture>();
 
@@ -64,13 +65,7 @@ export default function Register() {
 					/>
 				</div>
 
-				<PasswordInput
-					className="mt-4"
-					register={register("password", {
-						required: "proporcionar un contraseña valida",
-					})}
-					errors={errors.password}
-				/>
+				<PasswordInput className="mt-4" control={control} />
 
 				<div className="mt-5">
 					<Button
