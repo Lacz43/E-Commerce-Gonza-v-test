@@ -20,12 +20,19 @@ function stringToColor(string: string) {
 	return color;
 }
 
+const initials = ( name: string) => {
+  const parts = name.trim().split(/\s+/);
+  const initial1 = parts[0] ? parts[0][0].toUpperCase() : "";
+  const initial2 = parts[1] ? parts[1][0].toUpperCase() : "";
+  return `${initial1}${initial2}`;
+};
+
 function stringAvatar(name: string) {
 	return {
 		sx: {
 			bgcolor: stringToColor(name),
 		},
-		children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+		children: initials(name),
 	};
 }
 
