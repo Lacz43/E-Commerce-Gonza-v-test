@@ -1,9 +1,9 @@
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { TextField, Button } from "@mui/material";
 import PasswordInput from "@/Components/Register/PasswordInput";
 import { useForm } from "react-hook-form";
-import axios, { toFormData } from "axios";
+import routerAsync from "@/Hook/routerAsync";
 
 type FormStruture = {
 	name: string;
@@ -20,7 +20,11 @@ export default function Register() {
 	} = useForm<FormStruture>();
 
 	async function onSubmit(data: FormStruture) {
-		router.post(route("register"), data); // hacer metodo con una promesa igual q con axios
+		try {
+			await routerAsync("post", route("register"), data);
+		} catch (e) {
+			console.log(e);
+		}
 	}
 
 	return (
