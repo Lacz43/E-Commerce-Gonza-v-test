@@ -66,7 +66,13 @@ export default function Register() {
 					/>
 				</div>
 
-				<PasswordInput className="mt-4" />
+				<PasswordInput
+					className="mt-4"
+					register={register("password", {
+						required: "proporcionar un contraseña valida",
+					})}
+                    errors={errors.password}
+				/>
 
 				<div className="mt-5">
 					<Button
