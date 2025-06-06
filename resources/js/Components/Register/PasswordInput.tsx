@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 import PasswordTooltip from "./PasswordTooltip";
 import type { UseFormRegisterReturn, FieldError } from "react-hook-form";
@@ -17,7 +17,39 @@ function Check(checked: boolean) {
 }
 
 export default function PasswordInput({ className, register, errors }: Props) {
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
+
+	const [password, setPassword] = useState("");
+	const [hasMinLength, setHasMinLength] = useState(false);
+	const [hasUppercase, setHasUppercase] = useState(false);
+	const [hasLowercase, setHasLowercase] = useState(false);
+	const [hasAlphanumeric, setHasAlphanumeric] = useState(false);
+	const [hasSpecialChar, setHasSpecialChar] = useState(false);
+
+	// Validar contraseñas en tiempo real
+	useEffect(() => {
+		if (password.length === 0) {
+			setHasMinLength(false);
+			setHasUppercase(false);
+			setHasLowercase(false);
+			setHasAlphanumeric(false);
+			setHasSpecialChar(false);
+			return;
+		}
+
+		setHasMinLength(password.length >= 8);
+		setHasUppercase(/[A-Z]/.test(password));
+		setHasLowercase(/[a-z]/.test(password));
+		setHasAlphanumeric(/\d/.test(password));
+		setHasSpecialChar(/[^A-Za-z0-9]/.test(password));
+	}, [password]);
+
+	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newPassword = e.target.value;
+		setPassword(newPassword);
+		register.onChange(e); // Asegura que el form library reciba el valor
+	};
+
 	return (
 		<div className={className}>
 			<PasswordTooltip
@@ -26,20 +58,20 @@ export default function PasswordInput({ className, register, errors }: Props) {
 				title={
 					<div>
 						<p>
-							<span>{Check(false)}</span>
-							minimo de 8 caracteres
+							<span>{Check(hasMinLength)}</span>
+							Mínimo 8 caracteres
 						</p>
 						<p>
-							<span>{Check(false)}</span>1 caracter en mayuscula
+							<span>{Check(hasUppercase)}</span>1 caracter en mayúscula
 						</p>
 						<p>
-							<span>{Check(false)}</span>1 caracter alfa numerico
+							<span>{Check(hasAlphanumeric)}</span>1 caracter alfanumérico
 						</p>
 						<p>
-							<span>{Check(false)}</span>1 caracter especial
+							<span>{Check(hasSpecialChar)}</span>1 caracter especial
 						</p>
 						<p>
-							<span>{Check(false)}</span>1 caracter en minuscula
+							<span>{Check(hasLowercase)}</span>1 caracter en minúscula
 						</p>
 					</div>
 				}
@@ -54,6 +86,7 @@ export default function PasswordInput({ className, register, errors }: Props) {
 					error={errors !== undefined}
 					helperText={errors?.message}
 					{...register}
+					onChange={handlePasswordChange}
 					onBeforeInput={() => setOpen(true)}
 					onMouseEnter={() => setOpen(true)}
 				/>
