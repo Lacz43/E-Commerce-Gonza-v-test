@@ -66,7 +66,7 @@ export default function Register() {
 					/>
 				</div>
 
-				<PasswordInput />
+				<PasswordInput className="mt-4" />
 
 				<div className="mt-5">
 					<Button
