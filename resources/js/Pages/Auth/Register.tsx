@@ -1,30 +1,39 @@
-import InputError from "@/Components/InputError";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import type { FormEventHandler } from "react";
+import { Head, Link } from "@inertiajs/react";
 import { TextField, Button } from "@mui/material";
+import PasswordInput from "@/Components/Register/PasswordInput";
+import { useForm } from "react-hook-form";
+import axios, { toFormData } from "axios";
+
+type FormStruture = {
+	name: string;
+	email: string;
+	password: string;
+	password_confirmation: string;
+};
 
 export default function Register() {
-	const { data, setData, post, processing, errors, reset } = useForm({
-		name: "",
-		email: "",
-		password: "",
-		password_confirmation: "",
-	});
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<FormStruture>();
 
-	const submit: FormEventHandler = (e) => {
-		e.preventDefault();
-
-		post(route("register"), {
-			onFinish: () => reset("password", "password_confirmation"),
-		});
-	};
+	async function onSubmit(data: FormStruture) {
+		try {
+			const formData = new FormData();
+			toFormData(data, formData);
+			await axios.post(route("register"), formData);
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
 	return (
 		<GuestLayout>
 			<Head title="Register" />
 
-			<form onSubmit={submit} className="w-full">
+			<form onSubmit={handleSubmit(onSubmit)} className="w-full">
 				<div>
 					<TextField
 						id="name"
@@ -33,11 +42,12 @@ export default function Register() {
 						className="w-full"
 						autoComplete="username"
 						size="small"
-						onChange={(e) => setData("name", e.target.value)}
+						{...register("name", {
+							required: "Necesitas proporcionar un nombre.",
+						})}
 						error={!!errors.name}
+						helperText={errors.name?.message}
 					/>
-
-					<InputError message={errors.name} className="mt-2" />
 				</div>
 
 				<div className="mt-4">
@@ -47,46 +57,16 @@ export default function Register() {
 						type="email"
 						className="w-full"
 						autoComplete="username"
-						value={data.email}
 						size="small"
-						onChange={(e) => setData("email", e.target.value)}
+						{...register("email", {
+							required: "Necesitas proporcionar un Correo Eletronico",
+						})}
 						error={!!errors.email}
+						helperText={errors.email?.message}
 					/>
-
-					<InputError message={errors.email} className="mt-2" />
 				</div>
 
-				<div className="mt-4">
-					<TextField
-						id="password"
-						label="Contraseña"
-						type="password"
-						className="w-full"
-						value={data.password}
-						size="small"
-						autoComplete="new-password"
-						onChange={(e) => setData("password", e.target.value)}
-						error={!!errors.password}
-					/>
-
-					<InputError message={errors.password} className="mt-2" />
-				</div>
-
-				<div className="mt-4">
-					<TextField
-						id="password_confirmation"
-						label="Confirmar contraseña"
-						type="password"
-						className="w-full"
-						value={data.password_confirmation}
-						size="small"
-						autoComplete="new-password"
-						onChange={(e) => setData("password_confirmation", e.target.value)}
-						error={!!errors.password_confirmation}
-					/>
-
-					<InputError message={errors.password_confirmation} className="mt-2" />
-				</div>
+				<PasswordInput />
 
 				<div className="mt-5">
 					<Button
@@ -94,7 +74,7 @@ export default function Register() {
 						variant="contained"
 						className="w-full"
 						type="submit"
-						disabled={processing}
+						disabled={isSubmitting}
 					>
 						<b>Registrarse</b>
 					</Button>
