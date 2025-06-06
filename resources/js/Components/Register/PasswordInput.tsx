@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 import PasswordTooltip from "./PasswordTooltip";
-import type { Control } from "react-hook-form";
+import type { Control, FieldValues } from "react-hook-form";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller } from "react-hook-form";
 
-type Props = {
+type Props<T extends FieldValues> = {
 	className?: string;
-	control: Control;
+	control: Control<T>;
 };
 
 function Check(checked: boolean) {
@@ -16,7 +16,7 @@ function Check(checked: boolean) {
 	return <CloseIcon />;
 }
 
-export default function PasswordInput({ className, control }: Props) {
+export default function PasswordInput<T extends FieldValues>({ className, control }: Props<T>) {
 	const [open, setOpen] = useState(false);
 
 	const [password, setPassword] = useState("");
