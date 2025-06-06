@@ -16,27 +16,25 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 type Props = {
 	children: React.ReactElement;
-    open: boolean;
-    setOpen: () => void;
+	open: boolean;
+	setOpen: () => void;
 };
 
 export default function PasswordTooltip({ children, open, setOpen }: Props) {
 	return (
-		<div>
-			<HtmlTooltip
-				open={open}
-				onClose={setOpen}
-				title={
-					<React.Fragment>
-						<Typography color="inherit">Tooltip with HTML</Typography>
-						<em>{"And here's"}</em> <b>{"some"}</b> <u>{"amazing content"}</u>.{" "}
-						{"It's very engaging. Right?"}
-					</React.Fragment>
-				}
-				arrow
-			>
-				{children}
-			</HtmlTooltip>
-		</div>
+		<HtmlTooltip
+			open={open}
+			onClose={setOpen}
+			title={
+				<React.Fragment>
+					<Typography color="inherit">Tooltip with HTML</Typography>
+					<em>{"And here's"}</em> <b>{"some"}</b> <u>{"amazing content"}</u>.{" "}
+					{"It's very engaging. Right?"}
+				</React.Fragment>
+			}
+			arrow
+		>
+			{children}
+		</HtmlTooltip>
 	);
 }
