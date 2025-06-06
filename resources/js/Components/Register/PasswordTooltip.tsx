@@ -18,22 +18,17 @@ type Props = {
 	children: React.ReactElement;
 	open: boolean;
 	setOpen: () => void;
+	title: React.ReactElement | React.ReactElement[];
 };
 
-export default function PasswordTooltip({ children, open, setOpen }: Props) {
+export default function PasswordTooltip({
+	children,
+	open,
+	setOpen,
+	title,
+}: Props) {
 	return (
-		<HtmlTooltip
-			open={open}
-			onClose={setOpen}
-			title={
-				<React.Fragment>
-					<Typography color="inherit">Tooltip with HTML</Typography>
-					<em>{"And here's"}</em> <b>{"some"}</b> <u>{"amazing content"}</u>.{" "}
-					{"It's very engaging. Right?"}
-				</React.Fragment>
-			}
-			arrow
-		>
+		<HtmlTooltip open={open} onClose={setOpen} title={title} arrow>
 			{children}
 		</HtmlTooltip>
 	);
