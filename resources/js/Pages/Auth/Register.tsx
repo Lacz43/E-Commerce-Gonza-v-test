@@ -1,5 +1,5 @@
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { TextField, Button } from "@mui/material";
 import PasswordInput from "@/Components/Register/PasswordInput";
 import { useForm } from "react-hook-form";
@@ -20,13 +20,7 @@ export default function Register() {
 	} = useForm<FormStruture>();
 
 	async function onSubmit(data: FormStruture) {
-		try {
-			const formData = new FormData();
-			toFormData(data, formData);
-			await axios.post(route("register"), formData);
-		} catch (e) {
-			console.log(e);
-		}
+		router.post(route("register"), data); // hacer metodo con una promesa igual q con axios
 	}
 
 	return (
@@ -71,7 +65,7 @@ export default function Register() {
 					register={register("password", {
 						required: "proporcionar un contraseña valida",
 					})}
-                    errors={errors.password}
+					errors={errors.password}
 				/>
 
 				<div className="mt-5">
