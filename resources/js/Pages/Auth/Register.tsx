@@ -2,8 +2,10 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link } from "@inertiajs/react";
 import { TextField, Button } from "@mui/material";
 import PasswordInput from "@/Components/Register/PasswordInput";
+import PasswordConfirmInput from "@/Components/Register/PasswordConfirmInput";
 import { useForm } from "react-hook-form";
 import routerAsync from "@/Hook/routerAsync";
+import { useState } from "react";
 
 type FormStruture = {
 	name: string;
@@ -19,6 +21,8 @@ export default function Register() {
 		control,
 		formState: { errors, isSubmitting },
 	} = useForm<FormStruture>();
+
+    const [password, setPassword] = useState("");
 
 	async function onSubmit(data: FormStruture) {
 		try {
@@ -65,7 +69,18 @@ export default function Register() {
 					/>
 				</div>
 
-				<PasswordInput<FormStruture> className="mt-4" control={control} name="password"/>
+				<PasswordInput<FormStruture>
+					className="mt-4"
+					control={control}
+					name="password"
+                    changePassword={(pass) => setPassword(pass)}
+				/>
+				<PasswordConfirmInput<FormStruture>
+					className="mt-4"
+					control={control}
+					name="password_confirmation"
+					confirm={password}
+				/>
 
 				<div className="mt-5">
 					<Button

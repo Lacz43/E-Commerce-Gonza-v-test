@@ -9,7 +9,8 @@ import { Controller } from "react-hook-form";
 type Props<T extends FieldValues> = {
 	className?: string;
 	control: Control<T>;
-    name: Path<T>
+    name: Path<T>,
+    changePassword?: (pass: string) => void;
 };
 
 function Check(checked: boolean) {
@@ -17,7 +18,7 @@ function Check(checked: boolean) {
 	return <CloseIcon />;
 }
 
-export default function PasswordInput<T extends FieldValues>({ className, control, name }: Props<T>) {
+export default function PasswordInput<T extends FieldValues>({ className, control, name, changePassword }: Props<T>) {
 	const [open, setOpen] = useState(false);
 
 	const [password, setPassword] = useState("");
@@ -48,6 +49,7 @@ export default function PasswordInput<T extends FieldValues>({ className, contro
 	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newPassword = e.target.value;
 		setPassword(newPassword);
+        if(changePassword) changePassword(newPassword);
 	};
 
 	return (
