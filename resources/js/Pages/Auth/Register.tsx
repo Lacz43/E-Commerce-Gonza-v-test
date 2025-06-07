@@ -65,7 +65,7 @@ export default function Register() {
 					/>
 				</div>
 
-				<PasswordInput<FormStruture> className="mt-4" control={control} />
+				<PasswordInput<FormStruture> className="mt-4" control={control} name="password"/>
 
 				<div className="mt-5">
 					<Button
