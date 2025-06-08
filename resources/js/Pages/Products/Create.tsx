@@ -170,7 +170,11 @@ export default function Products({ products }: Props) {
 								</div>
 							</div>
 						</div>
-						<Button variant="contained" onClick={handleSubmit(onSubmit)}>
+						<Button
+							variant="contained"
+							onClick={handleSubmit(onSubmit)}
+							disabled={isSubmitting}
+						>
 							<b>Crear</b>
 						</Button>
 					</div>
