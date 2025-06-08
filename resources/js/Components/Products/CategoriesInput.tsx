@@ -8,7 +8,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 type Props = {
 	errors: FieldError | undefined;
 	register: UseFormRegisterReturn<string>;
-	className: string;
+	className?: string;
 };
 
 type Category = { id: number; name: string };
@@ -48,18 +48,21 @@ export default function CategoryInput({ errors, register, className }: Props) {
 			onOpen={handleOpen}
 			onClose={handleClose}
 			isOptionEqualToValue={(option, value) => option.name === value.name}
-			getOptionLabel={(option) => option.name}
+			getOptionLabel={(option) =>
+				typeof option === "string" ? option : option.name
+			}
 			options={categories}
 			loading={loading}
+			freeSolo
 			renderInput={(params) => (
 				<TextField
 					{...params}
 					{...register}
 					label="Categoria"
-                    variant="filled"
-                    required
-                    error={errors !== undefined}
-                    helperText={errors?.message}
+					variant="filled"
+					required
+					error={errors !== undefined}
+					helperText={errors?.message}
 					slotProps={{
 						input: {
 							...params.InputProps,
