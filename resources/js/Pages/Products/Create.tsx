@@ -16,7 +16,7 @@ type Props = {
 interface FormStruture extends Item {
 	images: File[];
 	image_used: number | null;
-	category: number;
+	category: number | string;
 }
 
 export default function Products({ products }: Props) {
