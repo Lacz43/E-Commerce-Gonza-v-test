@@ -1,29 +1,34 @@
-import {
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	FormHelperText,
-} from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
 import CircularProgress from "@mui/material/CircularProgress";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 
 type Props = {
 	errors: FieldError | undefined;
 	register: UseFormRegisterReturn<string>;
+	className: string;
 };
 
 type Category = { id: number; name: string };
 
-export default function CategoryInput({ errors, register }: Props) {
+export default function CategoryInput({ errors, register, className }: Props) {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [open, setOpen] = useState(false);
+
+	const handleOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
 
 	useEffect(() => {
 		setLoading(true);
-		const fetchData = async () => {
+		(async () => {
 			try {
 				const { data } = await axios.get<Category[]>(
 					route("products.categories"),
@@ -33,39 +38,43 @@ export default function CategoryInput({ errors, register }: Props) {
 			} catch (e) {
 				console.log(e);
 			}
-		};
-		fetchData();
+		})();
 	}, []);
 
 	return (
-		<FormControl
-			variant="filled"
-			className="mt-3 w-full"
-			required
-			error={errors !== undefined}
-			disabled={loading}
-		>
-			{loading && (
-				<CircularProgress
-					sx={{ position: "absolute", alignSelf: "anchor-center" }}
-					className="right-0 mr-8 "
+		<Autocomplete
+			className={className}
+			open={open}
+			onOpen={handleOpen}
+			onClose={handleClose}
+			isOptionEqualToValue={(option, value) => option.name === value.name}
+			getOptionLabel={(option) => option.name}
+			options={categories}
+			loading={loading}
+			renderInput={(params) => (
+				<TextField
+					{...params}
+					{...register}
+					label="Categoria"
+                    variant="filled"
+                    required
+                    error={errors !== undefined}
+                    helperText={errors?.message}
+					slotProps={{
+						input: {
+							...params.InputProps,
+							endAdornment: (
+								<Fragment>
+									{loading ? (
+										<CircularProgress color="inherit" size={20} />
+									) : null}
+									{params.InputProps.endAdornment}
+								</Fragment>
+							),
+						},
+					}}
 				/>
 			)}
-			<InputLabel id="category_product">Categoria</InputLabel>
-			<Select
-				labelId="category_product"
-				id="demo-simple-select-filled"
-				defaultValue=""
-				{...register}
-			>
-				<MenuItem value="">None</MenuItem>
-				{categories.map((item) => (
-					<MenuItem key={item.id} value={item.id}>
-						{item.name}
-					</MenuItem>
-				))}
-			</Select>
-			<FormHelperText>{errors?.message}</FormHelperText>
-		</FormControl>
+		/>
 	);
 }
