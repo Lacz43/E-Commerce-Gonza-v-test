@@ -44,7 +44,7 @@ export default function SideNavItem() {
 		// obtner el path actual
 		const path = url.split("/").filter(Boolean);
 		setActive(path[0]); // setear el path actual (solo el primer elemento)
-		if (path[1]) setToggle(path[1]);
+		if (path[1]) setToggle(path[1].split("?")[0]);
 	}, [url]);
 
 	const list = Object.entries(paths).map(([clave, valor]) => {
