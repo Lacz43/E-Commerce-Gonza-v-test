@@ -124,10 +124,9 @@ export default function Products({ products }: Props) {
 									</div>
 									<div className="mt-3">
 										<CategoriesInput
-											errors={errors.category}
-											register={register("category", {
-												required: "Este campo es obligatorio",
-											})}
+											control={control}
+											setValue={setValue}
+											name="category"
 										/>
 									</div>
 									<div className="mt-3">
