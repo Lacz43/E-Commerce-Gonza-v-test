@@ -11,5 +11,9 @@ Route::middleware('auth', 'permission:create products')->group(function () {
     Route::post('/products/storage', [ProductsController::class, 'storage'])->name('products.storage');
 });
 
+Route::middleware('auth', 'permission:show product_categories')
+    ->get('/products/categories/index', [ProductCategoryController::class, 'index'])
+    ->name('products.categories.index');
+
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
 Route::get('/products/categories', [ProductCategoryController::class, 'categories'])->name('products.categories');
