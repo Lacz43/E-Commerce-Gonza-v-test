@@ -44,7 +44,7 @@ class ProductsController extends Controller
             'name' => 'required|string',
             'barcode' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'category' => 'required|numeric|string',
+            'category' => 'required|string',
             'description' => 'nullable|string',
             'image_used' => 'nullable|numeric',
             'images' => 'required|array',
