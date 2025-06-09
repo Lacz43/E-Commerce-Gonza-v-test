@@ -51,11 +51,16 @@ class ProductsController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        $user = Auth::user();
+
         $exists = DB::table('product_categories')
             ->where('id', $data['category'])
             ->orWhere('name', $data['category'])
             ->exists();
 
+        if(!$exists && !$user->hasPermissionTo("create product_categories")){
+            abort(403, 'Permission denied');
+        }
 
         $category = function () use ($exists, $data) {
             if (!$exists) {
