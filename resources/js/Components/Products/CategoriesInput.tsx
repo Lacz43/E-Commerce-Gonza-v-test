@@ -5,6 +5,7 @@ import type {
 	FieldValues,
 	Control,
 	UseFormSetValue,
+    PathValue,
 } from "react-hook-form";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
@@ -40,19 +41,19 @@ export default function CategoryInput<T extends FieldValues>({
 
 	const handleAutocompleteChange = (
 		_event: React.SyntheticEvent,
-		newValue: string | T | null,
+		newValue: string | Category | null,
 	) => {
 		if (newValue === null) {
-			setValue(name, null); // Limpiar el campo
+			setValue(name, null as PathValue<T, Path<T>>); // Limpiar el campo
 			return;
 		}
 
 		if (typeof newValue === "string") {
 			// Caso 1: El usuario ingresó un texto nuevo
-			setValue(name, newValue); // Almacenar el texto directamente
+			setValue(name, newValue as PathValue<T, Path<T>>); // Almacenar el texto directamente
 		} else {
 			// Caso 2: El usuario seleccionó una categoría existente
-			setValue(name, newValue.id); // Almacenar solo el ID
+			setValue(name, newValue.id as PathValue<T, Path<T>>); // Almacenar solo el ID
 		}
 	};
 
@@ -78,7 +79,7 @@ export default function CategoryInput<T extends FieldValues>({
 			rules={{
 				required: "Este campo es obligatorio",
 			}}
-			defaultValue={null}
+			defaultValue={null as PathValue<T, Path<T>>}
 			render={({ field: { onChange, value }, fieldState: { error } }) => (
 				<Autocomplete
 					className={className}
