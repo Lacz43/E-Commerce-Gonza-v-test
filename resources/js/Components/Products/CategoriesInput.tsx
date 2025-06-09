@@ -1,31 +1,23 @@
 import axios from "axios";
 import { useEffect, useState, Fragment } from "react";
-import type {
-	Path,
-	FieldValues,
-	Control,
-	UseFormSetValue,
-    PathValue,
-} from "react-hook-form";
+import type { Path, FieldValues, Control, PathValue } from "react-hook-form";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Controller } from "react-hook-form";
 
+type Category = { id: number; name: string };
+
 type Props<T extends FieldValues> = {
 	className?: string;
 	name: Path<T>;
 	control: Control<T>;
-	setValue: UseFormSetValue<T>;
 };
-
-type Category = { id: number; name: string };
 
 export default function CategoryInput<T extends FieldValues>({
 	className,
 	name,
 	control,
-	setValue,
 }: Props<T>) {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -37,24 +29,6 @@ export default function CategoryInput<T extends FieldValues>({
 
 	const handleClose = () => {
 		setOpen(false);
-	};
-
-	const handleAutocompleteChange = (
-		_event: React.SyntheticEvent,
-		newValue: string | Category | null,
-	) => {
-		if (newValue === null) {
-			setValue(name, null as PathValue<T, Path<T>>); // Limpiar el campo
-			return;
-		}
-
-		if (typeof newValue === "string") {
-			// Caso 1: El usuario ingresó un texto nuevo
-			setValue(name, newValue as PathValue<T, Path<T>>); // Almacenar el texto directamente
-		} else {
-			// Caso 2: El usuario seleccionó una categoría existente
-			setValue(name, newValue.id as PathValue<T, Path<T>>); // Almacenar solo el ID
-		}
 	};
 
 	useEffect(() => {
@@ -89,13 +63,21 @@ export default function CategoryInput<T extends FieldValues>({
 					value={
 						// Mostrar el objeto Category si el valor es un ID
 						typeof value === "string"
-							? categories.find((cat) => cat.id === value) || value
+							? categories.find((cat) => String(cat.id) === value)?.name ||
+								value
 							: value || null
 					}
-					onChange={(event, newValue) => {
-						handleAutocompleteChange(event, newValue);
+					onChange={(_event, newValue) => {
+						if (newValue === null) {
+							onChange(null); // Limpiar el campo
+							return;
+						}
+
+						onChange((newValue as Category).id.toString());
 					}}
-					isOptionEqualToValue={(option, value) => option.name === value.name}
+					onInputChange={(event, newValue) => {
+						onChange(event, newValue);
+					}}
 					getOptionLabel={(option) =>
 						typeof option === "string" ? option : option.name
 					}
