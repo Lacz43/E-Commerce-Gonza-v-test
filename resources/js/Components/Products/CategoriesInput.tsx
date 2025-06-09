@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Controller } from "react-hook-form";
+import usePermissions from "@/Hook/usePermissions";
 
 type Category = { id: number; name: string };
 
@@ -14,6 +15,8 @@ type Props<T extends FieldValues> = {
 	control: Control<T>;
 };
 
+const permissions = ["create product_categories"];
+
 export default function CategoryInput<T extends FieldValues>({
 	className,
 	name,
@@ -22,6 +25,8 @@ export default function CategoryInput<T extends FieldValues>({
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
+
+	const { hasPermission } = usePermissions();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -63,19 +68,32 @@ export default function CategoryInput<T extends FieldValues>({
 					value={
 						// Mostrar el objeto Category si el valor es un ID
 						typeof value === "string"
-							? categories.find((cat) => String(cat.id) === value)?.name ||
-								value
+							? categories.find((cat) => String(cat.id) === value) || value
 							: value || null
 					}
+					isOptionEqualToValue={(option, value) => option.name === value.name}
 					onChange={(_event, newValue) => {
 						if (newValue === null) {
 							onChange(null); // Limpiar el campo
 							return;
 						}
 
+						if (typeof newValue === "string") {
+							if (!hasPermission(permissions)) {
+								// Usuario NO tiene permiso → ignoramos la entrada
+								return;
+							}
+						}
 						onChange((newValue as Category).id.toString());
 					}}
+					filterOptions={(opts, params) => {
+						const filtered = opts.filter((o) =>
+							o.name.toLowerCase().includes(params.inputValue.toLowerCase()),
+						);
+						return hasPermission(permissions) ? filtered : filtered; // sin permiso no añadimos la opción extra
+					}}
 					onInputChange={(event, newValue) => {
+						if (!hasPermission(permissions)) return;
 						onChange(event, newValue);
 					}}
 					getOptionLabel={(option) =>
@@ -83,7 +101,7 @@ export default function CategoryInput<T extends FieldValues>({
 					}
 					options={categories}
 					loading={loading}
-					freeSolo
+					freeSolo={hasPermission(permissions)}
 					renderInput={(params) => (
 						<TextField
 							{...params}
