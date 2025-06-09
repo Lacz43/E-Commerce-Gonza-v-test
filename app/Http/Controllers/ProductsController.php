@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\Products;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -37,22 +39,39 @@ class ProductsController extends Controller
     public function storage(Request $request)
     {
         Debugbar::info($request);
+
         $data = $request->validate([
             'name' => 'required|string',
             'barcode' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'category' => 'required|exists:product_categories,id',
+            'category' => 'required|numeric|string',
             'description' => 'nullable|string',
             'image_used' => 'nullable|numeric',
             'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        $exists = DB::table('product_categories')
+            ->where('id', $data['category'])
+            ->orWhere('name', $data['category'])
+            ->exists();
+
+
+        $category = function () use ($exists, $data) {
+            if (!$exists) {
+                return ProductCategory::create([
+                    'name' => $data['category']
+                ])->id;
+            } else {
+                return $data['category'];
+            }
+        };
+
         $product = Products::create([
             'name' => $data['name'],
             'barcode' => $data['barcode'],
             'price' => $data['price'],
-            'category_id' => $data['category'],
+            'category_id' => $category(),
             'description' => $data['description'],
             'created_by' => Auth::user()->id,
         ]);
