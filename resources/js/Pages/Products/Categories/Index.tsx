@@ -15,7 +15,7 @@ export default function Products({ categories }: Props) {
 		<AuthenticatedLayout
 			header={
 				<h2 className="text-xl font-semibold leading-tight text-gray-800">
-					Products
+				    Categoria de Productos
 				</h2>
 			}
 		>
