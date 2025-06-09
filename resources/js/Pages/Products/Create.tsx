@@ -125,7 +125,6 @@ export default function Products({ products }: Props) {
 									<div className="mt-3">
 										<CategoriesInput
 											control={control}
-											setValue={setValue}
 											name="category"
 										/>
 									</div>
