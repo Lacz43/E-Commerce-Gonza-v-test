@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Brand;
 use App\Models\ProductCategory;
 use App\Models\Products;
 use Illuminate\Database\Seeder;
@@ -18,6 +19,7 @@ class FakeDataSeeder extends Seeder
         $this->call([AdminSeeder::class]);
 
         ProductCategory::factory()->count(5)->create();
-        Products::factory()->count(20)->withImages(3)->create();
+        Brand::factory()->count(10)->create();
+        Products::factory()->count(20)->withImages(3)->withBrands()->create();
     }
 }
