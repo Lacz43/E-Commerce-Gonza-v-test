@@ -11,8 +11,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('product_brands', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->unique()->constrained('products')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('product_id')->unique()->primary()->constrained('products')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
