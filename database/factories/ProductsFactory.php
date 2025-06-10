@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -30,5 +31,10 @@ class ProductsFactory extends Factory
     public function withImages(int $count = 3)
     {
         return $this->has(ProductImage::factory()->count($count), 'images');
+    }
+
+    public function withBrands()
+    {
+        return $this->has(ProductBrand::factory(), 'brand');
     }
 }
