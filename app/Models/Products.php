@@ -22,4 +22,9 @@ class Products extends Model
     {
         return $this->hasOne(ProductImage::class, 'product_id', 'id')->where('default', true);
     }
+
+    public function brand(): HasOne
+    {
+        return $this->hasOne(ProductBrand::class, 'product_id', 'id');
+    }
 }
