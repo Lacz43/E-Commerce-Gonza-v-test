@@ -7,22 +7,26 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { Controller } from "react-hook-form";
 import usePermissions from "@/Hook/usePermissions";
 
-type Category = { id: number; name: string };
+type Data = { id: number; name: string };
 
 type Props<T extends FieldValues> = {
 	className?: string;
 	name: Path<T>;
 	control: Control<T>;
+	permissions: string[];
+	url: string;
+	label: string;
 };
-
-const permissions = ["create product_categories"];
 
 export default function CategoryInput<T extends FieldValues>({
 	className,
 	name,
 	control,
+	permissions,
+	url,
+	label,
 }: Props<T>) {
-	const [categories, setCategories] = useState<Category[]>([]);
+	const [categories, setCategories] = useState<Data[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
 
@@ -36,13 +40,12 @@ export default function CategoryInput<T extends FieldValues>({
 		setOpen(false);
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		setLoading(true);
 		(async () => {
 			try {
-				const { data } = await axios.get<Category[]>(
-					route("products.categories"),
-				);
+				const { data } = await axios.get<Data[]>(url);
 				setCategories(data);
 				setLoading(false);
 			} catch (e) {
@@ -66,7 +69,7 @@ export default function CategoryInput<T extends FieldValues>({
 					onOpen={handleOpen}
 					onClose={handleClose}
 					value={
-						// Mostrar el objeto Category si el valor es un ID
+						// Mostrar el objeto Data si el valor es un ID
 						typeof value === "string"
 							? categories.find((cat) => String(cat.id) === value) || value
 							: value || null
@@ -84,7 +87,7 @@ export default function CategoryInput<T extends FieldValues>({
 								return;
 							}
 						}
-						onChange((newValue as Category).id.toString());
+						onChange((newValue as Data).id.toString());
 					}}
 					filterOptions={(opts, params) => {
 						const filtered = opts.filter((o) =>
@@ -105,7 +108,7 @@ export default function CategoryInput<T extends FieldValues>({
 					renderInput={(params) => (
 						<TextField
 							{...params}
-							label="Categoria"
+							label={label}
 							variant="filled"
 							required
 							error={error !== undefined}

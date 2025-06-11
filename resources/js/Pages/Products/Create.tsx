@@ -125,6 +125,9 @@ export default function Products({ products }: Props) {
 									<div className="mt-3">
 										<SelectionTextInput
 											control={control}
+											permissions={["create product_categories"]}
+											url={route("products.categories")}
+											label="Cateria"
 											name="category"
 										/>
 									</div>
