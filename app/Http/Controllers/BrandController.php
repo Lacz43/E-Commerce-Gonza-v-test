@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
+    public function brands()
+    {
+        $brands = Brand::get();
+        Debugbar::info($brands);
+        return json_encode($brands);
+    }
+
     /**
      * Display a listing of the resource.
      */
