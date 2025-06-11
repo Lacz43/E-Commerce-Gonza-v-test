@@ -17,6 +17,7 @@ interface FormStruture extends Item {
 	images: File[];
 	image_used: number | null;
 	category: number | string | null;
+	brand: number | string | null;
 }
 
 export default function Products({ products }: Props) {
@@ -122,13 +123,23 @@ export default function Products({ products }: Props) {
 											})}
 										/>
 									</div>
-									<div className="mt-3">
+									<div className="mt-3 flex gap-3">
 										<SelectionTextInput
+											className="w-full"
 											control={control}
 											permissions={["create product_categories"]}
 											url={route("products.categories")}
 											label="Cateria"
 											name="category"
+										/>
+
+										<SelectionTextInput
+											className="w-full"
+											control={control}
+											permissions={["create product_brands"]}
+											url={route("products.brands")}
+											label="Marca"
+											name="brand"
 										/>
 									</div>
 									<div className="mt-3">
