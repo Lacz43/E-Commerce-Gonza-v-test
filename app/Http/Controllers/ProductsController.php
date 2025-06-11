@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\Products;
@@ -45,6 +47,7 @@ class ProductsController extends Controller
             'barcode' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category' => 'required|string',
+            'brand' => 'required|string',
             'description' => 'nullable|string',
             'image_used' => 'nullable|numeric',
             'images' => 'required|array',
@@ -58,7 +61,7 @@ class ProductsController extends Controller
             ->orWhere('name', $data['category'])
             ->exists();
 
-        if(!$exists && !$user->hasPermissionTo("create product_categories")){
+        if (!$exists && !$user->hasPermissionTo("create product_categories")) {
             abort(403, 'Permission denied');
         }
 
@@ -72,6 +75,26 @@ class ProductsController extends Controller
             }
         };
 
+        $exists = DB::table('brands')
+            ->where('id', $data['brand'])
+            ->orWhere('name', $data['brand'])
+            ->exists();
+
+        if (!$exists && !$user->hasPermissionTo("create product_brands")) {
+            abort(403, 'Permission denied');
+        }
+
+        $brand = function () use ($exists, $data) {
+            if (!$exists) {
+                return Brand::firstOrCreate([
+                    'name' => $data['brand']
+                ])->id;
+            } else {
+                return $data['brand'];
+            }
+        };
+
+
         $product = Products::create([
             'name' => $data['name'],
             'barcode' => $data['barcode'],
@@ -79,6 +102,11 @@ class ProductsController extends Controller
             'category_id' => $category(),
             'description' => $data['description'],
             'created_by' => Auth::user()->id,
+        ]);
+
+        ProductBrand::firstOrCreate([
+            'product_id' => $product->id,
+            'brand_id' => $brand(),
         ]);
 
         foreach ($request->file('images') as $index => $image) {
