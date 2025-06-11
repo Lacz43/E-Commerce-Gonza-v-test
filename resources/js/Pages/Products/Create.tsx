@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Button, TextField, FormHelperText } from "@mui/material";
 import ImageUpload from "@/Components/ImageUpload";
-import CategoriesInput from "@/Components/Products/CategoriesInput";
+import SelectionTextInput from "@/Components/Products/SelectionTextInput";
 import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import { useForm, Controller } from "react-hook-form";
 import axios, { toFormData } from "axios";
@@ -123,7 +123,7 @@ export default function Products({ products }: Props) {
 										/>
 									</div>
 									<div className="mt-3">
-										<CategoriesInput
+										<SelectionTextInput
 											control={control}
 											name="category"
 										/>
