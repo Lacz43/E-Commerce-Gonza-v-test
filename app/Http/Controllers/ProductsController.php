@@ -54,15 +54,9 @@ class ProductsController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $user = Auth::user();
-
-        $exists = DB::table('product_categories')
-            ->where('id', $data['category'])
-            ->orWhere('name', $data['category'])
-            ->exists();
-
-        if (!$exists && !$user->hasPermissionTo("create product_categories")) {
-            abort(403, 'Permission denied');
+        $category = ProductCategory::createOrReadCategory($data['category']);
+        if (!$category) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear categorias.']);
         }
 
         $brand = Brand::createOrReadBrand($data['brand']);
@@ -75,7 +69,7 @@ class ProductsController extends Controller
             'name' => $data['name'],
             'barcode' => $data['barcode'],
             'price' => $data['price'],
-            'category_id' => $category(),
+            'category_id' => $category,
             'description' => $data['description'],
             'created_by' => Auth::user()->id,
         ]);
