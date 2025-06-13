@@ -65,34 +65,10 @@ class ProductsController extends Controller
             abort(403, 'Permission denied');
         }
 
-        $category = function () use ($exists, $data) {
-            if (!$exists) {
-                return ProductCategory::create([
-                    'name' => $data['category']
-                ])->id;
-            } else {
-                return $data['category'];
-            }
-        };
-
-        $exists = DB::table('brands')
-            ->where('id', $data['brand'])
-            ->orWhere('name', $data['brand'])
-            ->exists();
-
-        if (!$exists && !$user->hasPermissionTo("create product_brands")) {
-            abort(403, 'Permission denied');
+        $brand = Brand::createOrReadBrand($data['brand']);
+        if (!$brand) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
         }
-
-        $brand = function () use ($exists, $data) {
-            if (!$exists) {
-                return Brand::firstOrCreate([
-                    'name' => $data['brand']
-                ])->id;
-            } else {
-                return $data['brand'];
-            }
-        };
 
 
         $product = Products::create([
@@ -106,7 +82,7 @@ class ProductsController extends Controller
 
         ProductBrand::firstOrCreate([
             'product_id' => $product->id,
-            'brand_id' => $brand(),
+            'brand_id' => $brand,
         ]);
 
         foreach ($request->file('images') as $index => $image) {
