@@ -10,7 +10,6 @@ use App\Models\Products;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -64,7 +63,6 @@ class ProductsController extends Controller
             return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
         }
 
-
         $product = Products::create([
             'name' => $data['name'],
             'barcode' => $data['barcode'],
@@ -79,31 +77,7 @@ class ProductsController extends Controller
             'brand_id' => $brand,
         ]);
 
-        foreach ($request->file('images') as $index => $image) {
-            $filename = Str::uuid() . '.' . $image->getClientOriginalExtension(); // Nombre único
-            $path = $image->storeAs('products/' . $product->id, $filename, 'public'); // Almacenar en storage/app/public/products/{id_producto}
-
-            // Función para determinar si es la imagen por defecto
-            $defaultImage = function () use ($index, $data, $request) {
-                // Verifica que existan imágenes subidas
-                $uploadedImages = $request->file('images') ?? [];
-
-                // Si no hay imágenes usadas o el índice es menor al número de imágenes
-                if (empty($data['image_used']) || $data['image_used'] >= count($uploadedImages)) {
-                    return $index == 0; // Asigna como defecto la primera imagen
-                }
-
-                // Si el índice coincide con la imagen usada
-                return $data['image_used'] == $index;
-            };
-
-            // Guardar en la base de datos
-            ProductImage::create([
-                'product_id' => $product->id,
-                'image' => $path,
-                'default' => $defaultImage(),
-            ]);
-        }
+        ProductImage::saveImages($product->id, $request->file('images'), $data['image_used'] ?? null);
         return json_encode(["test" => "test"]);
     }
 }
