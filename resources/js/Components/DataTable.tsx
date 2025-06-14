@@ -61,17 +61,18 @@ export default function DataTable<T>({
 	const actionColumn: GridColDef = {
 		field: "actions",
 		type: "actions",
+        width: 120,
 		headerName: "Acciones",
 		renderCell: (params) => (
-			<div className="flex gap-1">
+			<div className="flex">
+				{onShow && (
+					<CrudButton type="show" onClick={() => onShow(params.row.id)} />
+				)}
 				{onEdit && (
 					<CrudButton type="edit" onClick={() => onEdit(params.row.id)} />
 				)}
 				{onDelete && (
 					<CrudButton type="delete" onClick={() => onDelete(params.row.id)} />
-				)}
-				{onShow && (
-					<CrudButton type="show" onClick={() => onShow(params.row.id)} />
 				)}
 			</div>
 		),
