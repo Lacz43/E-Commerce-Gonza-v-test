@@ -7,13 +7,23 @@ import { esES } from "@mui/x-data-grid/locales";
 import Paper from "@mui/material/Paper";
 import { router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import CrudButton from "./CrudButton";
 
 export type tableProps<T> = {
 	columns: GridColDef[];
 	response: paginateResponse<T>;
+	onEdit?: (id: number) => void;
+	onDelete?: (id: number) => void;
+	onShow?: (id: number) => void;
 };
 
-export default function DataTable<T>({ columns, response }: tableProps<T>) {
+export default function DataTable<T>({
+	columns,
+	response,
+	onEdit,
+	onShow,
+	onDelete,
+}: tableProps<T>) {
 	const [loading, setLoading] = useState(false);
 	const [paginationModel, setPaginationModel] = useState({
 		page: 0,
@@ -48,6 +58,29 @@ export default function DataTable<T>({ columns, response }: tableProps<T>) {
 		});
 	};
 
+	const actionColumn: GridColDef = {
+		field: "actions",
+		type: "actions",
+		headerName: "Acciones",
+		renderCell: (params) => (
+			<div className="flex gap-1">
+				{onEdit && (
+					<CrudButton type="edit" onClick={() => onEdit(params.row.id)} />
+				)}
+				{onDelete && (
+					<CrudButton type="delete" onClick={() => onDelete(params.row.id)} />
+				)}
+				{onShow && (
+					<CrudButton type="show" onClick={() => onShow(params.row.id)} />
+				)}
+			</div>
+		),
+	};
+
+	if (onEdit || onDelete || onShow) {
+		columns.push(actionColumn);
+	}
+
 	return (
 		<Paper sx={{ width: "100%" }}>
 			<DataGrid
@@ -61,7 +94,6 @@ export default function DataTable<T>({ columns, response }: tableProps<T>) {
 				pageSizeOptions={[5, 10, 20]}
 				paginationMode="server"
 				sortingMode="client"
-				checkboxSelection
 				sx={{ border: 0 }}
 			/>
 		</Paper>
