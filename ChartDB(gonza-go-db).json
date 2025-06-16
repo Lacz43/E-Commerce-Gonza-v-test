@@ -1,8 +1,8 @@
 {
   "id": "0",
   "name": "gonza-go-db",
-  "createdAt": "2025-04-18T16:11:55.452Z",
-  "updatedAt": "2025-04-18T16:11:55.452Z",
+  "createdAt": "2025-03-13T21:56:18.409Z",
+  "updatedAt": "2025-06-15T19:37:17.299Z",
   "databaseType": "mariadb",
   "tables": [
     {
@@ -105,13 +105,63 @@
     },
     {
       "id": "9",
+      "name": "brands",
+      "x": 907.3185481987678,
+      "y": 229.51129034228276,
+      "fields": [
+        {
+          "id": "10",
+          "name": "id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1750014199249
+        },
+        {
+          "id": "11",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750014243625
+        },
+        {
+          "id": "12",
+          "name": "created_by",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1750014263384
+        }
+      ],
+      "indexes": [],
+      "color": "#7175fa",
+      "createdAt": 1750014199250,
+      "isView": false,
+      "order": 26,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "13",
       "name": "failed_jobs",
       "schema": "gonza-go",
       "x": 115.00555951532431,
       "y": 602.3156094084102,
       "fields": [
         {
-          "id": "10",
+          "id": "14",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -123,7 +173,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "11",
+          "id": "15",
           "name": "uuid",
           "type": {
             "id": "varchar",
@@ -137,7 +187,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "12",
+          "id": "16",
           "name": "connection",
           "type": {
             "id": "text",
@@ -151,7 +201,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "13",
+          "id": "17",
           "name": "queue",
           "type": {
             "id": "text",
@@ -165,7 +215,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "14",
+          "id": "18",
           "name": "payload",
           "type": {
             "id": "longtext",
@@ -179,7 +229,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "15",
+          "id": "19",
           "name": "exception",
           "type": {
             "id": "longtext",
@@ -193,7 +243,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "16",
+          "id": "20",
           "name": "failed_at",
           "type": {
             "id": "timestamp",
@@ -208,20 +258,20 @@
       ],
       "indexes": [
         {
-          "id": "17",
+          "id": "21",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "10"
+            "14"
           ],
           "createdAt": 1741902978200
         },
         {
-          "id": "18",
+          "id": "22",
           "name": "failed_jobs_uuid_unique",
           "unique": true,
           "fieldIds": [
-            "11"
+            "15"
           ],
           "createdAt": 1741902978200
         }
@@ -233,14 +283,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "19",
+      "id": "23",
       "name": "model_has_roles",
       "schema": "gonza-go",
       "x": 1307.5027797576622,
       "y": 769.9147540983607,
       "fields": [
         {
-          "id": "20",
+          "id": "24",
           "name": "role_id",
           "type": {
             "id": "bigint",
@@ -252,7 +302,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "21",
+          "id": "25",
           "name": "model_type",
           "type": {
             "id": "varchar",
@@ -266,7 +316,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "22",
+          "id": "26",
           "name": "model_id",
           "type": {
             "id": "bigint",
@@ -280,23 +330,23 @@
       ],
       "indexes": [
         {
-          "id": "23",
+          "id": "27",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "20",
-            "22",
-            "21"
+            "24",
+            "26",
+            "25"
           ],
           "createdAt": 1741902978200
         },
         {
-          "id": "24",
+          "id": "28",
           "name": "model_has_roles_model_id_model_type_index",
           "unique": false,
           "fieldIds": [
-            "22",
-            "21"
+            "26",
+            "25"
           ],
           "createdAt": 1741902978200
         }
@@ -308,14 +358,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "25",
+      "id": "29",
       "name": "password_reset_tokens",
       "schema": "gonza-go",
       "x": 435.55628389317644,
       "y": 757.9534328596767,
       "fields": [
         {
-          "id": "26",
+          "id": "30",
           "name": "email",
           "type": {
             "id": "varchar",
@@ -329,7 +379,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "27",
+          "id": "31",
           "name": "token",
           "type": {
             "id": "varchar",
@@ -343,7 +393,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "28",
+          "id": "32",
           "name": "created_at",
           "type": {
             "id": "timestamp",
@@ -358,11 +408,11 @@
       ],
       "indexes": [
         {
-          "id": "29",
+          "id": "33",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "26"
+            "30"
           ],
           "createdAt": 1741902978200
         }
@@ -374,14 +424,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "30",
+      "id": "34",
       "name": "cache",
       "schema": "gonza-go",
       "x": 913.0850080556854,
       "y": 1015.5488712060774,
       "fields": [
         {
-          "id": "31",
+          "id": "35",
           "name": "key",
           "type": {
             "id": "varchar",
@@ -395,7 +445,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "32",
+          "id": "36",
           "name": "value",
           "type": {
             "id": "mediumtext",
@@ -409,7 +459,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "33",
+          "id": "37",
           "name": "expiration",
           "type": {
             "id": "int",
@@ -423,11 +473,11 @@
       ],
       "indexes": [
         {
-          "id": "34",
+          "id": "38",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "31"
+            "35"
           ],
           "createdAt": 1741902978199
         }
@@ -439,14 +489,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "35",
+      "id": "39",
       "name": "migrations",
       "schema": "gonza-go",
       "x": 114.44960798289299,
       "y": 947.4434782608695,
       "fields": [
         {
-          "id": "36",
+          "id": "40",
           "name": "id",
           "type": {
             "id": "int",
@@ -458,7 +508,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "37",
+          "id": "41",
           "name": "migration",
           "type": {
             "id": "varchar",
@@ -472,7 +522,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "38",
+          "id": "42",
           "name": "batch",
           "type": {
             "id": "int",
@@ -486,11 +536,11 @@
       ],
       "indexes": [
         {
-          "id": "39",
+          "id": "43",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "36"
+            "40"
           ],
           "createdAt": 1741902978197
         }
@@ -502,14 +552,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "40",
+      "id": "44",
       "name": "permissions",
       "schema": "gonza-go",
       "x": 894.9981468282252,
       "y": 439.9592302209551,
       "fields": [
         {
-          "id": "41",
+          "id": "45",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -521,7 +571,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "42",
+          "id": "46",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -535,7 +585,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "43",
+          "id": "47",
           "name": "guard_name",
           "type": {
             "id": "varchar",
@@ -549,7 +599,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "44",
+          "id": "48",
           "name": "created_at",
           "type": {
             "id": "timestamp",
@@ -562,7 +612,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "45",
+          "id": "49",
           "name": "updated_at",
           "type": {
             "id": "timestamp",
@@ -577,21 +627,21 @@
       ],
       "indexes": [
         {
-          "id": "46",
+          "id": "50",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "41"
+            "45"
           ],
           "createdAt": 1741902978200
         },
         {
-          "id": "47",
+          "id": "51",
           "name": "permissions_name_guard_name_unique",
           "unique": true,
           "fieldIds": [
-            "42",
-            "43"
+            "46",
+            "47"
           ],
           "createdAt": 1741902978200
         }
@@ -603,13 +653,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "48",
+      "id": "52",
       "name": "orders",
       "x": 916.7130418156169,
       "y": -190.5498038714905,
       "fields": [
         {
-          "id": "49",
+          "id": "53",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -621,7 +671,7 @@
           "createdAt": 1741905148173
         },
         {
-          "id": "50",
+          "id": "54",
           "name": "user_id",
           "type": {
             "id": "bigint",
@@ -633,7 +683,7 @@
           "createdAt": 1741905174812
         },
         {
-          "id": "51",
+          "id": "55",
           "name": "order_date",
           "type": {
             "id": "datetime",
@@ -645,7 +695,7 @@
           "createdAt": 1741905317326
         },
         {
-          "id": "52",
+          "id": "56",
           "name": "total_amount",
           "type": {
             "id": "float",
@@ -657,7 +707,7 @@
           "createdAt": 1741905368879
         },
         {
-          "id": "53",
+          "id": "57",
           "name": "status",
           "type": {
             "id": "enum",
@@ -677,13 +727,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "54",
+      "id": "58",
       "name": "supplier_contacts",
       "x": -343.57128955397576,
       "y": -419.7639467880768,
       "fields": [
         {
-          "id": "55",
+          "id": "59",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -695,7 +745,7 @@
           "createdAt": 1744991244203
         },
         {
-          "id": "56",
+          "id": "60",
           "name": "supplier_id",
           "type": {
             "id": "bigint",
@@ -707,7 +757,7 @@
           "createdAt": 1744991266490
         },
         {
-          "id": "57",
+          "id": "61",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -719,7 +769,7 @@
           "createdAt": 1744991302057
         },
         {
-          "id": "58",
+          "id": "62",
           "name": "phone",
           "type": {
             "id": "varchar",
@@ -731,7 +781,7 @@
           "createdAt": 1744991322266
         },
         {
-          "id": "59",
+          "id": "63",
           "name": "email",
           "type": {
             "id": "varchar",
@@ -751,13 +801,51 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "60",
+      "id": "64",
+      "name": "product_brands",
+      "x": 484.39408604198013,
+      "y": 203.2419354954605,
+      "fields": [
+        {
+          "id": "65",
+          "name": "product_id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1750014369615
+        },
+        {
+          "id": "66",
+          "name": "brand_id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": false,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750014435168
+        }
+      ],
+      "indexes": [],
+      "color": "#ff6363",
+      "createdAt": 1750014369615,
+      "isView": false,
+      "order": 27,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "67",
       "name": "categories",
       "x": 355.2815998516553,
       "y": 391.59465576007796,
       "fields": [
         {
-          "id": "61",
+          "id": "68",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -769,7 +857,7 @@
           "createdAt": 1741903049306
         },
         {
-          "id": "62",
+          "id": "69",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -782,7 +870,7 @@
           "characterMaximumLength": "100"
         },
         {
-          "id": "63",
+          "id": "70",
           "name": "description",
           "type": {
             "id": "text",
@@ -802,14 +890,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "64",
+      "id": "71",
       "name": "sessions",
       "schema": "gonza-go",
       "x": 1293.8008553100494,
       "y": 994.9610833927297,
       "fields": [
         {
-          "id": "65",
+          "id": "72",
           "name": "id",
           "type": {
             "id": "varchar",
@@ -823,7 +911,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "66",
+          "id": "73",
           "name": "user_id",
           "type": {
             "id": "bigint",
@@ -836,7 +924,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "67",
+          "id": "74",
           "name": "ip_address",
           "type": {
             "id": "varchar",
@@ -851,7 +939,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "68",
+          "id": "75",
           "name": "user_agent",
           "type": {
             "id": "text",
@@ -866,7 +954,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "69",
+          "id": "76",
           "name": "payload",
           "type": {
             "id": "longtext",
@@ -880,7 +968,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "70",
+          "id": "77",
           "name": "last_activity",
           "type": {
             "id": "int",
@@ -894,29 +982,29 @@
       ],
       "indexes": [
         {
-          "id": "71",
+          "id": "78",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "65"
+            "72"
           ],
           "createdAt": 1741902978200
         },
         {
-          "id": "72",
+          "id": "79",
           "name": "sessions_user_id_index",
           "unique": false,
           "fieldIds": [
-            "66"
+            "73"
           ],
           "createdAt": 1741902978200
         },
         {
-          "id": "73",
+          "id": "80",
           "name": "sessions_last_activity_index",
           "unique": false,
           "fieldIds": [
-            "70"
+            "77"
           ],
           "createdAt": 1741902978200
         }
@@ -928,14 +1016,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "74",
+      "id": "81",
       "name": "role_has_permissions",
       "schema": "gonza-go",
       "x": 427.4731290092658,
       "y": 584.8461867426942,
       "fields": [
         {
-          "id": "75",
+          "id": "82",
           "name": "permission_id",
           "type": {
             "id": "bigint",
@@ -947,7 +1035,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "76",
+          "id": "83",
           "name": "role_id",
           "type": {
             "id": "bigint",
@@ -961,21 +1049,21 @@
       ],
       "indexes": [
         {
-          "id": "77",
+          "id": "84",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "75",
-            "76"
+            "82",
+            "83"
           ],
           "createdAt": 1741902978200
         },
         {
-          "id": "78",
+          "id": "85",
           "name": "role_has_permissions_role_id_foreign",
           "unique": false,
           "fieldIds": [
-            "76"
+            "83"
           ],
           "createdAt": 1741902978200
         }
@@ -987,14 +1075,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "79",
+      "id": "86",
       "name": "roles",
       "schema": "gonza-go",
       "x": 900,
       "y": 719.8962223806129,
       "fields": [
         {
-          "id": "80",
+          "id": "87",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1006,7 +1094,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "81",
+          "id": "88",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -1020,7 +1108,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "82",
+          "id": "89",
           "name": "guard_name",
           "type": {
             "id": "varchar",
@@ -1034,7 +1122,7 @@
           "createdAt": 1741902978200
         },
         {
-          "id": "83",
+          "id": "90",
           "name": "created_at",
           "type": {
             "id": "timestamp",
@@ -1047,7 +1135,7 @@
           "createdAt": 1741902978201
         },
         {
-          "id": "84",
+          "id": "91",
           "name": "updated_at",
           "type": {
             "id": "timestamp",
@@ -1062,21 +1150,21 @@
       ],
       "indexes": [
         {
-          "id": "85",
+          "id": "92",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "80"
+            "87"
           ],
           "createdAt": 1741902978201
         },
         {
-          "id": "86",
+          "id": "93",
           "name": "roles_name_guard_name_unique",
           "unique": true,
           "fieldIds": [
-            "81",
-            "82"
+            "88",
+            "89"
           ],
           "createdAt": 1741902978201
         }
@@ -1088,14 +1176,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "87",
+      "id": "94",
       "name": "jobs",
       "schema": "gonza-go",
       "x": 121.4307020000654,
       "y": 1133.873676382556,
       "fields": [
         {
-          "id": "88",
+          "id": "95",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1107,7 +1195,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "89",
+          "id": "96",
           "name": "queue",
           "type": {
             "id": "varchar",
@@ -1121,7 +1209,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "90",
+          "id": "97",
           "name": "payload",
           "type": {
             "id": "longtext",
@@ -1135,7 +1223,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "91",
+          "id": "98",
           "name": "attempts",
           "type": {
             "id": "tinyint",
@@ -1147,7 +1235,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "92",
+          "id": "99",
           "name": "reserved_at",
           "type": {
             "id": "int",
@@ -1160,7 +1248,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "93",
+          "id": "100",
           "name": "available_at",
           "type": {
             "id": "int",
@@ -1172,7 +1260,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "94",
+          "id": "101",
           "name": "created_at",
           "type": {
             "id": "int",
@@ -1186,20 +1274,20 @@
       ],
       "indexes": [
         {
-          "id": "95",
+          "id": "102",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "88"
+            "95"
           ],
           "createdAt": 1741902978198
         },
         {
-          "id": "96",
+          "id": "103",
           "name": "jobs_queue_index",
           "unique": false,
           "fieldIds": [
-            "89"
+            "96"
           ],
           "createdAt": 1741902978198
         }
@@ -1211,14 +1299,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "97",
+      "id": "104",
       "name": "products",
       "schema": "gonza-go",
       "x": 67.85953496996788,
       "y": 61.43144196396143,
       "fields": [
         {
-          "id": "98",
+          "id": "105",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1230,7 +1318,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "99",
+          "id": "106",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -1244,7 +1332,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "100",
+          "id": "107",
           "name": "barcode",
           "type": {
             "id": "bigint",
@@ -1256,7 +1344,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "101",
+          "id": "108",
           "name": "description",
           "type": {
             "id": "varchar",
@@ -1271,7 +1359,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "102",
+          "id": "109",
           "name": "price",
           "type": {
             "id": "float",
@@ -1283,7 +1371,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "103",
+          "id": "110",
           "name": "category_id",
           "type": {
             "id": "bigint",
@@ -1295,7 +1383,7 @@
           "createdAt": 1741903648313
         },
         {
-          "id": "104",
+          "id": "111",
           "name": "created_by",
           "type": {
             "id": "bigint",
@@ -1307,7 +1395,7 @@
           "createdAt": 1741902995978
         },
         {
-          "id": "105",
+          "id": "112",
           "name": "created_at",
           "type": {
             "id": "timestamp",
@@ -1320,7 +1408,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "106",
+          "id": "113",
           "name": "updated_at",
           "type": {
             "id": "timestamp",
@@ -1335,20 +1423,20 @@
       ],
       "indexes": [
         {
-          "id": "107",
+          "id": "114",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "98"
+            "105"
           ],
           "createdAt": 1741902978199
         },
         {
-          "id": "108",
+          "id": "115",
           "name": "products_barcode_unique",
           "unique": true,
           "fieldIds": [
-            "100"
+            "107"
           ],
           "createdAt": 1741902978199
         }
@@ -1360,13 +1448,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "109",
+      "id": "116",
       "name": "orders_items",
-      "x": 913.0288010384133,
-      "y": 186.13644628048613,
+      "x": 1195.754338630134,
+      "y": 50.53053232246626,
       "fields": [
         {
-          "id": "110",
+          "id": "117",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1378,7 +1466,7 @@
           "createdAt": 1741905532683
         },
         {
-          "id": "111",
+          "id": "118",
           "name": "order_id",
           "type": {
             "id": "bigint",
@@ -1390,7 +1478,7 @@
           "createdAt": 1741905558555
         },
         {
-          "id": "112",
+          "id": "119",
           "name": "product_id",
           "type": {
             "id": "bigint",
@@ -1402,7 +1490,7 @@
           "createdAt": 1741905691320
         },
         {
-          "id": "113",
+          "id": "120",
           "name": "quantity",
           "type": {
             "id": "int",
@@ -1414,7 +1502,7 @@
           "createdAt": 1741905727497
         },
         {
-          "id": "114",
+          "id": "121",
           "name": "price",
           "type": {
             "id": "float",
@@ -1434,14 +1522,76 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "115",
+      "id": "122",
+      "name": "product_details",
+      "x": -352.698487138532,
+      "y": 146.46970660705492,
+      "fields": [
+        {
+          "id": "123",
+          "name": "id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1750015836488
+        },
+        {
+          "id": "124",
+          "name": "product_id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": false,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750015523257
+        },
+        {
+          "id": "125",
+          "name": "detail_id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": false,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750015735559
+        },
+        {
+          "id": "126",
+          "name": "value",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "unique": false,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750015796426
+        }
+      ],
+      "indexes": [],
+      "color": "#42e0c0",
+      "createdAt": 1750015523257,
+      "isView": false,
+      "order": 28,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "127",
       "name": "cache_locks",
       "schema": "gonza-go",
       "x": 450.129722024234,
       "y": 989.7739130434779,
       "fields": [
         {
-          "id": "116",
+          "id": "128",
           "name": "key",
           "type": {
             "id": "varchar",
@@ -1455,7 +1605,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "117",
+          "id": "129",
           "name": "owner",
           "type": {
             "id": "varchar",
@@ -1469,7 +1619,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "118",
+          "id": "130",
           "name": "expiration",
           "type": {
             "id": "int",
@@ -1483,11 +1633,11 @@
       ],
       "indexes": [
         {
-          "id": "119",
+          "id": "131",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "116"
+            "128"
           ],
           "createdAt": 1741902978199
         }
@@ -1499,14 +1649,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "120",
+      "id": "132",
       "name": "users",
       "schema": "gonza-go",
       "x": 485.85819538678584,
       "y": -372.17858492479894,
       "fields": [
         {
-          "id": "121",
+          "id": "133",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1518,7 +1668,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "122",
+          "id": "134",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -1532,7 +1682,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "123",
+          "id": "135",
           "name": "email",
           "type": {
             "id": "varchar",
@@ -1546,7 +1696,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "124",
+          "id": "136",
           "name": "email_verified_at",
           "type": {
             "id": "timestamp",
@@ -1559,7 +1709,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "125",
+          "id": "137",
           "name": "password",
           "type": {
             "id": "varchar",
@@ -1573,7 +1723,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "126",
+          "id": "138",
           "name": "remember_token",
           "type": {
             "id": "varchar",
@@ -1588,7 +1738,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "127",
+          "id": "139",
           "name": "created_at",
           "type": {
             "id": "timestamp",
@@ -1601,7 +1751,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "128",
+          "id": "140",
           "name": "updated_at",
           "type": {
             "id": "timestamp",
@@ -1616,20 +1766,20 @@
       ],
       "indexes": [
         {
-          "id": "129",
+          "id": "141",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "121"
+            "133"
           ],
           "createdAt": 1741902978198
         },
         {
-          "id": "130",
+          "id": "142",
           "name": "users_email_unique",
           "unique": true,
           "fieldIds": [
-            "123"
+            "135"
           ],
           "createdAt": 1741902978198
         }
@@ -1641,13 +1791,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "131",
+      "id": "143",
       "name": "supplier_order",
       "x": -347.8364600122599,
       "y": -155.77997035508105,
       "fields": [
         {
-          "id": "132",
+          "id": "144",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1659,7 +1809,7 @@
           "createdAt": 1744990938116
         },
         {
-          "id": "133",
+          "id": "145",
           "name": "supplier_id",
           "type": {
             "id": "bigint",
@@ -1671,7 +1821,7 @@
           "createdAt": 1744990980556
         },
         {
-          "id": "134",
+          "id": "146",
           "name": "total",
           "type": {
             "id": "decimal",
@@ -1683,7 +1833,7 @@
           "createdAt": 1744991561018
         },
         {
-          "id": "135",
+          "id": "147",
           "name": "note",
           "type": {
             "id": "varchar",
@@ -1695,7 +1845,7 @@
           "createdAt": 1744991538689
         },
         {
-          "id": "136",
+          "id": "148",
           "name": "created_at",
           "type": {
             "id": "timestamp",
@@ -1707,7 +1857,7 @@
           "createdAt": 1744991004698
         },
         {
-          "id": "137",
+          "id": "149",
           "name": "updated_at",
           "type": {
             "id": "timestamp",
@@ -1727,13 +1877,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "138",
+      "id": "150",
       "name": "inventory",
       "x": -256.2889675591563,
       "y": 378.979236460679,
       "fields": [
         {
-          "id": "139",
+          "id": "151",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1745,7 +1895,7 @@
           "createdAt": 1741905920728
         },
         {
-          "id": "140",
+          "id": "152",
           "name": "product_id",
           "type": {
             "id": "bigint",
@@ -1757,7 +1907,7 @@
           "createdAt": 1741905977734
         },
         {
-          "id": "141",
+          "id": "153",
           "name": "quantity",
           "type": {
             "id": "int",
@@ -1777,13 +1927,63 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "142",
+      "id": "154",
+      "name": "details",
+      "x": -648.4007168818812,
+      "y": 240.33226357028792,
+      "fields": [
+        {
+          "id": "155",
+          "name": "id",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1750015956537
+        },
+        {
+          "id": "156",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "unique": false,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750016015922
+        },
+        {
+          "id": "157",
+          "name": "type",
+          "type": {
+            "id": "enum",
+            "name": "enum"
+          },
+          "unique": false,
+          "nullable": false,
+          "primaryKey": false,
+          "createdAt": 1750015976195
+        }
+      ],
+      "indexes": [],
+      "color": "#9ef07a",
+      "createdAt": 1750015956537,
+      "isView": false,
+      "order": 29,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "158",
       "name": "supplier_order_receive",
       "x": -959.4216493861194,
       "y": 12.572384593936183,
       "fields": [
         {
-          "id": "143",
+          "id": "159",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1795,7 +1995,7 @@
           "createdAt": 1744992138368
         },
         {
-          "id": "144",
+          "id": "160",
           "name": "item_id",
           "type": {
             "id": "bigint",
@@ -1807,7 +2007,7 @@
           "createdAt": 1744992194601
         },
         {
-          "id": "145",
+          "id": "161",
           "name": "quantity",
           "type": {
             "id": "int",
@@ -1819,7 +2019,7 @@
           "createdAt": 1744992224729
         },
         {
-          "id": "146",
+          "id": "162",
           "name": "date",
           "type": {
             "id": "timestamp",
@@ -1839,13 +2039,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "147",
+      "id": "163",
       "name": "product_images",
       "x": -211.84881830451175,
       "y": 626.8628597799133,
       "fields": [
         {
-          "id": "148",
+          "id": "164",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1857,7 +2057,7 @@
           "createdAt": 1741904016916
         },
         {
-          "id": "149",
+          "id": "165",
           "name": "product_id",
           "type": {
             "id": "bigint",
@@ -1869,7 +2069,7 @@
           "createdAt": 1741904086053
         },
         {
-          "id": "150",
+          "id": "166",
           "name": "image",
           "type": {
             "id": "varchar",
@@ -1882,7 +2082,7 @@
           "characterMaximumLength": "256"
         },
         {
-          "id": "151",
+          "id": "167",
           "name": "is_primary",
           "type": {
             "id": "bool",
@@ -1902,13 +2102,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "152",
+      "id": "168",
       "name": "supplier_order_status",
       "x": -652.330152437476,
       "y": -306.03566855205315,
       "fields": [
         {
-          "id": "153",
+          "id": "169",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1920,7 +2120,7 @@
           "createdAt": 1744991958406
         },
         {
-          "id": "154",
+          "id": "170",
           "name": "order_id",
           "type": {
             "id": "bigint",
@@ -1932,7 +2132,7 @@
           "createdAt": 1744991992390
         },
         {
-          "id": "155",
+          "id": "171",
           "name": "status",
           "type": {
             "id": "enum",
@@ -1944,7 +2144,7 @@
           "createdAt": 1744992017031
         },
         {
-          "id": "156",
+          "id": "172",
           "name": "date",
           "type": {
             "id": "timestamp",
@@ -1964,13 +2164,13 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "157",
+      "id": "173",
       "name": "supplier_order_items",
       "x": -657.7318254879328,
       "y": -28.782085846374578,
       "fields": [
         {
-          "id": "158",
+          "id": "174",
           "name": "id",
           "type": {
             "id": "bigint",
@@ -1982,7 +2182,7 @@
           "createdAt": 1744991702130
         },
         {
-          "id": "159",
+          "id": "175",
           "name": "order_id",
           "type": {
             "id": "bigint",
@@ -1994,7 +2194,7 @@
           "createdAt": 1744991727605
         },
         {
-          "id": "160",
+          "id": "176",
           "name": "product_id",
           "type": {
             "id": "bigint",
@@ -2006,7 +2206,7 @@
           "createdAt": 1744991770028
         },
         {
-          "id": "161",
+          "id": "177",
           "name": "quantity",
           "type": {
             "id": "int",
@@ -2018,7 +2218,7 @@
           "createdAt": 1744991823237
         },
         {
-          "id": "162",
+          "id": "178",
           "name": "unit_price",
           "type": {
             "id": "decimal",
@@ -2030,7 +2230,7 @@
           "createdAt": 1744991847814
         },
         {
-          "id": "163",
+          "id": "179",
           "name": "subtotal",
           "type": {
             "id": "decimal",
@@ -2050,14 +2250,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "164",
+      "id": "180",
       "name": "job_batches",
       "schema": "gonza-go",
       "x": -205.26129722024262,
       "y": 887.2359230220952,
       "fields": [
         {
-          "id": "165",
+          "id": "181",
           "name": "id",
           "type": {
             "id": "varchar",
@@ -2071,7 +2271,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "166",
+          "id": "182",
           "name": "name",
           "type": {
             "id": "varchar",
@@ -2085,7 +2285,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "167",
+          "id": "183",
           "name": "total_jobs",
           "type": {
             "id": "int",
@@ -2097,7 +2297,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "168",
+          "id": "184",
           "name": "pending_jobs",
           "type": {
             "id": "int",
@@ -2109,7 +2309,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "169",
+          "id": "185",
           "name": "failed_jobs",
           "type": {
             "id": "int",
@@ -2121,7 +2321,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "170",
+          "id": "186",
           "name": "failed_job_ids",
           "type": {
             "id": "longtext",
@@ -2135,7 +2335,7 @@
           "createdAt": 1741902978197
         },
         {
-          "id": "171",
+          "id": "187",
           "name": "options",
           "type": {
             "id": "mediumtext",
@@ -2150,7 +2350,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "172",
+          "id": "188",
           "name": "cancelled_at",
           "type": {
             "id": "int",
@@ -2163,7 +2363,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "173",
+          "id": "189",
           "name": "created_at",
           "type": {
             "id": "int",
@@ -2175,7 +2375,7 @@
           "createdAt": 1741902978198
         },
         {
-          "id": "174",
+          "id": "190",
           "name": "finished_at",
           "type": {
             "id": "int",
@@ -2190,11 +2390,11 @@
       ],
       "indexes": [
         {
-          "id": "175",
+          "id": "191",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "165"
+            "181"
           ],
           "createdAt": 1741902978198
         }
@@ -2206,14 +2406,14 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "176",
+      "id": "192",
       "name": "model_has_permissions",
       "schema": "gonza-go",
       "x": 1300,
       "y": 550,
       "fields": [
         {
-          "id": "177",
+          "id": "193",
           "name": "permission_id",
           "type": {
             "id": "bigint",
@@ -2225,7 +2425,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "178",
+          "id": "194",
           "name": "model_type",
           "type": {
             "id": "varchar",
@@ -2239,7 +2439,7 @@
           "createdAt": 1741902978199
         },
         {
-          "id": "179",
+          "id": "195",
           "name": "model_id",
           "type": {
             "id": "bigint",
@@ -2253,23 +2453,23 @@
       ],
       "indexes": [
         {
-          "id": "180",
+          "id": "196",
           "name": "PRIMARY",
           "unique": true,
           "fieldIds": [
-            "177",
-            "179",
-            "178"
+            "193",
+            "195",
+            "194"
           ],
           "createdAt": 1741902978199
         },
         {
-          "id": "181",
+          "id": "197",
           "name": "model_has_permissions_model_id_model_type_index",
           "unique": false,
           "fieldIds": [
-            "179",
-            "178"
+            "195",
+            "194"
           ],
           "createdAt": 1741902978199
         }
@@ -2283,157 +2483,219 @@
   ],
   "relationships": [
     {
-      "id": "182",
+      "id": "198",
+      "name": "brands_created_by_fk",
+      "sourceTableId": "9",
+      "targetTableId": "132",
+      "sourceFieldId": "12",
+      "targetFieldId": "133",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1750014365111,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "199",
+      "name": "details_id_fk",
+      "sourceTableId": "154",
+      "targetTableId": "122",
+      "sourceFieldId": "155",
+      "targetFieldId": "125",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1750015972618,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "200",
       "name": "model_has_permissions_permission_id_foreign",
       "sourceSchema": "gonza-go",
       "targetSchema": "gonza-go",
-      "sourceTableId": "176",
-      "targetTableId": "40",
-      "sourceFieldId": "177",
-      "targetFieldId": "41",
+      "sourceTableId": "192",
+      "targetTableId": "44",
+      "sourceFieldId": "193",
+      "targetFieldId": "45",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741902978201,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "183",
+      "id": "201",
       "name": "model_has_roles_role_id_foreign",
       "sourceSchema": "gonza-go",
       "targetSchema": "gonza-go",
-      "sourceTableId": "19",
-      "targetTableId": "79",
-      "sourceFieldId": "20",
-      "targetFieldId": "80",
+      "sourceTableId": "23",
+      "targetTableId": "86",
+      "sourceFieldId": "24",
+      "targetFieldId": "87",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741902978201,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "184",
+      "id": "202",
       "name": "orders_id_fk",
-      "sourceTableId": "48",
-      "targetTableId": "109",
-      "sourceFieldId": "49",
-      "targetFieldId": "111",
+      "sourceTableId": "52",
+      "targetTableId": "116",
+      "sourceFieldId": "53",
+      "targetFieldId": "118",
       "sourceCardinality": "one",
       "targetCardinality": "many",
       "createdAt": 1741905881952,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "185",
+      "id": "203",
       "name": "orders_items_product_id_fk",
-      "sourceTableId": "109",
-      "targetTableId": "97",
-      "sourceFieldId": "112",
-      "targetFieldId": "98",
+      "sourceTableId": "116",
+      "targetTableId": "104",
+      "sourceFieldId": "119",
+      "targetFieldId": "105",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1741905707610,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "186",
+      "id": "204",
       "name": "orders_user_id_fk",
-      "sourceTableId": "48",
-      "targetTableId": "120",
-      "sourceFieldId": "50",
-      "targetFieldId": "121",
+      "sourceTableId": "52",
+      "targetTableId": "132",
+      "sourceFieldId": "54",
+      "targetFieldId": "133",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741905190276,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "187",
+      "id": "205",
+      "name": "product_brands_brand_id_fk",
+      "sourceTableId": "64",
+      "targetTableId": "9",
+      "sourceFieldId": "66",
+      "targetFieldId": "10",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1750014457582,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "206",
+      "name": "product_details_product_id_fk",
+      "sourceTableId": "122",
+      "targetTableId": "104",
+      "sourceFieldId": "124",
+      "targetFieldId": "105",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1750015616019,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "207",
       "name": "product_images_product_id_fk",
-      "sourceTableId": "147",
-      "targetTableId": "97",
-      "sourceFieldId": "149",
-      "targetFieldId": "98",
+      "sourceTableId": "163",
+      "targetTableId": "104",
+      "sourceFieldId": "165",
+      "targetFieldId": "105",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741904106709,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "188",
+      "id": "208",
       "name": "products_category_id_fk",
       "sourceSchema": "gonza-go",
-      "sourceTableId": "97",
+      "sourceTableId": "104",
       "targetSchema": "gonza-go",
-      "targetTableId": "60",
-      "sourceFieldId": "103",
-      "targetFieldId": "61",
+      "targetTableId": "67",
+      "sourceFieldId": "110",
+      "targetFieldId": "68",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741903718679,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "189",
+      "id": "209",
       "name": "products_created_by_fk",
       "sourceSchema": "gonza-go",
-      "sourceTableId": "97",
+      "sourceTableId": "104",
       "targetSchema": "gonza-go",
-      "targetTableId": "120",
-      "sourceFieldId": "104",
-      "targetFieldId": "121",
+      "targetTableId": "132",
+      "sourceFieldId": "111",
+      "targetFieldId": "133",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1741903036266,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "190",
+      "id": "210",
       "name": "products_id_fk",
       "sourceSchema": "gonza-go",
-      "sourceTableId": "97",
+      "sourceTableId": "104",
       "targetSchema": "gonza-go",
-      "targetTableId": "138",
-      "sourceFieldId": "98",
-      "targetFieldId": "140",
+      "targetTableId": "64",
+      "sourceFieldId": "105",
+      "targetFieldId": "65",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1750014447040,
+      "diagramId": "iwgpq31e7w5c"
+    },
+    {
+      "id": "211",
+      "name": "products_id_fk",
+      "sourceSchema": "gonza-go",
+      "sourceTableId": "104",
+      "targetSchema": "gonza-go",
+      "targetTableId": "150",
+      "sourceFieldId": "105",
+      "targetFieldId": "152",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1741906026037,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "192",
+      "id": "213",
       "name": "role_has_permissions_permission_id_foreign",
       "sourceSchema": "gonza-go",
       "targetSchema": "gonza-go",
-      "sourceTableId": "74",
-      "targetTableId": "40",
-      "sourceFieldId": "75",
-      "targetFieldId": "41",
+      "sourceTableId": "81",
+      "targetTableId": "44",
+      "sourceFieldId": "82",
+      "targetFieldId": "45",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741902978201,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "193",
+      "id": "214",
       "name": "role_has_permissions_role_id_foreign",
       "sourceSchema": "gonza-go",
       "targetSchema": "gonza-go",
-      "sourceTableId": "74",
-      "targetTableId": "79",
-      "sourceFieldId": "76",
-      "targetFieldId": "80",
+      "sourceTableId": "81",
+      "targetTableId": "86",
+      "sourceFieldId": "83",
+      "targetFieldId": "87",
       "sourceCardinality": "many",
       "targetCardinality": "one",
       "createdAt": 1741902978201,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "194",
+      "id": "215",
       "name": "supplier_contacts_supplier_id_fk",
-      "sourceTableId": "54",
+      "sourceTableId": "58",
       "targetTableId": "1",
-      "sourceFieldId": "56",
+      "sourceFieldId": "60",
       "targetFieldId": "2",
       "sourceCardinality": "one",
       "targetCardinality": "one",
@@ -2441,59 +2703,59 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "195",
+      "id": "216",
       "name": "supplier_order_items_order_id_fk",
-      "sourceTableId": "157",
-      "targetTableId": "131",
-      "sourceFieldId": "159",
-      "targetFieldId": "132",
+      "sourceTableId": "173",
+      "targetTableId": "143",
+      "sourceFieldId": "175",
+      "targetFieldId": "144",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1744991740580,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "196",
+      "id": "217",
       "name": "supplier_order_items_product_id_fk",
-      "sourceTableId": "157",
-      "targetTableId": "97",
-      "sourceFieldId": "160",
-      "targetFieldId": "98",
+      "sourceTableId": "173",
+      "targetTableId": "104",
+      "sourceFieldId": "176",
+      "targetFieldId": "105",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1744991793548,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "197",
+      "id": "218",
       "name": "supplier_order_receive_item_id_fk",
-      "sourceTableId": "142",
-      "targetTableId": "157",
-      "sourceFieldId": "144",
-      "targetFieldId": "158",
+      "sourceTableId": "158",
+      "targetTableId": "173",
+      "sourceFieldId": "160",
+      "targetFieldId": "174",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1744992289370,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "198",
+      "id": "219",
       "name": "supplier_order_status_order_id_fk",
-      "sourceTableId": "152",
-      "targetTableId": "131",
-      "sourceFieldId": "154",
-      "targetFieldId": "132",
+      "sourceTableId": "168",
+      "targetTableId": "143",
+      "sourceFieldId": "170",
+      "targetFieldId": "144",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1744992004365,
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "199",
+      "id": "220",
       "name": "supplier_order_supplier_id_fk",
-      "sourceTableId": "131",
+      "sourceTableId": "143",
       "targetTableId": "1",
-      "sourceFieldId": "133",
+      "sourceFieldId": "145",
       "targetFieldId": "2",
       "sourceCardinality": "one",
       "targetCardinality": "one",
@@ -2501,17 +2763,19 @@
       "diagramId": "iwgpq31e7w5c"
     },
     {
-      "id": "200",
+      "id": "221",
       "name": "suppliers_created_by_fk",
       "sourceTableId": "1",
-      "targetTableId": "120",
+      "targetTableId": "132",
       "sourceFieldId": "6",
-      "targetFieldId": "121",
+      "targetFieldId": "133",
       "sourceCardinality": "one",
       "targetCardinality": "one",
       "createdAt": 1744990485872,
       "diagramId": "iwgpq31e7w5c"
     }
   ],
-  "dependencies": []
+  "dependencies": [],
+  "areas": [],
+  "customTypes": []
 }
