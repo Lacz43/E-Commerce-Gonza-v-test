@@ -80,4 +80,15 @@ class ProductsController extends Controller
         ProductImage::saveImages($product->id, $request->file('images'), $data['image_used'] ?? null);
         return json_encode(["test" => "test"]);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Products $product)
+    {
+        Debugbar::info($product);
+        $product = Products::destroy($product->id);
+        return redirect()->route('products.index');
+    }
+
 }
