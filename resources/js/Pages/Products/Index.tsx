@@ -1,8 +1,11 @@
+import { Head, Link } from "@inertiajs/react";
+import { Button } from "@mui/material";
 import DataTable from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import { Button } from "@mui/material";
+import ModalDelete from "@/Components/ModalDelete";
+import { useState } from "react";
+import routerAsync from "@/Hook/routerAsync";
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -10,6 +13,15 @@ type Props = {
 
 export default function Products({ products }: Props) {
 	console.log(products);
+	const [selected, setSelect] = useState<null | number>(null);
+
+	async function HandleDelete(id: number) {
+		try {
+			routerAsync("delete", route("products.delete", id));
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
 	return (
 		<AuthenticatedLayout
@@ -61,7 +73,7 @@ export default function Products({ products }: Props) {
 								}}
 								onDelete={{
 									permissions: ["delete products"],
-									hook: (id) => console.log(id),
+									hook: (id) => setSelect(id),
 								}}
 								onShow={{
 									permissions: ["show products"],
@@ -72,6 +84,13 @@ export default function Products({ products }: Props) {
 					</div>
 				</div>
 			</div>
+			<ModalDelete
+				show={selected !== null}
+				setOpen={() => setSelect(null)}
+				id={selected}
+				title={products.data.find((f) => f.id === selected)?.name ?? ""}
+				onDeleteConfirm={(id) => HandleDelete(id)}
+			/>
 		</AuthenticatedLayout>
 	);
 }
