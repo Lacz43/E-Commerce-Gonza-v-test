@@ -8,13 +8,19 @@ import Paper from "@mui/material/Paper";
 import { router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import CrudButton from "./CrudButton";
+import usePermissions from "@/Hook/usePermissions";
+
+type ActionHandler = {
+	permissions?: string[];
+	hook: (id: number) => void;
+};
 
 export type tableProps<T> = {
 	columns: GridColDef[];
 	response: paginateResponse<T>;
-	onEdit?: (id: number) => void;
-	onDelete?: (id: number) => void;
-	onShow?: (id: number) => void;
+	onEdit?: ActionHandler;
+	onDelete?: ActionHandler;
+	onShow?: ActionHandler;
 };
 
 export default function DataTable<T>({
@@ -29,9 +35,10 @@ export default function DataTable<T>({
 		page: 0,
 		pageSize: 20,
 	});
+	const { hasPermission } = usePermissions();
 
 	const url = new URL(window.location.href);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+
 	useEffect(() => {
 		setPaginationModel({
 			page: Number(url.searchParams.get("page")) ?? 0,
@@ -61,18 +68,21 @@ export default function DataTable<T>({
 	const actionColumn: GridColDef = {
 		field: "actions",
 		type: "actions",
-        width: 120,
+		width: 120,
 		headerName: "Acciones",
 		renderCell: (params) => (
 			<div className="flex">
-				{onShow && (
-					<CrudButton type="show" onClick={() => onShow(params.row.id)} />
+				{onShow && hasPermission(onShow?.permissions ?? []) && (
+					<CrudButton type="show" onClick={() => onShow.hook(params.row.id)} />
 				)}
-				{onEdit && (
-					<CrudButton type="edit" onClick={() => onEdit(params.row.id)} />
+				{onEdit && hasPermission(onEdit?.permissions ?? []) && (
+					<CrudButton type="edit" onClick={() => onEdit.hook(params.row.id)} />
 				)}
-				{onDelete && (
-					<CrudButton type="delete" onClick={() => onDelete(params.row.id)} />
+				{onDelete && hasPermission(onDelete?.permissions ?? []) && (
+					<CrudButton
+						type="delete"
+						onClick={() => onDelete.hook(params.row.id)}
+					/>
 				)}
 			</div>
 		),
