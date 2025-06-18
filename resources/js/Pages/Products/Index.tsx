@@ -55,6 +55,18 @@ export default function Products({ products }: Props) {
 									},
 								]}
 								response={products}
+								onEdit={{
+									permissions: ["edit products"],
+									hook: (id) => console.log(id),
+								}}
+								onDelete={{
+									permissions: ["delete products"],
+									hook: (id) => console.log(id),
+								}}
+								onShow={{
+									permissions: ["show products"],
+									hook: (id) => console.log(id),
+								}}
 							/>
 						</div>
 					</div>
