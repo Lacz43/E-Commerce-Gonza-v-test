@@ -20,7 +20,7 @@ class ProductsFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->word(),
             'barcode' => $this->faker->unique()->numberBetween(000000000000000, 9999999999999),
             'category_id' => ProductCategory::inRandomOrder()->first()->id,
             'description' => $this->faker->text(),
