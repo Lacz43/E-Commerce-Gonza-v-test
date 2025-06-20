@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ProductCategory extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = ['name', 'created_by'];
 
@@ -36,5 +39,10 @@ class ProductCategory extends Model
         ]);
 
         return $category->id;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnlyDirty();
     }
 }
