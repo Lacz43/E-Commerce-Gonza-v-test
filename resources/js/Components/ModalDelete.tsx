@@ -8,7 +8,7 @@ type Props = {
 	title: string;
 	id: number | null;
 	onDeleteConfirm: (id: number) => void;
-	setOpen: (open: boolean) => void;
+	setOpen: () => void;
 };
 
 export default function ModalDelete({
@@ -19,12 +19,12 @@ export default function ModalDelete({
 	onDeleteConfirm,
 }: Props) {
 	return (
-		<Modal show={show} onClose={() => setOpen(false)} maxWidth="sm">
+		<Modal show={show} onClose={setOpen} maxWidth="sm">
 			<div className="max-h-dvh flex flex-col">
 				<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
 					<h2 className="font-bold">Eliminar</h2>
 					<span className="mx-auto"></span>
-					<button type="button" onClick={() => setOpen(false)}>
+					<button type="button" onClick={setOpen}>
 						<Close />
 					</button>
 				</div>
@@ -57,7 +57,7 @@ export default function ModalDelete({
 						<Button
 							size="medium"
 							variant="contained"
-							onClick={() => setOpen(false)}
+							onClick={setOpen}
 							className="w-full"
 						>
 							<b>Cancelar</b>
