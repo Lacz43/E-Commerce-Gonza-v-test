@@ -1,11 +1,13 @@
 import { Head, Link } from "@inertiajs/react";
 import { Button } from "@mui/material";
-import DataTable from "@/Components/DataTable";
+import type { GridColDef } from "@mui/x-data-grid";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import ModalDelete from "@/Components/ModalDelete";
-import { useState } from "react";
 import routerAsync from "@/Hook/routerAsync";
+
+const DataTable = lazy(() => import("@/Components/DataTable"));
+const ModalDelete = lazy(() => import("@/Components/ModalDelete"));
 
 type Props = {
 	products: paginateResponse<Item>;
@@ -22,6 +24,31 @@ export default function Products({ products }: Props) {
 			console.log(e);
 		}
 	}
+
+	const columns = useMemo<GridColDef[]>(
+		() => [
+			{ field: "id", headerName: "ID" },
+			{ field: "name", headerName: "Producto" },
+			{
+				field: "barcode",
+				headerName: "Codigo de barras",
+				width: 150,
+			},
+			{
+				field: "price",
+				headerName: "Precio",
+				valueGetter: (_value, row) => `${row.price} $`,
+			},
+			{
+				field: "description",
+				headerName: "Descripción",
+				width: 300,
+			},
+		],
+		[],
+	);
+
+	const handleDeleteClick = useCallback((id: number) => console.log(id), []);
 
 	return (
 		<AuthenticatedLayout
@@ -46,40 +73,24 @@ export default function Products({ products }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<DataTable<Item>
-								columns={[
-									{ field: "id", headerName: "ID" },
-									{ field: "name", headerName: "Producto" },
-									{
-										field: "barcode",
-										headerName: "Codigo de barras",
-										width: 150,
-									},
-									{
-										field: "price",
-										headerName: "Precio",
-										valueGetter: (_value, row) => `${row.price} $`,
-									},
-									{
-										field: "description",
-										headerName: "Descripción",
-										width: 300,
-									},
-								]}
-								response={products}
-								onEdit={{
-									permissions: ["edit products"],
-									hook: (id) => console.log(id),
-								}}
-								onDelete={{
-									permissions: ["delete products"],
-									hook: (id) => setSelect(id),
-								}}
-								onShow={{
-									permissions: ["show products"],
-									hook: (id) => console.log(id),
-								}}
-							/>
+							<Suspense fallback={<div>Esperando...</div>}>
+								<DataTable
+									columns={columns}
+									response={products}
+									onEdit={{
+										permissions: ["edit products"],
+										hook: (id) => console.log(id),
+									}}
+									onDelete={{
+										permissions: ["delete products"],
+										hook: handleDeleteClick,
+									}}
+									onShow={{
+										permissions: ["show products"],
+										hook: (id) => console.log(id),
+									}}
+								/>
+							</Suspense>
 						</div>
 					</div>
 				</div>
