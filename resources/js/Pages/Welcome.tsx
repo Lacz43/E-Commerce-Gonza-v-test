@@ -1,12 +1,29 @@
 // import { router } from "@inertiajs/react";
 import Ecommerce from "@/Layouts/EcommerceLayout";
-import InfiniteScroll from "@/Components/InfiniteScroll";
 import ProductCard from "@/Components/ProductCard";
 import "../../css/welcome.css";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import InputProductSearch from "@/Components/InputProductSearch";
-import LoadingProductCard from "@/Components/LoadingProductCard";
 import shoppingCart from "@/shoppingCart";
+import type {
+	InfiniteScrollProps,
+	GenericInfiniteScroll,
+} from "@/Components/InfiniteScroll";
+
+// Importar InfiniteScroll de manera dinamica
+const _InfiniteScroll = lazy(
+	() => import("@/Components/InfiniteScroll"),
+) as unknown as GenericInfiniteScroll; // definir tipo unknown y usar GenericInfiniteScroll
+
+// Importar LoadingProductCard de manera dinamica
+const LoadingProductCard = lazy(
+	() => import("@/Components/LoadingProductCard"),
+);
+
+// Wrapper de InfiniteScroll para que sea más fácil de usar con los props
+function InfiniteScroll<T, K extends string>(props: InfiniteScrollProps<T, K>) {
+	return <_InfiniteScroll {...props} />;
+}
 
 export default function Welcome() {
 	function addToCart(item: Item) {
@@ -42,34 +59,36 @@ export default function Welcome() {
 
 			<div className="content mx-5 sm:mx-0 w-full">
 				<InputProductSearch className="mx-auto bg-white" />
-				<InfiniteScroll<Item, "products">
-					url={route("products")}
-					className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
-					transformResponse={(res) => res.products}
-				>
-					{{
-						card: (item) => (
-							<ProductCard
-								key={item.id}
-								item={item}
-								className=""
-								addCart={(select) => addToCart(select)}
-							/>
-						),
-						loading: (
-							<>
-								{[...Array(8).fill(null)].map((_, i) => (
-									<LoadingProductCard
-										key={`card-${
-											// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-											i
-										}`}
-									/>
-								))}
-							</>
-						),
-					}}
-				</InfiniteScroll>
+				<Suspense>
+					<InfiniteScroll<Item, "products">
+						url={route("products")}
+						className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
+						transformResponse={(res) => res.products}
+					>
+						{{
+							card: (item) => (
+								<ProductCard
+									key={item.id}
+									item={item}
+									className=""
+									addCart={(select) => addToCart(select)}
+								/>
+							),
+							loading: (
+								<>
+									{[...Array(8).fill(null)].map((_, i) => (
+										<LoadingProductCard
+											key={`card-${
+												// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+												i
+											}`}
+										/>
+									))}
+								</>
+							),
+						}}
+					</InfiniteScroll>
+				</Suspense>
 			</div>
 		</Ecommerce>
 	);
