@@ -1,8 +1,10 @@
-import DataTable from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
+import { lazy, Suspense } from "react";
 import { Button } from "@mui/material";
+
+const DataTable = lazy(() => import("@/Components/DataTable"));
 
 type Props = {
 	categories: paginateResponse<Item>;
@@ -15,7 +17,7 @@ export default function Products({ categories }: Props) {
 		<AuthenticatedLayout
 			header={
 				<h2 className="text-xl font-semibold leading-tight text-gray-800">
-				    Categoria de Productos
+					Categoria de Productos
 				</h2>
 			}
 		>
@@ -34,13 +36,15 @@ export default function Products({ categories }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<DataTable<Item>
-								columns={[
-									{ field: "id", headerName: "ID" },
-									{ field: "name", headerName: "Categoria" },
-								]}
-								response={categories}
-							/>
+							<Suspense>
+								<DataTable
+									columns={[
+										{ field: "id", headerName: "ID" },
+										{ field: "name", headerName: "Categoria" },
+									]}
+									response={categories}
+								/>
+							</Suspense>
 						</div>
 					</div>
 				</div>
