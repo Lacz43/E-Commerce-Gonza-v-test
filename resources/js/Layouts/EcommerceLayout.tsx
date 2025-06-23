@@ -1,8 +1,9 @@
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Navbar from "@/Components/Navbar";
 import { Link } from "@inertiajs/react";
-import { useState, type PropsWithChildren } from "react";
-import CartModal from "@/Components/CartModal";
+import { useState, lazy, Suspense, type PropsWithChildren } from "react";
+
+const CartModal = lazy(() => import("@/Components/CartModal"));
 
 export default function Ecommerce({ children }: PropsWithChildren) {
 	const [open, setOpen] = useState(false);
@@ -18,7 +19,9 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 
 			{children}
 
-			<CartModal show={open} setOpen={setOpen} />
+			<Suspense>
+				<CartModal show={open} setOpen={setOpen} />
+			</Suspense>
 		</div>
 	);
 }
