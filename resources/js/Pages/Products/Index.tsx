@@ -2,10 +2,10 @@ import { Head, Link } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
-import PermissionGate from "@/Components/PermissionGate";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import routerAsync from "@/Hook/routerAsync";
 import type { tableProps } from "@/Components/DataTable";
+import PermissionGate from "@/Components/PermissionGate";
+import routerAsync from "@/Hook/routerAsync";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalDelete = lazy(() => import("@/Components/ModalDelete"));
@@ -47,10 +47,13 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 export default function Products({ products }: Props) {
 	console.log(products);
 	const [selected, setSelect] = useState<null | number>(null);
+	const [loading, setLoading] = useState(false);
 
 	async function HandleDelete(id: number) {
+		setLoading(true);
 		try {
 			routerAsync("delete", route("products.delete", id));
+			setLoading(false);
 		} catch (e) {
 			console.log(e);
 		}
@@ -120,6 +123,7 @@ export default function Products({ products }: Props) {
 					show={selected !== null}
 					setOpen={() => setSelect(null)}
 					id={selected}
+					loading={loading}
 					title={products.data.find((f) => f.id === selected)?.name ?? ""}
 					onDeleteConfirm={HandleDelete}
 				/>
