@@ -48,7 +48,7 @@ export default function Products({ products }: Props) {
 		[],
 	);
 
-	const handleDeleteClick = useCallback((id: number) => console.log(id), []);
+	const handleDeleteClick = useCallback((id: number) => setSelect(id), []);
 
 	return (
 		<AuthenticatedLayout
@@ -95,13 +95,15 @@ export default function Products({ products }: Props) {
 					</div>
 				</div>
 			</div>
-			<ModalDelete
-				show={selected !== null}
-				setOpen={() => setSelect(null)}
-				id={selected}
-				title={products.data.find((f) => f.id === selected)?.name ?? ""}
-				onDeleteConfirm={(id) => HandleDelete(id)}
-			/>
+			<Suspense>
+				<ModalDelete
+					show={selected !== null}
+					setOpen={() => setSelect(null)}
+					id={selected}
+					title={products.data.find((f) => f.id === selected)?.name ?? ""}
+					onDeleteConfirm={(id) => HandleDelete(id)}
+				/>
+			</Suspense>
 		</AuthenticatedLayout>
 	);
 }
