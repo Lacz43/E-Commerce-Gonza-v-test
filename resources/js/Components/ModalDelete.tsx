@@ -7,6 +7,7 @@ type Props = {
 	show: boolean;
 	title: string;
 	id: number | null;
+	loading?: boolean;
 	onDeleteConfirm: (id: number) => void;
 	setOpen: () => void;
 };
@@ -16,6 +17,7 @@ export default function ModalDelete({
 	setOpen,
 	title,
 	id,
+	loading,
 	onDeleteConfirm,
 }: Props) {
 	return (
@@ -44,6 +46,7 @@ export default function ModalDelete({
 							variant="contained"
 							color="error"
 							endIcon={<DeleteIcon />}
+							loading={loading}
 							onClick={() => {
 								if (id !== null) onDeleteConfirm(id);
 							}}
