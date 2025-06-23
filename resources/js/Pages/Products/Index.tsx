@@ -1,10 +1,11 @@
 import { Head, Link } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import { lazy, Suspense, useCallback, useMemo, useState } from "react";
+import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import routerAsync from "@/Hook/routerAsync";
+import type { tableProps } from "@/Components/DataTable";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalDelete = lazy(() => import("@/Components/ModalDelete"));
@@ -13,18 +14,7 @@ type Props = {
 	products: paginateResponse<Item>;
 };
 
-export default function Products({ products }: Props) {
-	console.log(products);
-	const [selected, setSelect] = useState<null | number>(null);
-
-	async function HandleDelete(id: number) {
-		try {
-			routerAsync("delete", route("products.delete", id));
-		} catch (e) {
-			console.log(e);
-		}
-	}
-
+const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 	const columns = useMemo<GridColDef[]>(
 		() => [
 			{ field: "id", headerName: "ID" },
@@ -47,8 +37,50 @@ export default function Products({ products }: Props) {
 		],
 		[],
 	);
+	return (
+		<Suspense fallback={<div>Esperando...</div>}>
+			<DataTable {...props} columns={columns} />
+		</Suspense>
+	);
+});
+
+export default function Products({ products }: Props) {
+	console.log(products);
+	const [selected, setSelect] = useState<null | number>(null);
+
+	async function HandleDelete(id: number) {
+		try {
+			routerAsync("delete", route("products.delete", id));
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
 	const handleDeleteClick = useCallback((id: number) => setSelect(id), []);
+
+	const onEditConfig = useMemo(
+		() => ({
+			permissions: ["edit products"],
+			hook: (id: number) => console.log("Edit:", id),
+		}),
+		[],
+	);
+
+	const onShowConfig = useMemo(
+		() => ({
+			permissions: ["show products"],
+			hook: (id: number) => console.log("Show:", id),
+		}),
+		[],
+	);
+
+	const onDeleteConfig = useMemo(
+		() => ({
+			permissions: ["delete products"],
+			hook: handleDeleteClick,
+		}),
+		[handleDeleteClick],
+	);
 
 	return (
 		<AuthenticatedLayout
@@ -73,24 +105,12 @@ export default function Products({ products }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<Suspense fallback={<div>Esperando...</div>}>
-								<DataTable
-									columns={columns}
-									response={products}
-									onEdit={{
-										permissions: ["edit products"],
-										hook: (id) => console.log(id),
-									}}
-									onDelete={{
-										permissions: ["delete products"],
-										hook: handleDeleteClick,
-									}}
-									onShow={{
-										permissions: ["show products"],
-										hook: (id) => console.log(id),
-									}}
-								/>
-							</Suspense>
+							<WrapperDataTable
+								response={products}
+								onEdit={onEditConfig}
+								onDelete={onDeleteConfig}
+								onShow={onShowConfig}
+							/>
 						</div>
 					</div>
 				</div>
@@ -101,7 +121,7 @@ export default function Products({ products }: Props) {
 					setOpen={() => setSelect(null)}
 					id={selected}
 					title={products.data.find((f) => f.id === selected)?.name ?? ""}
-					onDeleteConfirm={(id) => HandleDelete(id)}
+					onDeleteConfirm={HandleDelete}
 				/>
 			</Suspense>
 		</AuthenticatedLayout>
