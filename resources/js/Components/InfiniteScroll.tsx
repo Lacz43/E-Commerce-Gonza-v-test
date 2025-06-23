@@ -1,32 +1,16 @@
-import {
-	useEffect,
-	useState,
-	type ReactNode,
-	type HTMLAttributes,
-	useCallback,
-} from "react";
+import { useEffect, useState, type ReactNode, useCallback } from "react";
 import axios from "axios";
 
 // PaginationResponse: tipo object que contiene la respuesta de la api
 // T: tipo de los items
 // K: tipo string con el nombre del objeto de la api
 // se usa Record porque la api devuelve un objeto con una propiedad que es un objeto inderminado con la informacion de la pagina
-type PaginationResponse<T, K extends string> = Record<
-	K,
-	{
-		data: T[];
-		current_page: number;
-		last_page: number;
-	}
->;
+type PaginationResponse<T, K extends string> = Record<K, paginateResponse<T>>;
 
 // Props: tipo object que contiene las propiedades del componente
-// se usa Omit para ignorar las propiedades que no son necesarias
-type Props<T, K extends string> = Omit<
-	HTMLAttributes<HTMLDivElement>,
-	"children"
-> & {
+export type InfiniteScrollProps<T, K extends string> = {
 	url: string;
+	className?: string;
 	transformResponse: (
 		data: PaginationResponse<T, K>,
 	) => PaginationResponse<T, K>[K]; //[K] es para que se pueda usar el nombre del objeto de la api
@@ -35,6 +19,11 @@ type Props<T, K extends string> = Omit<
 		loading: ReactNode;
 	};
 };
+
+// GenericInfiniteScroll: Tipo generico de InfiniteScrollProps para defenir elementos react
+export type GenericInfiniteScroll = <T, K extends string>(
+	props: InfiniteScrollProps<T, K>,
+) => React.ReactElement | null;
 
 // url: tipo string que contiene la url de la api
 // children: tipo function que recibe un array de items y devuelve un ReactNode
@@ -46,7 +35,7 @@ export default function InfiniteScroll<T, K extends string>({
 	transformResponse,
 	className,
 	...props
-}: Props<T, K>) {
+}: InfiniteScrollProps<T, K>) {
 	const [items, setItems] = useState<T[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
@@ -98,7 +87,7 @@ export default function InfiniteScroll<T, K extends string>({
 			) : (
 				<div className="text-center text-gray-500">No hay productos</div>
 			)}
-            {loading && children.loading}
+			{loading && children.loading}
 		</div>
 	);
 }
