@@ -1,10 +1,10 @@
 import { Head, Link } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
+import axios from "axios";
+import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import type { tableProps } from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
-import routerAsync from "@/Hook/routerAsync";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
@@ -45,15 +45,24 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 });
 
 export default function Products({ products }: Props) {
-	console.log(products);
+	const [product, setProduct] = useState(products);
 	const [selected, setSelect] = useState<null | number>(null);
 	const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setProduct(products);
+    }, [products]);
 
 	async function HandleDelete(id: number) {
 		setLoading(true);
 		try {
-			routerAsync("delete", route("products.delete", id));
+			axios.delete(route("products.delete", id));
 			setLoading(false);
+			setSelect(null);
+			setProduct((prev) => ({
+				...prev,
+				data: prev.data.filter((item) => item.id !== id),
+			}));
 		} catch (e) {
 			console.log(e);
 		}
@@ -109,7 +118,7 @@ export default function Products({ products }: Props) {
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
 							<WrapperDataTable
-								response={products}
+								response={product}
 								onEdit={onEditConfig}
 								onDelete={onDeleteConfig}
 								onShow={onShowConfig}
