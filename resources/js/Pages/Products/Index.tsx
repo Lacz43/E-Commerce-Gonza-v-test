@@ -8,7 +8,7 @@ import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
-const ModalDelete = lazy(() => import("@/Components/ModalDelete"));
+const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
 
 type Props = {
 	products: paginateResponse<Item>;
