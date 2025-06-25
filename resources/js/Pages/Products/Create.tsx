@@ -21,8 +21,6 @@ interface FormStruture extends Item {
 }
 
 export default function Products({ products }: Props) {
-	const [newImage, addNewImage] = useState<File[]>([]);
-
 	const {
 		register,
 		handleSubmit,
@@ -129,7 +127,7 @@ export default function Products({ products }: Props) {
 											control={control}
 											permissions={["create product_categories"]}
 											url={route("products.categories")}
-											label="Cateria"
+											label="Categoria"
 											name="category"
 										/>
 
@@ -159,25 +157,31 @@ export default function Products({ products }: Props) {
 										name="images"
 										control={control}
 										rules={{ required: true }}
-										render={({ fieldState: { error } }) => (
-											<>
-												{error ? (
-													<FormHelperText className="red text-center">
-														Es necesario una imagen
-													</FormHelperText>
-												) : null}
-											</>
-										)}
-									/>
-									<ImageUrlInput
-										imageResponse={(image) => addNewImage([image])}
-									/>
-									<ImageUpload
-										appendImages={newImage}
-										onImagesSelected={(data) => setValue("images", data)}
-										onMainImageSelected={(index) =>
-											setValue("image_used", index)
-										}
+										render={({
+											field: { onChange },
+											fieldState: { error },
+										}) => {
+											const [newImage, addNewImage] = useState<File[]>([]);
+											return (
+												<>
+													{error && (
+														<FormHelperText className="red text-center">
+															Es necesario una imagen
+														</FormHelperText>
+													)}
+													<ImageUrlInput
+														imageResponse={(image) => addNewImage([image])}
+													/>
+													<ImageUpload
+														appendImages={newImage}
+														onImagesSelected={(data) => onChange(data)}
+														onMainImageSelected={(index) =>
+															setValue("image_used", index)
+														}
+													/>
+												</>
+											);
+										}}
 									/>
 								</div>
 							</div>
