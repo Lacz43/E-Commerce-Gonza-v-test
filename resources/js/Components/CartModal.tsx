@@ -1,6 +1,6 @@
-import Modal from "@/Components/Modal";
+import ModalStyled from "@/Components/Modals/ModalStyled";
 import ProductsInCar from "@/Components/ProductsInCar";
-import { Close, ShoppingCart, WhatsApp } from "@mui/icons-material";
+import { ShoppingCart, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import shoppingCart from "@/shoppingCart";
 import { useEffect, useState } from "react";
@@ -8,7 +8,10 @@ import { useEffect, useState } from "react";
 export default function CartModal({
 	show,
 	setOpen,
-}: { show: boolean; setOpen: (open: boolean) => void }) {
+}: {
+	show: boolean;
+	setOpen: (open: boolean) => void;
+}) {
 	const [items, setItems] = useState<Item[]>([]);
 
 	function emtyCart() {
@@ -32,9 +35,10 @@ export default function CartModal({
 		return () => removeEventListener("addCart", () => {});
 	}, []);
 
-	function sendMessage() { // mover a otro componente
+	function sendMessage() {
+		// mover a otro componente
 
-        // construir el mensaje para enviar por whatsapp
+		// construir el mensaje para enviar por whatsapp
 		let url = `https://wa.me/${import.meta.env.VITE_COMPANY_PHONE}`;
 
 		const cart = new shoppingCart();
@@ -49,31 +53,27 @@ export default function CartModal({
 	}
 
 	return (
-		<Modal show={show} onClose={() => setOpen(false)} maxWidth="2xl">
-			<div className="max-h-dvh flex flex-col">
-				<div className="border-b border-b-gray-300 py-2 px-4 text-xl bg-gray-100 flex">
+		<ModalStyled
+			show={show}
+			onClose={() => setOpen(false)}
+			maxWidth="2xl"
+			header={
+				<>
 					<h2 className="font-bold">Carrito</h2>
-					<span className="mx-auto">
+					<span>
 						{items
 							.reduce(
 								(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
 								0,
 							)
-							.toFixed(2)} $
+							.toFixed(2)}{" "}
+						$
 					</span>
-					<button
-						type="button"
-						onClick={() => setOpen(false)}
-					>
-						<Close />
-					</button>
-				</div>
-				<div className="p-3 overflow-x-hidden overflow-y-scroll">
-					{items.map((it) => (
-						<ProductsInCar item={it} key={it.id} />
-					))}
-				</div>
-				<div className="border-t border-t-gray-300 py-2 px-4 bg-gray-100 md:flex">
+				</>
+			}
+			body={items.map((it) => <ProductsInCar item={it} key={it.id} />)}
+			footer={
+				<>
 					<Button
 						size="medium"
 						color="info"
@@ -110,8 +110,8 @@ export default function CartModal({
 							<b>Vaciar</b>
 						</Button>
 					</div>
-				</div>
-			</div>
-		</Modal>
+				</>
+			}
+		/>
 	);
 }
