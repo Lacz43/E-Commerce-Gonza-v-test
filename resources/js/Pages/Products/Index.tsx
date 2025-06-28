@@ -1,8 +1,16 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	lazy,
+	memo,
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import type { tableProps } from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -49,9 +57,9 @@ export default function Products({ products }: Props) {
 	const [selected, setSelect] = useState<null | number>(null);
 	const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setProduct(products);
-    }, [products]);
+	useEffect(() => {
+		setProduct(products);
+	}, [products]);
 
 	async function HandleDelete(id: number) {
 		setLoading(true);
@@ -73,7 +81,7 @@ export default function Products({ products }: Props) {
 	const onEditConfig = useMemo(
 		() => ({
 			permissions: ["edit products"],
-			hook: (id: number) => console.log("Edit:", id),
+			hook: (id: number) => router.visit(route("products.edit", id)),
 		}),
 		[],
 	);
