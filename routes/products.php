@@ -13,6 +13,11 @@ Route::middleware('auth', 'permission:create products')->group(function () {
     Route::post('/products/storage', [ProductsController::class, 'storage'])->name('products.storage');
 });
 
+Route::middleware('auth', 'permission:edit products')->group(function () {
+    Route::get('/products/edit/{product}', [ProductsController::class, 'edit'])->name('products.edit');
+    //Route::patch('/products/update/{product}', [ProductsController::class, 'update'])->name('products.update');
+});
+
 Route::middleware('auth', 'permission:show product_categories')
     ->get('/products/categories/index', [ProductCategoryController::class, 'index'])
     ->name('products.categories.index');
