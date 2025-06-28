@@ -1,5 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { prepareFiles } from "@/utils";
@@ -22,6 +22,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 	const [images, setImages] = useState<File[]>([]);
 	const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	// Ref para memorizar el appendImages “anterior”
 	const prevAppendRef = useRef<File[]>([]);
@@ -29,10 +30,12 @@ const ImageUpload: FC<ImageUploadProps> = ({
 	useEffect(() => {
 		if (setImagesInit && !images.length) {
 			const init = async () => {
+				setLoading(true);
 				try {
 					// Suponiendo que prepareFiles es una función que procesa las imágenes
 					const files = await prepareFiles(setImagesInit); // Pasamos setImagesInit directamente
 					setImages(files);
+					setLoading(false);
 
 					// Establecemos el índice principal si es necesario
 					if (defaultImage) {
@@ -158,6 +161,12 @@ const ImageUpload: FC<ImageUploadProps> = ({
 			{error && (
 				<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
 					{error}
+				</div>
+			)}
+
+			{loading && (
+				<div className="flex justify-center">
+					<CircularProgress color="inherit" size={70} />
 				</div>
 			)}
 
