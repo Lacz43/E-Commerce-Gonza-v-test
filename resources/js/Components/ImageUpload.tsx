@@ -1,18 +1,21 @@
-import { useState, useCallback, type FC, useEffect, useRef } from "react";
-import { useDropzone } from "react-dropzone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@mui/material";
+import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { prepareFiles } from "@/utils";
 
 interface ImageUploadProps {
 	onImagesSelected?: (images: File[]) => void;
 	onMainImageSelected?: (image: number | null) => void;
-	setImagesInit?: File[];
+	setImagesInit?: string[];
+	defaultImage?: number;
 	appendImages?: File[];
 }
 
 const ImageUpload: FC<ImageUploadProps> = ({
 	onImagesSelected,
 	onMainImageSelected,
+	defaultImage,
 	setImagesInit,
 	appendImages,
 }) => {
@@ -23,10 +26,26 @@ const ImageUpload: FC<ImageUploadProps> = ({
 	// Ref para memorizar el appendImages “anterior”
 	const prevAppendRef = useRef<File[]>([]);
 
-	if (setImagesInit) {
-		setImages(setImagesInit);
-		if (mainImageIndex === null) setMainImageIndex(0);
-	}
+	useEffect(() => {
+		if (setImagesInit && !images.length) {
+			const init = async () => {
+				try {
+					// Suponiendo que prepareFiles es una función que procesa las imágenes
+					const files = await prepareFiles(setImagesInit); // Pasamos setImagesInit directamente
+					setImages(files);
+
+					// Establecemos el índice principal si es necesario
+					if (defaultImage) {
+						setMainImageIndex(defaultImage);
+					} else setMainImageIndex(0);
+				} catch (error) {
+					console.error("Error al inicializar imágenes:", error);
+				}
+			};
+
+			init();
+		}
+	}, [setImagesInit]); // Asegúrate de incluir setImagesInit como dependencia
 
 	// Sólo añadir si appendImages cambió (y no es el mismo array vacío, por ejemplo)
 	useEffect(() => {
@@ -73,7 +92,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
 		[mainImageIndex],
 	);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (onImagesSelected) {
 			onImagesSelected(images);
@@ -163,9 +181,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
 						{/* Miniaturas */}
 						{images.map((image, index) => (
-							// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 							<div
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 								key={index}
 								className={`relative group cursor-pointer ${index === mainImageIndex ? "opacity-50" : ""}`}
 								onClick={() => handleImageSelect(index)}
