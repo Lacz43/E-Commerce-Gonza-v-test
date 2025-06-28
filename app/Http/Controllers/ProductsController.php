@@ -83,7 +83,7 @@ class ProductsController extends Controller
 
     public function edit(Products $product)
     {
-        $product = Products::with(['images', 'brand.brand'])->find($product->id);
+        $product = Products::with(['images', 'brand.brand', 'category'])->find($product->id);
         Debugbar::info($product);
         return Inertia::render('Products/Edit', ['product' => $product]);
     }

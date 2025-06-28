@@ -31,6 +31,11 @@ class Products extends Model
         return $this->hasOne(ProductBrand::class, 'product_id', 'id');
     }
 
+    public function category(): HasOne
+    {
+        return $this->hasOne(ProductCategory::class, 'id', 'category_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnlyDirty();
