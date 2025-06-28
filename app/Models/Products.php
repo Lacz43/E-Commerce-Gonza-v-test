@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -26,9 +27,9 @@ class Products extends Model
         return $this->hasOne(ProductImage::class, 'product_id', 'id')->where('default', true);
     }
 
-    public function brand(): HasOne
+    public function brand(): HasOneThrough
     {
-        return $this->hasOne(ProductBrand::class, 'product_id', 'id');
+        return $this->hasOneThrough(Brand::class, ProductBrand::class, 'product_id', 'id', 'id', 'brand_id');
     }
 
     public function category(): HasOne
