@@ -40,6 +40,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
 					// Establecemos el índice principal si es necesario
 					if (defaultImage) {
 						setMainImageIndex(defaultImage);
+						onMainImageSelected?.(defaultImage);
 					} else setMainImageIndex(0);
 				} catch (error) {
 					console.error("Error al inicializar imágenes:", error);
