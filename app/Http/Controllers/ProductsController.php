@@ -123,9 +123,7 @@ class ProductsController extends Controller
             'description' => $data['description'],
         ]);
 
-        ProductBrand::updateOrCreate([
-            'product_id' => $product->id
-        ], ['brand_id' => $brand]);
+        ProductBrand::where('product_id', $product->id)->update(['brand_id' => $brand]);
         ProductImage::where('product_id', $product->id)->delete();
         Storage::disk('public')->deleteDirectory('storage/products/' . $product->id);
         ProductImage::saveImages($product->id, $request->file('images'), $data['image_used'] ?? null);
