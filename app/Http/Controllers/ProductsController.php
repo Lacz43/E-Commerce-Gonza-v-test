@@ -10,6 +10,7 @@ use App\Models\Products;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -86,6 +87,50 @@ class ProductsController extends Controller
         $product = Products::with(['images', 'brand', 'category'])->find($product->id);
         Debugbar::info($product);
         return Inertia::render('Products/Edit', ['product' => $product]);
+    }
+
+    public function update(Products $product, Request $request)
+    {
+        Debugbar::info($request, $product);
+
+        $data = $request->validate([
+            'name' => 'required|string',
+            'barcode' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'category' => 'required|string',
+            'brand' => 'required|string',
+            'description' => 'nullable|string',
+            'image_used' => 'nullable|numeric',
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $category = ProductCategory::createOrReadCategory($data['category']);
+        if (!$category) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear categorias.']);
+        }
+
+        $brand = Brand::createOrReadBrand($data['brand']);
+        if (!$brand) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
+        }
+
+        $product->update([
+            'name' => $data['name'],
+            'barcode' => $data['barcode'],
+            'price' => $data['price'],
+            'category_id' => $category,
+            'description' => $data['description'],
+        ]);
+
+        ProductBrand::updateOrCreate([
+            'product_id' => $product->id
+        ], ['brand_id' => $brand]);
+        ProductImage::where('product_id', $product->id)->delete();
+        Storage::disk('public')->deleteDirectory('storage/products/' . $product->id);
+        ProductImage::saveImages($product->id, $request->file('images'), $data['image_used'] ?? null);
+
+        return redirect()->route('products.index');
     }
 
     /**
