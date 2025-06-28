@@ -11,13 +11,18 @@ type Props = {
 export default function Products({ product }: Props) {
 	console.log(product);
 
-	const initialValues = product;
+	const initialValues = {
+		...product,
+		brand: product.brand.name,
+		category: product.category.name,
+	};
 
 	async function onSubmit(data: FormStruture) {
 		try {
-			const formData = new FormData();
-			toFormData(data, formData);
-			await axios.post(route("products.create"), formData);
+			const formData = toFormData(data, new FormData());
+
+			formData.append("_method", "PATCH");
+			await axios.post(route("products.update", data.id), formData);
 		} catch (e) {
 			console.log(e);
 		}
