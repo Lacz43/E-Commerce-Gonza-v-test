@@ -81,6 +81,13 @@ class ProductsController extends Controller
         return json_encode(["test" => "test"]);
     }
 
+    public function edit(Products $product)
+    {
+        $product = Products::with(['images', 'brand.brand'])->find($product->id);
+        Debugbar::info($product);
+        return Inertia::render('Products/Edit', ['product' => $product]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
