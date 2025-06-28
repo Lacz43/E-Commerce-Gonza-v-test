@@ -29,8 +29,8 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 		defaultValues: InitialValues ?? {},
 	});
 
-	const validateBarcode = (value: string) => {
-		const code = value.trim();
+	const validateBarcode = (value: string | undefined) => {
+		const code = String(value || "").trim();
 		if (!/^\d+$/.test(code)) {
 			return "El código debe contener solo números.";
 		}
