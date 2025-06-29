@@ -73,7 +73,7 @@ class ProductsController extends Controller
 
     public function edit(Products $product)
     {
-        $product = Products::with(['images', 'brand', 'category'])->find($product->id);
+        $product = $product->with(['images', 'brand', 'category'])->first();
         Debugbar::info($product);
         return Inertia::render('Products/Edit', ['product' => $product]);
     }
@@ -114,7 +114,7 @@ class ProductsController extends Controller
     public function destroy(Products $product)
     {
         Debugbar::info($product);
-        $product = Products::destroy($product->id);
+        $product->delete();
         return redirect()->route('products.index');
     }
 
