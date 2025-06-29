@@ -78,7 +78,7 @@ class ProductsController extends Controller
         return Inertia::render('Products/Edit', ['product' => $product]);
     }
 
-    public function update(ProductRequest $product, Request $request)
+    public function update(Products $product, ProductRequest $request)
     {
         Debugbar::info($request, $product);
 
