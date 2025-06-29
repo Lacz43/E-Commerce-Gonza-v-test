@@ -11,11 +11,7 @@ type Props = {
 export default function Products({ product }: Props) {
 	console.log(product);
 
-	const initialValues = {
-		...product,
-		brand: product.brand.name,
-		category: product.category.name,
-	};
+	const initialValues = product;
 
 	async function onSubmit(data: FormStruture) {
 		try {
