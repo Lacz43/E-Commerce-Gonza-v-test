@@ -2,14 +2,23 @@ import { Head } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import axios, { toFormData } from "axios";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import Form, {type FormStruture } from "./Partials/Form";
+import Form, { type FormStruture } from "./Partials/Form";
 
-export default function Products() {
+type Props = {
+	product: FormStruture;
+};
+
+export default function Products({ product }: Props) {
+	console.log(product);
+
+	const initialValues = product;
+
 	async function onSubmit(data: FormStruture) {
 		try {
-			const formData = new FormData();
-			toFormData(data, formData);
-			await axios.post(route("products.storage"), formData);
+			const formData = toFormData(data, new FormData());
+
+			formData.append("_method", "PATCH");
+			await axios.post(route("products.update", data.id), formData);
 		} catch (e) {
 			console.log(e);
 		}
@@ -23,7 +32,7 @@ export default function Products() {
 				</h2>
 			}
 		>
-			<Head title="Registrar productos" />
+			<Head title="Editar productos" />
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -33,7 +42,7 @@ export default function Products() {
 						</Button>
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
-						<Form onSubmit={onSubmit} />
+						<Form onSubmit={onSubmit} InitialValues={initialValues} />
 					</div>
 				</div>
 			</div>

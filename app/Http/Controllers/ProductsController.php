@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
@@ -10,6 +11,7 @@ use App\Models\Products;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -37,38 +39,26 @@ class ProductsController extends Controller
         return Inertia::render('Products/Create');
     }
 
-    public function storage(Request $request)
+    public function storage(ProductRequest $request)
     {
         Debugbar::info($request);
 
-        $data = $request->validate([
-            'name' => 'required|string',
-            'barcode' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'category' => 'required|string',
-            'brand' => 'required|string',
-            'description' => 'nullable|string',
-            'image_used' => 'nullable|numeric',
-            'images' => 'required|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $category = ProductCategory::createOrReadCategory($data['category']);
+        $category = ProductCategory::createOrReadCategory($request['category']);
         if (!$category) {
             return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear categorias.']);
         }
 
-        $brand = Brand::createOrReadBrand($data['brand']);
+        $brand = Brand::createOrReadBrand($request['brand']);
         if (!$brand) {
             return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
         }
 
         $product = Products::create([
-            'name' => $data['name'],
-            'barcode' => $data['barcode'],
-            'price' => $data['price'],
+            'name' => $request['name'],
+            'barcode' => $request['barcode'],
+            'price' => $request['price'],
             'category_id' => $category,
-            'description' => $data['description'],
+            'description' => $request['description'],
             'created_by' => Auth::user()->id,
         ]);
 
@@ -81,13 +71,50 @@ class ProductsController extends Controller
         return json_encode(["test" => "test"]);
     }
 
+    public function edit(Products $product)
+    {
+        $product = $product->with(['images', 'brand', 'category'])->first();
+        Debugbar::info($product);
+        return Inertia::render('Products/Edit', ['product' => $product]);
+    }
+
+    public function update(Products $product, ProductRequest $request)
+    {
+        Debugbar::info($request, $product);
+
+        $category = ProductCategory::createOrReadCategory($request['category']);
+        if (!$category) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear categorias.']);
+        }
+
+        $brand = Brand::createOrReadBrand($request['brand']);
+        if (!$brand) {
+            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
+        }
+
+        $product->update([
+            'name' => $request['name'],
+            'barcode' => $request['barcode'],
+            'price' => $request['price'],
+            'category_id' => $category,
+            'description' => $request['description'],
+        ]);
+
+        ProductBrand::where('product_id', $product->id)->update(['brand_id' => $brand]);
+        ProductImage::where('product_id', $product->id)->delete();
+        Storage::disk('public')->deleteDirectory('products/' . $product->id);
+        ProductImage::saveImages($product->id, $request->file('images'), $request['image_used'] ?? null);
+
+        return json_encode(["test" => "test"]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Products $product)
     {
         Debugbar::info($product);
-        $product = Products::destroy($product->id);
+        $product->delete();
         return redirect()->route('products.index');
     }
 

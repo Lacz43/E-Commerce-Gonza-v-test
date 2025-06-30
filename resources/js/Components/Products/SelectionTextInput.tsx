@@ -40,7 +40,6 @@ export default function CategoryInput<T extends FieldValues>({
 		setOpen(false);
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		setLoading(true);
 		(async () => {
@@ -62,74 +61,86 @@ export default function CategoryInput<T extends FieldValues>({
 				required: "Este campo es obligatorio",
 			}}
 			defaultValue={null as PathValue<T, Path<T>>}
-			render={({ field: { onChange, value }, fieldState: { error } }) => (
-				<Autocomplete
-					className={className}
-					open={open}
-					onOpen={handleOpen}
-					onClose={handleClose}
-					value={
-						// Mostrar el objeto Data si el valor es un ID
-						typeof value === "string"
-							? categories.find((cat) => String(cat.id) === value) || value
-							: value || null
-					}
-					isOptionEqualToValue={(option, value) => option.name === value.name}
-					onChange={(_event, newValue) => {
-						if (newValue === null) {
-							onChange(null); // Limpiar el campo
-							return;
-						}
+			render={({ field: { onChange, value }, fieldState: { error } }) => {
+				if (
+					value !== null &&
+					typeof value === "object" &&
+					"name" in value &&
+					typeof value.name === "string"
+				) {
+					// Si todas las condiciones se cumplen, usa `value.name`
+					onChange(value.name);
+				}
 
-						if (typeof newValue === "string") {
-							if (!hasPermission(permissions)) {
-								// Usuario NO tiene permiso → ignoramos la entrada
+				return (
+					<Autocomplete
+						className={className}
+						open={open}
+						onOpen={handleOpen}
+						onClose={handleClose}
+						value={
+							// Mostrar el objeto Data si el valor es un ID
+							typeof value === "string"
+								? categories.find((cat) => String(cat.id) === value) || value
+								: value || null
+						}
+						isOptionEqualToValue={(option, value) => option.name === value.name}
+						onChange={(_event, newValue) => {
+							if (newValue === null) {
+								onChange(null); // Limpiar el campo
 								return;
 							}
+
+							if (typeof newValue === "string") {
+								if (!hasPermission(permissions)) {
+									// Usuario NO tiene permiso → ignoramos la entrada
+									return;
+								}
+							}
+							onChange((newValue as Data).id.toString());
+						}}
+						filterOptions={(opts, params) => {
+							const filtered = opts.filter((o) =>
+								o.name.toLowerCase().includes(params.inputValue.toLowerCase()),
+							);
+							return hasPermission(permissions) ? filtered : filtered; // sin permiso no añadimos la opción extra
+						}}
+						onInputChange={(event, newValue) => {
+							if (!hasPermission(permissions)) return;
+							onChange(event, newValue);
+						}}
+						getOptionLabel={(option) =>
+							typeof option === "string" ? option : option.name
 						}
-						onChange((newValue as Data).id.toString());
-					}}
-					filterOptions={(opts, params) => {
-						const filtered = opts.filter((o) =>
-							o.name.toLowerCase().includes(params.inputValue.toLowerCase()),
-						);
-						return hasPermission(permissions) ? filtered : filtered; // sin permiso no añadimos la opción extra
-					}}
-					onInputChange={(event, newValue) => {
-						if (!hasPermission(permissions)) return;
-						onChange(event, newValue);
-					}}
-					getOptionLabel={(option) =>
-						typeof option === "string" ? option : option.name
-					}
-					options={categories}
-					loading={loading}
-					freeSolo={hasPermission(permissions)}
-					renderInput={(params) => (
-						<TextField
-							{...params}
-							label={label}
-							variant="filled"
-							required
-							error={error !== undefined}
-							helperText={error?.message}
-							slotProps={{
-								input: {
-									...params.InputProps,
-									endAdornment: (
-										<Fragment>
-											{loading ? (
-												<CircularProgress color="inherit" size={20} />
-											) : null}
-											{params.InputProps.endAdornment}
-										</Fragment>
-									),
-								},
-							}}
-						/>
-					)}
-				/>
-			)}
+						options={categories}
+						loading={loading}
+						freeSolo={hasPermission(permissions)}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								label={label}
+								variant="filled"
+								required
+								error={error !== undefined}
+								helperText={error?.message}
+								slotProps={{
+									input: {
+										...params.InputProps,
+										endAdornment: (
+											<Fragment>
+												{loading ? (
+													<CircularProgress color="inherit" size={20} />
+												) : null}
+												{params.InputProps.endAdornment}
+											</Fragment>
+										),
+									},
+								}}
+							/>
+						)}
+					/>
+				);
+			}}
 		/>
 	);
 }

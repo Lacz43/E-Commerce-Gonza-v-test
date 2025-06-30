@@ -1,3 +1,4 @@
+import axios from "axios";
 import { format } from "date-fns";
 
 export const imageUrl = (file: string): string => {
@@ -6,9 +7,37 @@ export const imageUrl = (file: string): string => {
 		new URL(file);
 		return file;
 	} catch (e) {
-		return `./storage/${file}`;
+		return `http://localhost:8000/storage/${file}`;
 	}
 };
+
+export async function prepareFiles(
+	input: string | File | Array<string | File>,
+): Promise<File[]> {
+	const items = Array.isArray(input) ? input : [input];
+
+	return Promise.all(
+		items.map(async (item) => {
+			if (item instanceof File) {
+				return item;
+			}
+
+			// descargamos el blob y extraemos el content-type
+            const response = await axios.get<Blob>(imageUrl(item), { responseType: "blob" });
+			const blob = response.data;
+			const contentType =
+				response.headers["content-type"] ||
+				blob.type ||
+				"application/octet-stream";
+
+			// sacamos el nombre del archivo de la URL
+			const urlParts = item.split("/");
+			const filename = urlParts[urlParts.length - 1] || "file";
+
+			return new File([blob], filename, { type: contentType });
+		}),
+	);
+}
 
 export const formatDate = (date: string): string => {
 	const dateF = new Date(date);
