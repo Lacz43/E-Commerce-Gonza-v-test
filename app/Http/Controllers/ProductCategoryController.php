@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductCategoryRequest;
 use App\Models\ProductCategory;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProductCategoryController extends Controller
@@ -30,6 +32,19 @@ class ProductCategoryController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Categoria eliminada correctamente'
+        ]);
+    }
+
+    public function store(ProductCategoryRequest $request)
+    {
+        ProductCategory::create([
+            'name' => $request->name,
+            'created_by' => Auth::user()->id,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Categoria creada correctamente',
         ]);
     }
 }
