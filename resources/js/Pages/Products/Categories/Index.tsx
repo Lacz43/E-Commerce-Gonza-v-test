@@ -1,17 +1,75 @@
 import { Head, Link } from "@inertiajs/react";
 import { Button } from "@mui/material";
-import { lazy, Suspense } from "react";
+import type { GridColDef } from "@mui/x-data-grid";
+import {
+	lazy,
+	memo,
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
+import type { tableProps } from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import axios from "axios";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
+const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
 
 type Props = {
 	categories: paginateResponse<Item>;
 };
+const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
+	const columns = useMemo<GridColDef[]>(
+		() => [
+			{ field: "id", headerName: "ID" },
+			{ field: "name", headerName: "Categoria" },
+		],
+		[],
+	);
+	return (
+		<Suspense fallback={<div>Esperando...</div>}>
+			<DataTable {...props} columns={columns} />
+		</Suspense>
+	);
+});
 
 export default function Products({ categories }: Props) {
 	console.log(categories);
+	const [category, setCategory] = useState(categories);
+	const [selected, setSelect] = useState<null | number>(null);
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		setCategory(categories);
+	}, [categories]);
+
+	const handleDeleteClick = useCallback((id: number) => setSelect(id), []);
+
+	const onDeleteConfig = useMemo(
+		() => ({
+			permissions: ["delete product_categories"],
+			hook: handleDeleteClick,
+		}),
+		[handleDeleteClick],
+	);
+
+	async function HandleDelete(id: number) {
+		setLoading(true);
+		try {
+			axios.delete(route("products.categories.delete", id));
+			setLoading(false);
+			setSelect(null);
+			setCategory((prev) => ({
+				...prev,
+				data: prev.data.filter((item) => item.id !== id),
+			}));
+		} catch (e) {
+			console.log(e);
+		}
+	}
 
 	return (
 		<AuthenticatedLayout
@@ -36,19 +94,21 @@ export default function Products({ categories }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<Suspense>
-								<DataTable
-									columns={[
-										{ field: "id", headerName: "ID" },
-										{ field: "name", headerName: "Categoria" },
-									]}
-									response={categories}
-								/>
-							</Suspense>
+							<WrapperDataTable response={category} onDelete={onDeleteConfig} />
 						</div>
 					</div>
 				</div>
 			</div>
+			<Suspense>
+				<ModalDelete
+					show={selected !== null}
+					setOpen={() => setSelect(null)}
+					id={selected}
+					loading={loading}
+					title={categories.data.find((f) => f.id === selected)?.name ?? ""}
+					onDeleteConfirm={HandleDelete}
+				/>
+			</Suspense>
 		</AuthenticatedLayout>
 	);
 }
