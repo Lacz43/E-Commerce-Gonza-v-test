@@ -7,8 +7,7 @@ import Form, { type FormStruture } from "./Partials/Form";
 export default function Products() {
 	async function onSubmit(data: FormStruture) {
 		try {
-			const formData = new FormData();
-			toFormData(data, formData);
+			const formData = toFormData(data, new FormData());
 			await axios.post(route("products.storage"), formData);
 		} catch (e) {
 			console.log(e);
