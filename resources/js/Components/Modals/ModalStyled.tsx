@@ -1,6 +1,6 @@
-import Modal, { type ModalProps } from "@/Components/Modals/Modal";
-import { JSX } from "react";
 import { Close } from "@mui/icons-material";
+import type { JSX } from "react";
+import Modal, { type ModalProps } from "@/Components/Modals/Modal";
 
 type Props = {
 	header: JSX.Element;
