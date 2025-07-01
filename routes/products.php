@@ -22,6 +22,10 @@ Route::middleware('auth', 'permission:show product_categories')
     ->get('/products/categories/index', [ProductCategoryController::class, 'index'])
     ->name('products.categories.index');
 
+Route::middleware('auth', 'permission:delete product_categories')
+    ->delete('/products/categories/delete/{category}', [ProductCategoryController::class, 'destroy'])
+    ->name('products.categories.delete');
+
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
 Route::get('/products/categories', [ProductCategoryController::class, 'categories'])->name('products.categories');
 Route::get('/products/brands', [BrandController::class, 'brands'])->name('products.brands');

@@ -23,4 +23,13 @@ class ProductCategoryController extends Controller
             'categories' => $categories
         ]);
     }
+
+    public function destroy(ProductCategory $category)
+    {
+        $category->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Categoria eliminada correctamente'
+        ]);
+    }
 }
