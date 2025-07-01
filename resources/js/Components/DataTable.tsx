@@ -1,14 +1,14 @@
+import { router } from "@inertiajs/react";
+import Paper from "@mui/material/Paper";
 import {
 	DataGrid,
-	type GridPaginationModel,
 	type GridColDef,
+	type GridPaginationModel,
 } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
-import Paper from "@mui/material/Paper";
-import { router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-import CrudButton from "./CrudButton";
 import usePermissions from "@/Hook/usePermissions";
+import CrudButton from "./CrudButton";
 
 type ActionHandler = {
 	permissions?: string[];

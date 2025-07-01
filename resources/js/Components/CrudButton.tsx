@@ -1,7 +1,7 @@
-import { IconButton, Tooltip } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import ShowIcon from "@mui/icons-material/Preview";
+import { IconButton, Tooltip } from "@mui/material";
 
 type Props = {
 	type: "show" | "delete" | "edit";
