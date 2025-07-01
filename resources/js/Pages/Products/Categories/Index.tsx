@@ -1,8 +1,8 @@
+import { Head, Link } from "@inertiajs/react";
+import { Button } from "@mui/material";
+import { lazy, Suspense } from "react";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import { lazy, Suspense } from "react";
-import { Button } from "@mui/material";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
