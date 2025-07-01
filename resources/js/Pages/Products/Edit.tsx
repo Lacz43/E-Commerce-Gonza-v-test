@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
-import { Button } from "@mui/material";
 import axios, { toFormData } from "axios";
+import BackButtom from "@/Components/BackButtom";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Form, { type FormStruture } from "./Partials/Form";
 
@@ -37,9 +37,7 @@ export default function Products({ product }: Props) {
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
 					<div className="flex mb-3 mx-3">
-						<Button variant="contained" size="small">
-							<b>Atras</b>
-						</Button>
+						<BackButtom />
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<Form onSubmit={onSubmit} InitialValues={initialValues} />
