@@ -26,6 +26,10 @@ Route::middleware('auth', 'permission:delete product_categories')
     ->delete('/products/categories/delete/{category}', [ProductCategoryController::class, 'destroy'])
     ->name('products.categories.delete');
 
+Route::middleware('auth', 'permission:create product_categories')
+    ->post('/products/categories/store', [ProductCategoryController::class, 'store'])
+    ->name('products.categories.store');
+
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
 Route::get('/products/categories', [ProductCategoryController::class, 'categories'])->name('products.categories');
 Route::get('/products/brands', [BrandController::class, 'brands'])->name('products.brands');
