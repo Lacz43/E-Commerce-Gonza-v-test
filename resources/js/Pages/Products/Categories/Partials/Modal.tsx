@@ -33,9 +33,9 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 		if (openModal?.id) {
 			setValue("name", openModal?.name ?? "");
 		}
-        if(openModal == null){
-            reset();
-        }
+		if (openModal == null) {
+			reset();
+		}
 	}, [openModal]);
 
 	const onSubmit = async (data: FormStruture) => {
@@ -55,7 +55,7 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 			onClose={() => setOpenModal(null)}
 			header={
 				<h2 className="text-xl font-semibold leading-tight text-gray-800">
-					{openModal?.type === "create" ? "Nuevo" : "Editar"} Categoria
+					{openModal?.type === "create" ? "Nueva" : "Editar"} Categoria
 				</h2>
 			}
 			body={
@@ -81,7 +81,7 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 						color="info"
 						variant="contained"
 					>
-						Cancelar
+						<b>Cancelar</b>
 					</Button>
 					<Button
 						onClick={handleSubmit(onSubmit)}
@@ -90,7 +90,7 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 						variant="contained"
 						loading={isSubmitting}
 					>
-						Guardar
+						<b>Guardar</b>
 					</Button>
 				</div>
 			}
