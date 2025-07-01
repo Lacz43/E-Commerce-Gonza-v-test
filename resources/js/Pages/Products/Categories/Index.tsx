@@ -1,6 +1,7 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
+import axios from "axios";
 import {
 	lazy,
 	memo,
@@ -13,10 +14,11 @@ import {
 import type { tableProps } from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import axios from "axios";
+import type { ModalType } from "./Partials/Modal";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
+const Modal = lazy(() => import("./Partials/Modal"));
 
 type Props = {
 	categories: paginateResponse<Item>;
@@ -40,6 +42,7 @@ export default function Products({ categories }: Props) {
 	console.log(categories);
 	const [category, setCategory] = useState(categories);
 	const [selected, setSelect] = useState<null | number>(null);
+	const [openModal, setOpenModal] = useState<ModalType | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -71,6 +74,19 @@ export default function Products({ categories }: Props) {
 		}
 	}
 
+	const onEditConfig = useMemo(
+		() => ({
+			permissions: ["edit product_categories"],
+			hook: (id: number) =>
+				setOpenModal({
+					type: "edit",
+					name: category.data.find((f) => f.id === id)?.name ?? "",
+					id,
+				}),
+		}),
+		[],
+	);
+
 	return (
 		<AuthenticatedLayout
 			header={
@@ -85,16 +101,18 @@ export default function Products({ categories }: Props) {
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
 					<div className="flex justify-end mb-3 mx-3">
 						<PermissionGate permission={["create product_categories"]}>
-							<Link href={route("products.create")}>
-								<Button variant="contained" size="small">
-									<b>Nuevo</b>
-								</Button>
-							</Link>
+							<Button variant="contained" size="small" onClick={() => setOpenModal({ type: "create" })}>
+								<b>Nuevo</b>
+							</Button>
 						</PermissionGate>
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<WrapperDataTable response={category} onDelete={onDeleteConfig} />
+							<WrapperDataTable
+								response={category}
+								onDelete={onDeleteConfig}
+								onEdit={onEditConfig}
+							/>
 						</div>
 					</div>
 				</div>
@@ -108,6 +126,9 @@ export default function Products({ categories }: Props) {
 					title={categories.data.find((f) => f.id === selected)?.name ?? ""}
 					onDeleteConfirm={HandleDelete}
 				/>
+			</Suspense>
+			<Suspense>
+				<Modal openModal={openModal} setOpenModal={setOpenModal} />
 			</Suspense>
 		</AuthenticatedLayout>
 	);
