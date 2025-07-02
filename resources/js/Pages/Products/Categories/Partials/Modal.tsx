@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import usePermissions from "@/Hook/usePermissions";
 
 export type ModalType = {
 	type: "create" | "edit";
@@ -29,6 +30,8 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 		formState: { errors, isSubmitting },
 	} = useForm<FormStruture>();
 
+	const { hasPermission } = usePermissions();
+
 	useEffect(() => {
 		if (openModal?.id) {
 			setValue("name", openModal?.name ?? "");
@@ -38,9 +41,29 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 		}
 	}, [openModal]);
 
+	const path = () => {
+		if (
+			openModal?.type === "create" &&
+			hasPermission(["create product_categories"])
+		) {
+			return { url: route("products.categories.store"), method: "post" };
+		} else if (
+			openModal?.type === "edit" &&
+			hasPermission(["edit product_categories"])
+		) {
+			return {
+				url: route("products.categories.update", openModal?.id),
+				method: "patch",
+			};
+		}
+		return null;
+	};
+
 	const onSubmit = async (data: FormStruture) => {
 		try {
-			await axios.post(route("products.categories.store"), data);
+			const r = path();
+			if (!r) return;
+			await axios(r.url, { method: r.method, data: data });
 			setOpenModal(null);
 			reset();
 			router.reload();
