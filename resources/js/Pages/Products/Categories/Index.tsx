@@ -1,16 +1,8 @@
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { Button } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import {
-	lazy,
-	memo,
-	Suspense,
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-} from "react";
+import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
 import type { tableProps } from "@/Components/DataTable";
 import PermissionGate from "@/Components/PermissionGate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -40,14 +32,9 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 
 export default function Products({ categories }: Props) {
 	console.log(categories);
-	const [category, setCategory] = useState(categories);
 	const [selected, setSelect] = useState<null | number>(null);
 	const [openModal, setOpenModal] = useState<ModalType | null>(null);
 	const [loading, setLoading] = useState(false);
-
-	useEffect(() => {
-		setCategory(categories);
-	}, [categories]);
 
 	const handleDeleteClick = useCallback((id: number) => setSelect(id), []);
 
@@ -65,10 +52,7 @@ export default function Products({ categories }: Props) {
 			axios.delete(route("products.categories.delete", id));
 			setLoading(false);
 			setSelect(null);
-			setCategory((prev) => ({
-				...prev,
-				data: prev.data.filter((item) => item.id !== id),
-			}));
+			router.reload({ showProgress: true });
 		} catch (e) {
 			console.log(e);
 		}
@@ -77,12 +61,9 @@ export default function Products({ categories }: Props) {
 	const onEditConfig = useMemo(
 		() => ({
 			permissions: ["edit product_categories"],
-			hook: (id: number) =>
-				setOpenModal({
-					type: "edit",
-					name: category.data.find((f) => f.id === id)?.name ?? "",
-					id,
-				}),
+			hook: (id: number) => {
+				setOpenModal({ type: "edit", id });
+			},
 		}),
 		[],
 	);
@@ -101,7 +82,11 @@ export default function Products({ categories }: Props) {
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
 					<div className="flex justify-end mb-3 mx-3">
 						<PermissionGate permission={["create product_categories"]}>
-							<Button variant="contained" size="small" onClick={() => setOpenModal({ type: "create" })}>
+							<Button
+								variant="contained"
+								size="small"
+								onClick={() => setOpenModal({ type: "create" })}
+							>
 								<b>Nuevo</b>
 							</Button>
 						</PermissionGate>
@@ -109,7 +94,7 @@ export default function Products({ categories }: Props) {
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
 							<WrapperDataTable
-								response={category}
+								response={categories}
 								onDelete={onDeleteConfig}
 								onEdit={onEditConfig}
 							/>
@@ -128,7 +113,11 @@ export default function Products({ categories }: Props) {
 				/>
 			</Suspense>
 			<Suspense>
-				<Modal openModal={openModal} setOpenModal={setOpenModal} />
+				<Modal
+					openModal={openModal}
+					setOpenModal={setOpenModal}
+					name={categories.data.find((f) => f.id === openModal?.id)?.name ?? ""}
+				/>
 			</Suspense>
 		</AuthenticatedLayout>
 	);

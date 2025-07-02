@@ -8,20 +8,20 @@ import usePermissions from "@/Hook/usePermissions";
 
 export type ModalType = {
 	type: "create" | "edit";
-	name?: string;
 	id?: number;
 };
 
 type Props = {
 	openModal: ModalType | null;
 	setOpenModal: React.Dispatch<React.SetStateAction<ModalType | null>>;
+    name: string;
 };
 
 type FormStruture = {
 	name: string;
 };
 
-export default function Modal({ openModal, setOpenModal }: Props) {
+export default function Modal({ openModal, setOpenModal, name }: Props) {
 	const {
 		register,
 		handleSubmit,
@@ -34,10 +34,7 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 
 	useEffect(() => {
 		if (openModal?.id) {
-			setValue("name", openModal?.name ?? "");
-		}
-		if (openModal == null) {
-			reset();
+			setValue("name", name);
 		}
 	}, [openModal]);
 
@@ -66,7 +63,7 @@ export default function Modal({ openModal, setOpenModal }: Props) {
 			await axios(r.url, { method: r.method, data: data });
 			setOpenModal(null);
 			reset();
-			router.reload();
+			router.reload({showProgress: true});
 		} catch (e) {
 			console.log(e);
 		}
