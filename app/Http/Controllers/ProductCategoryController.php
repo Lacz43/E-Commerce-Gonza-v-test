@@ -47,4 +47,15 @@ class ProductCategoryController extends Controller
             'message' => 'Categoria creada correctamente',
         ]);
     }
+
+    public function update(ProductCategoryRequest $request, ProductCategory $category){
+        $category->update([
+            'name' => $request->name,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Categoria actualizada correctamente',
+        ]);
+    }
 }
