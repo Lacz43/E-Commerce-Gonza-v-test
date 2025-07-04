@@ -3,10 +3,11 @@ import Paper from "@mui/material/Paper";
 import {
 	DataGrid,
 	type GridColDef,
+	type GridFilterModel,
 	type GridPaginationModel,
 } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import usePermissions from "@/Hook/usePermissions";
 import CrudButton from "./CrudButton";
 
@@ -46,6 +47,42 @@ export default function DataTable<T>({
 		});
 	}, []);
 
+	function removeFiltersFromUrl(url: URL) {
+		const parsedUrl = new URL(url);
+		const searchParams = parsedUrl.searchParams;
+
+		// Recoge todas las claves en un array para evitar problemas durante la iteración
+		const keys = Array.from(searchParams.keys());
+
+		for (const key of keys) {
+			if (key.startsWith("filters[")) {
+				searchParams.delete(key);
+			}
+		}
+
+		// Rebuild the URL without filters
+		return parsedUrl;
+	}
+
+	const buildApiUrl = (filterModel: GridFilterModel) => {
+		const url = new URL(window.location.href); // O usa tu base URL
+
+		if (filterModel.items.length === 0) return removeFiltersFromUrl(url);
+		// 1. Filtros dinámicos
+		filterModel.items.forEach((item, index) => {
+			if (!item.value) return;
+			const field = item.field;
+			const operator = item.operator;
+			const value = item.value;
+
+			url.searchParams.append(`filters[${index}][field]`, field);
+			url.searchParams.append(`filters[${index}][operator]`, operator);
+			url.searchParams.append(`filters[${index}][value]`, value);
+		});
+
+		return url;
+	};
+
 	const handlePaginationChange = (newModel: GridPaginationModel) => {
 		const { page, pageSize } = newModel;
 
@@ -64,6 +101,32 @@ export default function DataTable<T>({
 			onFinish: () => setLoading(false),
 		});
 	};
+
+	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
+
+	const handleFilterChange = useCallback((newModel: GridFilterModel) => {
+		setLoading(true);
+
+		if (debounceRef.current) {
+			clearTimeout(debounceRef.current);
+		}
+
+		// Establecer un nuevo timeout
+		debounceRef.current = setTimeout(() => {
+			// Aquí iría la lógica para llamar al backend
+			router.visit(buildApiUrl(newModel), {
+				preserveState: true,
+				preserveScroll: true,
+				onFinish: () => setLoading(false),
+			});
+		}, 500);
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			debounceRef.current && clearTimeout(debounceRef.current);
+		};
+	}, []);
 
 	const actionColumn: GridColDef = {
 		field: "actions",
@@ -101,9 +164,11 @@ export default function DataTable<T>({
 				loading={loading}
 				onPaginationModelChange={handlePaginationChange}
 				paginationModel={paginationModel}
+				onFilterModelChange={handleFilterChange}
 				localeText={esES.components.MuiDataGrid.defaultProps.localeText}
 				pageSizeOptions={[5, 10, 20]}
 				paginationMode="server"
+				filterMode="server"
 				sortingMode="client"
 				sx={{ border: 0 }}
 			/>
