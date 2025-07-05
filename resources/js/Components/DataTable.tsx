@@ -8,7 +8,7 @@ import {
 	type GridSortModel,
 } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import usePermissions from "@/Hook/usePermissions";
 import { removeParamsFromUrl } from "@/utils";
 import CrudButton from "./CrudButton";
@@ -42,10 +42,9 @@ export default function DataTable<T>({
 	});
 	const { hasPermission } = usePermissions(); // Usamos la hook de permissions
 
-	const url = new URL(window.location.href);
-
 	// Obtenemos la página actual y el tamaño de página desde la URL
 	useEffect(() => {
+		const url = new URL(window.location.href);
 		setPaginationModel({
 			page: Number(url.searchParams.get("page")) ?? 0,
 			pageSize: Number(url.searchParams.get("perPage") ?? 20),
@@ -53,7 +52,7 @@ export default function DataTable<T>({
 	}, []);
 
 	// Construye la URL para los filtros dinámicos
-	const buildApiFilterUrl = (filterModel: GridFilterModel) => {
+	const buildApiFilterUrl = useCallback((filterModel: GridFilterModel) => {
 		const url = new URL(window.location.href); // O usa tu base URL
 
 		if (filterModel.items.length === 0)
@@ -71,10 +70,10 @@ export default function DataTable<T>({
 		});
 
 		return url;
-	};
+	}, []);
 
 	// Construye la URL para el ordenamiento
-	const buildApiSortUrl = (sortModel: GridSortModel) => {
+	const buildApiSortUrl = useCallback((sortModel: GridSortModel) => {
 		const url = new URL(window.location.href); // O usa tu base URL
 
 		if (sortModel.length === 0) return removeParamsFromUrl(url, "sort[");
@@ -84,27 +83,34 @@ export default function DataTable<T>({
 		url.searchParams.set("sort[field]", field);
 		url.searchParams.set("sort[order]", sort);
 		return url;
-	};
+	}, []);
 
 	// Cambia la página actual
-	const handlePaginationChange = (newModel: GridPaginationModel) => {
-		const { page, pageSize } = newModel;
+	const handlePaginationChange = useCallback(
+		(newModel: GridPaginationModel) => {
+			const { page, pageSize } = newModel;
 
-		if (page === paginationModel.page && pageSize === paginationModel.pageSize)
-			return;
+			if (
+				page === paginationModel.page &&
+				pageSize === paginationModel.pageSize
+			)
+				return;
 
-		setPaginationModel(newModel);
+			setPaginationModel(newModel);
 
-		url.searchParams.set("page", (page + 1).toString());
-		url.searchParams.set("perPage", (pageSize ? pageSize : 20).toString());
+			const url = new URL(window.location.href);
+			url.searchParams.set("page", (page + 1).toString());
+			url.searchParams.set("perPage", (pageSize ? pageSize : 20).toString());
 
-		setLoading(true);
-		router.visit(url, {
-			preserveState: true,
-			preserveScroll: true,
-			onFinish: () => setLoading(false),
-		});
-	};
+			setLoading(true);
+			router.visit(url, {
+				preserveState: true,
+				preserveScroll: true,
+				onFinish: () => setLoading(false),
+			});
+		},
+		[paginationModel],
+	);
 
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
 
@@ -138,53 +144,65 @@ export default function DataTable<T>({
 	};
 
 	// Eliminamos el timeout cuando cambiamos la página
-	useEffect(() => {
-		return () => {
+	useEffect(
+		() => () => {
 			debounceRef.current && clearTimeout(debounceRef.current);
+		},
+		[],
+	);
+
+	const processedColumns = useMemo(() => {
+		let cols = [...columns];
+
+		if (filtersAvailable) {
+			cols = cols.map((col) => ({
+				...col,
+				filterable: filtersAvailable.includes(col.field),
+				sortable: filtersAvailable.includes(col.field),
+			}));
+		}
+
+		const actionColumn: GridColDef = {
+			field: "actions",
+			type: "actions",
+			width: 120,
+			headerName: "Acciones",
+			renderCell: (params) => (
+				<div className="flex">
+					{onShow?.hook && hasPermission(onShow.permissions ?? []) && (
+						<CrudButton
+							type="show"
+							onClick={() => onShow.hook(params.row.id)}
+						/>
+					)}
+					{onEdit?.hook && hasPermission(onEdit.permissions ?? []) && (
+						<CrudButton
+							type="edit"
+							onClick={() => onEdit.hook(params.row.id)}
+						/>
+					)}
+					{onDelete?.hook && hasPermission(onDelete.permissions ?? []) && (
+						<CrudButton
+							type="delete"
+							onClick={() => onDelete.hook(params.row.id)}
+						/>
+					)}
+				</div>
+			),
 		};
-	}, []);
 
-    // Columna de acciones
-	if (filtersAvailable) {
-		columns = columns.map((col) => {
-			const available = filtersAvailable?.includes(col.field);
-			return { ...col, filterable: available, sortable: available };
-		});
-	}
+		if (onEdit || onDelete || onShow) {
+			cols.push(actionColumn);
+		}
 
-	// Columna de acciones
-	const actionColumn: GridColDef = {
-		field: "actions",
-		type: "actions",
-		width: 120,
-		headerName: "Acciones",
-		renderCell: (params) => (
-			<div className="flex">
-				{onShow && hasPermission(onShow?.permissions ?? []) && (
-					<CrudButton type="show" onClick={() => onShow.hook(params.row.id)} />
-				)}
-				{onEdit && hasPermission(onEdit?.permissions ?? []) && (
-					<CrudButton type="edit" onClick={() => onEdit.hook(params.row.id)} />
-				)}
-				{onDelete && hasPermission(onDelete?.permissions ?? []) && (
-					<CrudButton
-						type="delete"
-						onClick={() => onDelete.hook(params.row.id)}
-					/>
-				)}
-			</div>
-		),
-	};
-
-	if (onEdit || onDelete || onShow) {
-		columns.push(actionColumn);
-	}
+		return cols;
+	}, [columns, filtersAvailable, onEdit, onDelete, onShow, hasPermission]);
 
 	return (
 		<Paper sx={{ width: "100%" }}>
 			<DataGrid
 				rows={response.data}
-				columns={columns}
+				columns={processedColumns}
 				rowCount={response.total}
 				loading={loading}
 				onPaginationModelChange={handlePaginationChange}
