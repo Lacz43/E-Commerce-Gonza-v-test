@@ -6,10 +6,28 @@ export const imageUrl = (file: string): string => {
 	try {
 		new URL(file);
 		return file;
-	} catch (e) {
+	} catch (_e) {
 		return `http://localhost:8000/storage/${file}`;
 	}
 };
+
+// Elimina los parámetros de la URL
+export function removeParamsFromUrl(url: URL, str: string) {
+	const parsedUrl = new URL(url);
+	const searchParams = parsedUrl.searchParams;
+
+	// Recoge todas las claves en un array para evitar problemas durante la iteración
+	const keys = Array.from(searchParams.keys());
+
+	for (const key of keys) {
+		if (key.startsWith(str)) {
+			searchParams.delete(key);
+		}
+	}
+
+	// Rebuild the URL without filters
+	return parsedUrl;
+}
 
 export async function prepareFiles(
 	input: string | File | Array<string | File>,
@@ -23,7 +41,9 @@ export async function prepareFiles(
 			}
 
 			// descargamos el blob y extraemos el content-type
-            const response = await axios.get<Blob>(imageUrl(item), { responseType: "blob" });
+			const response = await axios.get<Blob>(imageUrl(item), {
+				responseType: "blob",
+			});
 			const blob = response.data;
 			const contentType =
 				response.headers["content-type"] ||
