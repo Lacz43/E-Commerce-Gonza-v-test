@@ -21,6 +21,7 @@ type ActionHandler = {
 export type tableProps<T> = {
 	columns: GridColDef[];
 	response: paginateResponse<T>;
+	filtersAvailable?: string[];
 	onEdit?: ActionHandler;
 	onDelete?: ActionHandler;
 	onShow?: ActionHandler;
@@ -29,6 +30,7 @@ export type tableProps<T> = {
 export default function DataTable<T>({
 	columns,
 	response,
+	filtersAvailable,
 	onEdit,
 	onShow,
 	onDelete,
@@ -141,6 +143,14 @@ export default function DataTable<T>({
 			debounceRef.current && clearTimeout(debounceRef.current);
 		};
 	}, []);
+
+    // Columna de acciones
+	if (filtersAvailable) {
+		columns = columns.map((col) => {
+			const available = filtersAvailable?.includes(col.field);
+			return { ...col, filterable: available, sortable: available };
+		});
+	}
 
 	// Columna de acciones
 	const actionColumn: GridColDef = {
