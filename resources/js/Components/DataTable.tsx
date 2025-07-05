@@ -5,10 +5,12 @@ import {
 	type GridColDef,
 	type GridFilterModel,
 	type GridPaginationModel,
+	type GridSortModel,
 } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import { useCallback, useEffect, useRef, useState } from "react";
 import usePermissions from "@/Hook/usePermissions";
+import { removeParamsFromUrl } from "@/utils";
 import CrudButton from "./CrudButton";
 
 type ActionHandler = {
@@ -36,10 +38,11 @@ export default function DataTable<T>({
 		page: 0,
 		pageSize: 20,
 	});
-	const { hasPermission } = usePermissions();
+	const { hasPermission } = usePermissions(); // Usamos la hook de permissions
 
 	const url = new URL(window.location.href);
 
+	// Obtenemos la página actual y el tamaño de página desde la URL
 	useEffect(() => {
 		setPaginationModel({
 			page: Number(url.searchParams.get("page")) ?? 0,
@@ -47,27 +50,12 @@ export default function DataTable<T>({
 		});
 	}, []);
 
-	function removeFiltersFromUrl(url: URL) {
-		const parsedUrl = new URL(url);
-		const searchParams = parsedUrl.searchParams;
-
-		// Recoge todas las claves en un array para evitar problemas durante la iteración
-		const keys = Array.from(searchParams.keys());
-
-		for (const key of keys) {
-			if (key.startsWith("filters[")) {
-				searchParams.delete(key);
-			}
-		}
-
-		// Rebuild the URL without filters
-		return parsedUrl;
-	}
-
-	const buildApiUrl = (filterModel: GridFilterModel) => {
+	// Construye la URL para los filtros dinámicos
+	const buildApiFilterUrl = (filterModel: GridFilterModel) => {
 		const url = new URL(window.location.href); // O usa tu base URL
 
-		if (filterModel.items.length === 0) return removeFiltersFromUrl(url);
+		if (filterModel.items.length === 0)
+			return removeParamsFromUrl(url, "filters[");
 		// 1. Filtros dinámicos
 		filterModel.items.forEach((item, index) => {
 			if (!item.value) return;
@@ -83,6 +71,20 @@ export default function DataTable<T>({
 		return url;
 	};
 
+	// Construye la URL para el ordenamiento
+	const buildApiSortUrl = (sortModel: GridSortModel) => {
+		const url = new URL(window.location.href); // O usa tu base URL
+
+		if (sortModel.length === 0) return removeParamsFromUrl(url, "sort[");
+		const { field, sort } = sortModel[0];
+		if (!sort) return url;
+
+		url.searchParams.set("sort[field]", field);
+		url.searchParams.set("sort[order]", sort);
+		return url;
+	};
+
+	// Cambia la página actual
 	const handlePaginationChange = (newModel: GridPaginationModel) => {
 		const { page, pageSize } = newModel;
 
@@ -104,6 +106,7 @@ export default function DataTable<T>({
 
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
 
+	// Filtro dinámico
 	const handleFilterChange = useCallback((newModel: GridFilterModel) => {
 		setLoading(true);
 
@@ -114,7 +117,7 @@ export default function DataTable<T>({
 		// Establecer un nuevo timeout
 		debounceRef.current = setTimeout(() => {
 			// Aquí iría la lógica para llamar al backend
-			router.visit(buildApiUrl(newModel), {
+			router.visit(buildApiFilterUrl(newModel), {
 				preserveState: true,
 				preserveScroll: true,
 				onFinish: () => setLoading(false),
@@ -122,12 +125,24 @@ export default function DataTable<T>({
 		}, 500);
 	}, []);
 
+	// Ordenamiento
+	const handleSortChange = (newModel: GridSortModel) => {
+		setLoading(true);
+		router.visit(buildApiSortUrl(newModel), {
+			preserveState: true,
+			preserveScroll: true,
+			onFinish: () => setLoading(false),
+		});
+	};
+
+	// Eliminamos el timeout cuando cambiamos la página
 	useEffect(() => {
 		return () => {
 			debounceRef.current && clearTimeout(debounceRef.current);
 		};
 	}, []);
 
+	// Columna de acciones
 	const actionColumn: GridColDef = {
 		field: "actions",
 		type: "actions",
@@ -165,11 +180,12 @@ export default function DataTable<T>({
 				onPaginationModelChange={handlePaginationChange}
 				paginationModel={paginationModel}
 				onFilterModelChange={handleFilterChange}
+				onSortModelChange={handleSortChange}
 				localeText={esES.components.MuiDataGrid.defaultProps.localeText}
 				pageSizeOptions={[5, 10, 20]}
 				paginationMode="server"
 				filterMode="server"
-				sortingMode="client"
+				sortingMode="server"
 				sx={{ border: 0 }}
 			/>
 		</Paper>
