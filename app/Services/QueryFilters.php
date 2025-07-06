@@ -82,11 +82,24 @@ class QueryFilters
         $sort = $this->request->get('sort', []);
         $sortBy = $sort['field'] ?? 'id';
         $sortOrder = $sort['order'] ?? 'asc';
+        $model = $this->builder->getModel();
 
-        $this->builder->orderBy($sortBy, $sortOrder);
+        // Validar si el campo es ordenable
+        if ($this->isFieldSortable($model, $sortBy)) {
+            $this->builder->orderBy($sortBy, $sortOrder);
+        }
     }
 
-    protected function applyPagination() : LengthAwarePaginator
+    protected function isFieldSortable($model, $field): bool
+    {
+        $allowedFields = method_exists($model, 'getSortableFields')
+            ? $model::getSortableFields()
+            : [];
+
+        return in_array($field, $allowedFields);
+    }
+
+    protected function applyPagination(): LengthAwarePaginator
     {
         $page = $this->request->get('page', 1);
         $perPage = $this->request->get("perPage", 20);
