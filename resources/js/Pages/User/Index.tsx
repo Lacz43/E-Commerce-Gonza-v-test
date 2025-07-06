@@ -1,7 +1,6 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { lazy, Suspense } from "react";
-import { formatDate } from "@/utils";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
@@ -39,9 +38,13 @@ export default function Products({ users }: Props) {
 										},
 										{
 											field: "created_at",
+											type: "dateTime",
 											headerName: "Creado",
 											width: 200,
-											valueGetter: (value, _row) => `${formatDate(value)}`,
+											valueGetter: (_params, row) => {
+												const date = new Date(row.created_at);
+												return Number.isNaN(date.getTime()) ? null : date;
+											},
 										},
 									]}
 									response={users}
