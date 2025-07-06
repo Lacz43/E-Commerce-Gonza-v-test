@@ -21,7 +21,8 @@ type ActionHandler = {
 export type tableProps<T> = {
 	columns: GridColDef[];
 	response: paginateResponse<T>;
-	filtersAvailable?: string[];
+	filtersAvailable?: string[] | boolean;
+	sortAvailable?: string[] | boolean;
 	onEdit?: ActionHandler;
 	onDelete?: ActionHandler;
 	onShow?: ActionHandler;
@@ -31,6 +32,7 @@ export default function DataTable<T>({
 	columns,
 	response,
 	filtersAvailable,
+	sortAvailable,
 	onEdit,
 	onShow,
 	onDelete,
@@ -154,11 +156,17 @@ export default function DataTable<T>({
 	const processedColumns = useMemo(() => {
 		let cols = [...columns];
 
-		if (filtersAvailable) {
+		if (filtersAvailable || sortAvailable) {
 			cols = cols.map((col) => ({
 				...col,
-				filterable: filtersAvailable.includes(col.field),
-				sortable: filtersAvailable.includes(col.field),
+				filterable:
+					typeof filtersAvailable === "boolean"
+						? filtersAvailable
+						: filtersAvailable?.includes(col.field) || false,
+				sortable:
+					typeof sortAvailable === "boolean"
+						? sortAvailable
+						: sortAvailable?.includes(col.field) || false,
 			}));
 		}
 
@@ -196,7 +204,15 @@ export default function DataTable<T>({
 		}
 
 		return cols;
-	}, [columns, filtersAvailable, onEdit, onDelete, onShow, hasPermission]);
+	}, [
+		columns,
+		filtersAvailable,
+		sortAvailable,
+		onEdit,
+		onDelete,
+		onShow,
+		hasPermission,
+	]);
 
 	return (
 		<Paper sx={{ width: "100%" }}>
