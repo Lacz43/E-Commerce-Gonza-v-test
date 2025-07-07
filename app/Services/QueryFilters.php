@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -64,14 +65,44 @@ class QueryFilters
     protected function applyFilter($field, $operator, $value)
     {
         switch ($operator) {
+            case '=':
+            case 'is':
             case 'equals':
                 return $this->builder->where($field, $value);
+            case '!=':
+            case 'not':
+            case 'doesNotEqual':
+                return $this->builder->where($field, '!=', $value);
             case 'contains':
                 return $this->builder->where($field, 'LIKE', "%$value%");
+            case 'doesNotContain':
+                return $this->builder->where($field, 'NOT LIKE', "%$value%");
+            case 'startsWith':
+                return $this->builder->where($field, 'LIKE', "$value%");
+            case 'endsWith':
+                return $this->builder->where($field, 'LIKE', "%$value");
+            case 'isEmpty':
+                return $this->builder->where($field, '=', '');
+            case 'isNotEmpty':
+                return $this->builder->where($field, '!=', '');
+            case 'isAnyOf':
+                $arr = explode(',', $value);
+                if (!is_array($arr)) return $this->builder;
+                return $this->builder->whereIn($field, $arr);
+            case '>':
+            case 'after':
             case 'gt': // Greater than
                 return $this->builder->where($field, '>', $value);
+            case '>=':
+            case 'onOrAfer':
+                return $this->builder->where($field, '>=', $value);
+            case '<':
+            case 'before':
             case 'lt': // Less than
                 return $this->builder->where($field, '<', $value);
+            case '<=':
+            case 'onOrBefore':
+                return $this->builder->where($field, '<=', $value);
             default:
                 return $this->builder;
         }
