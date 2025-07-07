@@ -45,6 +45,7 @@ export default function DataTable<T>({
 		pageSize: 20,
 	});
 	const [filterModel, setFilterModel] = useState<GridFilterModel>();
+	const [sortModel, setSortModel] = useState<GridSortModel>();
 	const { hasPermission } = usePermissions(); // Usamos la hook de permissions
 
 	// Obtenemos la página actual y el tamaño de página desde la URL
@@ -61,6 +62,13 @@ export default function DataTable<T>({
 		setFilterModel({
 			items: params?.filters || [],
 		});
+
+		setSortModel([
+			{
+				field: url.searchParams.get("sort[field]") ?? "",
+				sort: url.searchParams.get("sort[order]") as "asc" | "desc" | undefined,
+			},
+		]);
 	}, []);
 
 	// Construye la URL para los filtros dinámicos
@@ -150,6 +158,7 @@ export default function DataTable<T>({
 	// Ordenamiento
 	const handleSortChange = (newModel: GridSortModel) => {
 		setLoading(true);
+        setSortModel(newModel);
 		router.visit(buildApiSortUrl(newModel), {
 			preserveState: true,
 			preserveScroll: true,
@@ -236,6 +245,7 @@ export default function DataTable<T>({
 				onPaginationModelChange={handlePaginationChange}
 				paginationModel={paginationModel}
 				filterModel={filterModel}
+				sortModel={sortModel}
 				onFilterModelChange={handleFilterChange}
 				onSortModelChange={handleSortChange}
 				localeText={esES.components.MuiDataGrid.defaultProps.localeText}
