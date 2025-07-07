@@ -2,6 +2,7 @@ import { router } from "@inertiajs/react";
 import Paper from "@mui/material/Paper";
 import {
 	DataGrid,
+	type GridFilterItem,
 	type GridColDef,
 	type GridFilterModel,
 	type GridPaginationModel,
@@ -12,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import usePermissions from "@/Hook/usePermissions";
 import { removeParamsFromUrl } from "@/utils";
 import CrudButton from "./CrudButton";
+import qs from "qs";
 
 type ActionHandler = {
 	permissions?: string[];
@@ -42,6 +44,7 @@ export default function DataTable<T>({
 		page: 0,
 		pageSize: 20,
 	});
+	const [filterModel, setFilterModel] = useState<GridFilterModel>();
 	const { hasPermission } = usePermissions(); // Usamos la hook de permissions
 
 	// Obtenemos la página actual y el tamaño de página desde la URL
@@ -51,24 +54,32 @@ export default function DataTable<T>({
 			page: Number(url.searchParams.get("page")) ?? 0,
 			pageSize: Number(url.searchParams.get("perPage") ?? 20),
 		});
+		const params = qs.parse(url.search, { ignoreQueryPrefix: true }) as {
+			filters?: GridFilterItem[];
+		};
+
+		setFilterModel({
+			items: params?.filters || [],
+		});
 	}, []);
 
 	// Construye la URL para los filtros dinámicos
 	const buildApiFilterUrl = useCallback((filterModel: GridFilterModel) => {
 		const url = new URL(window.location.href); // O usa tu base URL
 
-		if (filterModel.items.length === 0)
-			return removeParamsFromUrl(url, "filters[");
+		// borrar filtros viejos
+		Array.from(url.searchParams.keys())
+			.filter((key) => key.startsWith("filters["))
+			.forEach((key) => url.searchParams.delete(key));
+
+		if (filterModel.items.length === 0) return url;
 		// 1. Filtros dinámicos
 		filterModel.items.forEach((item, index) => {
 			if (!item.value) return;
-			const field = item.field;
-			const operator = item.operator;
-			const value = item.value;
 
-			url.searchParams.append(`filters[${index}][field]`, field);
-			url.searchParams.append(`filters[${index}][operator]`, operator);
-			url.searchParams.append(`filters[${index}][value]`, value);
+			url.searchParams.append(`filters[${index}][field]`, item.field);
+			url.searchParams.append(`filters[${index}][operator]`, item.operator);
+			url.searchParams.append(`filters[${index}][value]`, item.value!);
 		});
 
 		return url;
@@ -119,6 +130,7 @@ export default function DataTable<T>({
 	// Filtro dinámico
 	const handleFilterChange = useCallback((newModel: GridFilterModel) => {
 		setLoading(true);
+		setFilterModel(newModel);
 
 		if (debounceRef.current) {
 			clearTimeout(debounceRef.current);
@@ -223,6 +235,7 @@ export default function DataTable<T>({
 				loading={loading}
 				onPaginationModelChange={handlePaginationChange}
 				paginationModel={paginationModel}
+				filterModel={filterModel}
 				onFilterModelChange={handleFilterChange}
 				onSortModelChange={handleSortChange}
 				localeText={esES.components.MuiDataGrid.defaultProps.localeText}
