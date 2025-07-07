@@ -8,6 +8,7 @@ use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\Products;
+use App\Services\QueryFilters;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +20,10 @@ class ProductsController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Products::paginate($request->query("perPage", 20));
-        return Inertia::render('Products/Index', ['products' => $products]);
+        $products = (new QueryFilters($request))->apply(Products::query());
+        $filtersFields = Products::getFilterableFields();
+        $sortFields = Products::getSortableFields();
+        return Inertia::render('Products/Index', ['products' => $products, 'filtersFields' => $filtersFields, 'sortFields' => $sortFields]);
     }
 
     public function products(Request $request)
