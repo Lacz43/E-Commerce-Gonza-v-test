@@ -20,12 +20,14 @@ const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
 
 type Props = {
 	products: paginateResponse<Item>;
+	filtersFields: string[];
+	sortFields: string[];
 };
 
 const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 	const columns = useMemo<GridColDef[]>(
 		() => [
-			{ field: "id", headerName: "ID" },
+			{ field: "id", headerName: "ID", type: "number" },
 			{ field: "name", headerName: "Producto" },
 			{
 				field: "barcode",
@@ -34,6 +36,7 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 			},
 			{
 				field: "price",
+				type: "number",
 				headerName: "Precio",
 				valueGetter: (_value, row) => `${row.price} $`,
 			},
@@ -52,7 +55,11 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 	);
 });
 
-export default function Products({ products }: Props) {
+export default function Products({
+	products,
+	filtersFields,
+	sortFields,
+}: Props) {
 	const [product, setProduct] = useState(products);
 	const [selected, setSelect] = useState<null | number>(null);
 	const [loading, setLoading] = useState(false);
@@ -127,6 +134,8 @@ export default function Products({ products }: Props) {
 						<div className="p-6 text-gray-900">
 							<WrapperDataTable
 								response={product}
+								filtersAvailable={filtersFields}
+								sortAvailable={sortFields}
 								onEdit={onEditConfig}
 								onDelete={onDeleteConfig}
 								onShow={onShowConfig}
