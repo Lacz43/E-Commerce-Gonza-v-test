@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\FilterableAndSortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,8 +15,19 @@ class Products extends Model
 {
     use HasFactory;
     use LogsActivity;
+    use FilterableAndSortable;
 
     protected $fillable = ['name', 'barcode', 'category_id', 'description', 'price'];
+
+    public static function getFilterableFields(): array
+    {
+        return ['id', 'name', 'barcode', 'category_id', 'price', 'description'];
+    }
+
+    public static function getSortableFields(): array
+    {
+        return ['id', 'name', 'barcode', 'category_id', 'price'];
+    }
 
     public function images(): HasMany
     {
