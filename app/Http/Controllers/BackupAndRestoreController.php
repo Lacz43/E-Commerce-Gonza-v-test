@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\BackupAndRestore;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -23,16 +25,33 @@ class BackupAndRestoreController extends Controller
         // Prepare data for frontend
         $backups = collect($files)->map(function ($file) {
             return [
+                'id' => $file,
                 'name' => basename($file),
                 'size' => Storage::disk('backups')->size($file),
                 'lastModified' => Storage::disk('backups')->lastModified($file),
                 'url' => route('backup.download', ['file' => encrypt($file)]),
             ];
         });
-        Debugbar::info($backups);
+
+        $perPage = request()->get('per_page', 20);
+        $currentPage = request()->get('page', 1);
+        $totalItems = $backups->count();
+
+        // Crear paginador manualmente
+        $paginatedBackups = new LengthAwarePaginator(
+            $backups->forPage($currentPage, $perPage)->values(),
+            $totalItems,
+            $perPage,
+            $currentPage,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+                'pageName' => 'page',
+            ]
+        );
+        Debugbar::info($paginatedBackups);
 
         return Inertia::render('Settings/BackupAndRestore/Index', [
-            'backups' => $backups,
+            'backups' => $paginatedBackups,
         ]);
     }
 
