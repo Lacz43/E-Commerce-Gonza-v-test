@@ -5,5 +5,6 @@ return [
     'products',
     'product_categories',
     'product_brands',
+    'settings',
     'sales'
 ];
