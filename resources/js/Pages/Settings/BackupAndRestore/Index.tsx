@@ -1,11 +1,18 @@
 import { Head, router } from "@inertiajs/react";
 import BackupIcon from "@mui/icons-material/Backup";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { Button, IconButton, OutlinedInput } from "@mui/material";
+import {
+	Button,
+	FormControl,
+	FormHelperText,
+	IconButton,
+	OutlinedInput,
+} from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { format } from "date-fns";
 import { lazy, Suspense, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
@@ -17,6 +24,10 @@ type BackupAndRestore = {
 	url: string;
 };
 
+type FormStruture = {
+	file: File;
+};
+
 type Props = {
 	backups: paginateResponse<BackupAndRestore>;
 };
@@ -24,6 +35,21 @@ type Props = {
 export default function BackupAndRestore({ backups }: Props) {
 	console.log(backups);
 	const [loading, setLoading] = useState(false);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<FormStruture>();
+
+	const onSubmit = async (data: FormStruture) => {
+		try {
+			const formData = new FormData();
+			formData.append("file", data.file);
+			await axios.post(route("backup.restore"), formData);
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	const Columns: GridColDef[] = [
 		{ field: "name", headerName: "Nombre", width: 200 },
@@ -93,15 +119,29 @@ export default function BackupAndRestore({ backups }: Props) {
 								<b>Respaldar</b>
 							</Button>
 							<div className="flex mt-3">
-								<OutlinedInput type="file" size="small"/>
-                                <Button
-                                    variant="contained"
-                                    size="medium"
-                                    endIcon={<BackupIcon />}
-                                    loading={loading}
-                                >
-                                    <b>Restaurar</b>
-                                </Button>
+								<FormControl>
+									<div className="flex">
+										<OutlinedInput
+											type="file"
+											size="small"
+											{...register("file", {
+												required: "Es requirido un archivo",
+											})}
+										/>
+										<Button
+											variant="contained"
+											size="medium"
+											endIcon={<BackupIcon />}
+											loading={isSubmitting}
+											onClick={handleSubmit(onSubmit)}
+										>
+											<b>Restaurar</b>
+										</Button>
+									</div>
+									<FormHelperText className="red text-center">
+										{errors.file?.message}
+									</FormHelperText>
+								</FormControl>
 							</div>
 						</div>
 					</div>
