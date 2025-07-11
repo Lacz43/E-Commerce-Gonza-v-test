@@ -23,7 +23,7 @@ type Props = {
 
 export default function BackupAndRestore({ backups }: Props) {
 	console.log(backups);
-    const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const Columns: GridColDef[] = [
 		{ field: "name", headerName: "Nombre", width: 200 },
@@ -59,14 +59,14 @@ export default function BackupAndRestore({ backups }: Props) {
 	];
 
 	const handleBackup = useCallback(async () => {
-	    setLoading(true);
-        try {
-            await axios.post(route("backup.trigger"));
-            setLoading(false);
-            router.reload();
-        } catch (e) {
-            console.log(e);
-        }
+		setLoading(true);
+		try {
+			await axios.post(route("backup.trigger"));
+			setLoading(false);
+			router.reload();
+		} catch (e) {
+			console.log(e);
+		}
 	}, []);
 
 	return (
@@ -87,8 +87,8 @@ export default function BackupAndRestore({ backups }: Props) {
 								variant="contained"
 								size="medium"
 								endIcon={<BackupIcon />}
-                                onClick={handleBackup}
-                                loading={loading}
+								onClick={handleBackup}
+								loading={loading}
 							>
 								<b>Respaldar</b>
 							</Button>
