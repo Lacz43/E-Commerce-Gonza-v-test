@@ -16,7 +16,7 @@ class BackupAndRestoreController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // List files in the 'backups' disk and optional path subfolder
         $path = config('backup.destination.path', '');
@@ -33,8 +33,8 @@ class BackupAndRestoreController extends Controller
             ];
         });
 
-        $perPage = request()->get('per_page', 20);
-        $currentPage = request()->get('page', 1);
+        $perPage = $request->get('per_page', 20);
+        $currentPage = $request->get('page', 1);
         $totalItems = $backups->count();
 
         // Crear paginador manualmente
