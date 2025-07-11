@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     curl \
-    nano
+    nano \
+    mariadb-client
 
 # Instalar extensiones PHP necesarias para Laravel
 RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
