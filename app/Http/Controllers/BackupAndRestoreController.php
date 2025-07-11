@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\BackupAndRestore;
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -84,6 +86,33 @@ class BackupAndRestoreController extends Controller
         return Storage::disk('backups')->download($path, basename($path));
     }
 
+    public function restoreBackup(Request $request)
+    {
+        try {
+            // Validar que se haya cargado un archivo
+            $request->validate([
+                'file' => 'required|file|mimes:zip,sql|max:10240', // 10MB
+            ]);
+
+            $file = $request->file('file');
+            $fileName = $file->hashName();
+            $filePath = 'backups/' . $fileName;
+
+            // Guardar el archivo en el directorio de respaldos
+            Storage::disk('backups')->put($filePath, File::get($file));
+
+            // Ejecutar el comando de restauración
+            Artisan::call('backup:restore', ['--backup-name' => $fileName]);
+
+            return response()->json([
+                'message' => 'Restauración completada con éxito.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Error al restaurar el respaldo: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
