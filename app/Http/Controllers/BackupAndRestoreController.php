@@ -33,7 +33,7 @@ class BackupAndRestoreController extends Controller
             ];
         });
 
-        $perPage = $request->get('per_page', 20);
+        $perPage = $request->get('perPage', 20);
         $currentPage = $request->get('page', 1);
         $totalItems = $backups->count();
 
