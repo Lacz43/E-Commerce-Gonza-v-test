@@ -1,7 +1,7 @@
 import { Head, router } from "@inertiajs/react";
 import BackupIcon from "@mui/icons-material/Backup";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, OutlinedInput } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { format } from "date-fns";
@@ -92,6 +92,17 @@ export default function BackupAndRestore({ backups }: Props) {
 							>
 								<b>Respaldar</b>
 							</Button>
+							<div className="flex mt-3">
+								<OutlinedInput type="file" size="small"/>
+                                <Button
+                                    variant="contained"
+                                    size="medium"
+                                    endIcon={<BackupIcon />}
+                                    loading={loading}
+                                >
+                                    <b>Restaurar</b>
+                                </Button>
+							</div>
 						</div>
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
