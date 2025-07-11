@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BackupAndRestore;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class BackupAndRestoreController extends Controller
@@ -14,7 +16,24 @@ class BackupAndRestoreController extends Controller
      */
     public function index()
     {
-       return Inertia::render('Settings/BackupAndRestore/Index');
+        // List files in the 'backups' disk and optional path subfolder
+        $path = config('backup.destination.path', '');
+        $files = Storage::disk('backups')->allFiles($path);
+
+        // Prepare data for frontend
+        $backups = collect($files)->map(function ($file) {
+            return [
+                'name' => basename($file),
+                'size' => Storage::disk('backups')->size($file),
+                'lastModified' => Storage::disk('backups')->lastModified($file),
+                //'url' => route('backups.download', ['file' => encrypt($file)]),
+            ];
+        });
+        Debugbar::info($backups);
+
+        return Inertia::render('Settings/BackupAndRestore/Index', [
+            'backups' => $backups,
+        ]);
     }
 
     public function triggerBackup()
