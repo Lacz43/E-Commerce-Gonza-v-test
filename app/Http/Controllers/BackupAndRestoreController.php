@@ -20,7 +20,7 @@ class BackupAndRestoreController extends Controller
     public function triggerBackup()
     {
         try {
-            Artisan::call('backup:run');
+            Artisan::call('backup:run --only-db');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
