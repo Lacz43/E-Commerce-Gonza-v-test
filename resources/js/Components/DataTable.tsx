@@ -158,7 +158,7 @@ export default function DataTable<T>({
 	// Ordenamiento
 	const handleSortChange = (newModel: GridSortModel) => {
 		setLoading(true);
-        setSortModel(newModel);
+		setSortModel(newModel);
 		router.visit(buildApiSortUrl(newModel), {
 			preserveState: true,
 			preserveScroll: true,
@@ -177,13 +177,19 @@ export default function DataTable<T>({
 	const processedColumns = useMemo(() => {
 		let cols = [...columns];
 
-		if (filtersAvailable || sortAvailable) {
+		if (filtersAvailable !== undefined) {
 			cols = cols.map((col) => ({
 				...col,
 				filterable:
 					typeof filtersAvailable === "boolean"
 						? filtersAvailable
 						: filtersAvailable?.includes(col.field) || false,
+			}));
+		}
+
+		if (sortAvailable !== undefined) {
+			cols = cols.map((col) => ({
+				...col,
 				sortable:
 					typeof sortAvailable === "boolean"
 						? sortAvailable
