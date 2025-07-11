@@ -2,6 +2,7 @@ import { Head } from "@inertiajs/react";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { IconButton } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
+import { format } from "date-fns";
 import { lazy, Suspense } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
@@ -28,7 +29,14 @@ export default function BackupAndRestore({ backups }: Props) {
 			type: "number",
 			valueGetter: (value) => `${(Number(value) / 1024).toFixed(2)} KB`,
 		},
-		{ field: "lastModified", headerName: "Modificado" },
+		{
+			field: "lastModified",
+			headerName: "Modificado",
+			type: "dateTime",
+            width: 200,
+			valueGetter: (value) =>
+				new Date(format(value * 1000, "dd/MM/yyyy HH:mm:ss")),
+		},
 		{
 			field: "url",
 			headerName: "Acciones",
