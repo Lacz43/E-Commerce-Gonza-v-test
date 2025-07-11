@@ -26,7 +26,7 @@ class BackupAndRestoreController extends Controller
                 'name' => basename($file),
                 'size' => Storage::disk('backups')->size($file),
                 'lastModified' => Storage::disk('backups')->lastModified($file),
-                //'url' => route('backups.download', ['file' => encrypt($file)]),
+                'url' => route('backup.download', ['file' => encrypt($file)]),
             ];
         });
         Debugbar::info($backups);
@@ -50,6 +50,19 @@ class BackupAndRestoreController extends Controller
             'status' => 'success',
             'message' => 'Respaldo realizado correctamente',
         ]);
+    }
+
+    public function download($file)
+    {
+        // Decrypt file path
+        $path = decrypt($file);
+
+        if (! Storage::disk('backups')->exists($path)) {
+            abort(404);
+        }
+
+        // Stream download
+        return Storage::disk('backups')->download($path, basename($path));
     }
 
     /**
