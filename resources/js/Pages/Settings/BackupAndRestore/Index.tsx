@@ -9,7 +9,7 @@ import {
 	OutlinedInput,
 } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import axios from "axios";
+import axios, { toFormData } from "axios";
 import { format } from "date-fns";
 import { lazy, Suspense, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -43,8 +43,8 @@ export default function BackupAndRestore({ backups }: Props) {
 
 	const onSubmit = async (data: FormStruture) => {
 		try {
-			const formData = new FormData();
-			formData.append("file", data.file);
+            console.log(data.file);
+			const formData = toFormData(data, new FormData());
 			await axios.post(route("backup.restore"), formData);
 		} catch (e) {
 			console.log(e);
@@ -124,6 +124,9 @@ export default function BackupAndRestore({ backups }: Props) {
 										<OutlinedInput
 											type="file"
 											size="small"
+                                            inputProps={{
+                                                accept: ".zip,.sql",
+                                            }}
 											{...register("file", {
 												required: "Es requirido un archivo",
 											})}
