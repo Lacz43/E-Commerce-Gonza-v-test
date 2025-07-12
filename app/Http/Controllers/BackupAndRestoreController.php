@@ -87,13 +87,13 @@ class BackupAndRestoreController extends Controller
 
     public function restoreBackup(Request $request)
     {
-        try {
-            // Validar que se haya cargado un archivo
-            $request->validate([
-                'file' => 'required|file|mimes:zip,sql|max:10240', // 10MB
-            ]);
+        $request->validate([
+            'file' => 'required|array|max:1',
+            'file.*' => 'required|file|extensions:zip,sql|max:10240', // 10MB
+        ]);
 
-            $file = $request->file('file');
+        try {
+            $file = $request->file('file')[0];
             $fileName = $file->hashName();
             $filePath = 'backups/' . $fileName;
 
