@@ -153,7 +153,7 @@ return [
             'disks' => [
                 'backups',
             ],
-            'path' => 'backups',
+            'path' => env('APP_NAME', 'laravel-backup'),
         ],
 
         /*
