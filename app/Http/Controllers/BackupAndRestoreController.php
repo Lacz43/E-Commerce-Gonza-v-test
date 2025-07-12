@@ -33,7 +33,7 @@ class BackupAndRestoreController extends Controller
                 'lastModified' => Storage::disk('backups')->lastModified($file),
                 'url' => route('backup.download', ['file' => encrypt($file)]),
             ];
-        });
+        })->sortByDesc('lastModified');
 
         $perPage = $request->get('perPage', 20);
         $currentPage = $request->get('page', 1);
