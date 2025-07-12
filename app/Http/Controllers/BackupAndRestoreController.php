@@ -21,8 +21,8 @@ class BackupAndRestoreController extends Controller
     public function index(Request $request)
     {
         // List files in the 'backups' disk and optional path subfolder
-        $path = config('backup.destination.path', '');
-        $files = Storage::disk('backups')->allFiles($path);
+        $path = config('backup.backup.destination.path', '');
+        $files = Storage::disk('backups')->files($path);
 
         // Prepare data for frontend
         $backups = collect($files)->map(function ($file) {
@@ -50,7 +50,6 @@ class BackupAndRestoreController extends Controller
                 'pageName' => 'page',
             ]
         );
-        Debugbar::info($paginatedBackups);
 
         return Inertia::render('Settings/BackupAndRestore/Index', [
             'backups' => $paginatedBackups,
