@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use ZipArchive;
 
 class BackupAndRestoreController extends Controller
 {
@@ -100,8 +101,45 @@ class BackupAndRestoreController extends Controller
             // Guardar el archivo en el directorio de respaldos
             Storage::disk('backups')->put($filePath, File::get($file));
 
-            // Ejecutar el comando de restauración
-            Artisan::call('backup:restore', ['--backup-name' => $fileName]);
+            if ($file->getClientOriginalExtension() === 'zip') {
+                // Obtener ruta absoluta del ZIP usando el disco de respaldos
+                $zipPath = Storage::disk('backups')->path($filePath);
+
+                // Ruta para extraer el ZIP (usando el mismo disco)
+                $extractPath = 'extracted/' . $file->hashName();
+                $extractPathAbsolute = Storage::disk('backups')->path($extractPath);
+
+                // Crear directorio si no existe
+                if (!File::exists($extractPathAbsolute)) {
+                    File::makeDirectory($extractPathAbsolute, 0777, true);
+                }
+
+                // Extraer el ZIP
+                $zip = new ZipArchive();
+                if ($zip->open($zipPath) === true) {
+                    $zip->extractTo($extractPathAbsolute);
+                    $zip->close();
+                } else {
+                    throw new Exception('Error al abrir o extraer el archivo ZIP.');
+                }
+
+                // Buscar archivo SQL dentro del ZIP
+                $dumpFiles = File::allFiles($extractPathAbsolute);
+                $dumpFile = collect($dumpFiles)->first(function ($fileInfo) {
+                    return preg_match('/\.sql(\.gz)?$/', $fileInfo->getFilename()) === 1;
+                });
+
+                if (!$dumpFile) {
+                    throw new Exception('No se encontró un archivo SQL válido en el ZIP.');
+                }
+
+                $dumpPath = $dumpFile->getPathname();
+            } elseif ($file->getClientOriginalExtension() === 'sql') {
+                // Ruta directa para archivos SQL
+                $dumpPath = Storage::disk('backups')->path($filePath);
+            } else {
+                throw new Exception('Formato de archivo no soportado. Solo se permiten archivos ZIP y SQL.');
+            }
 
             return response()->json([
                 'message' => 'Restauración completada con éxito.',
