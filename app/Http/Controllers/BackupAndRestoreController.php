@@ -96,7 +96,7 @@ class BackupAndRestoreController extends Controller
         try {
             $file = $request->file('file')[0];
             $fileName = $file->hashName();
-            $filePath = 'backups/' . $fileName;
+            $filePath = 'uploads/' . $fileName;
 
             // Guardar el archivo en el directorio de respaldos
             Storage::disk('backups')->put($filePath, File::get($file));
@@ -134,12 +134,15 @@ class BackupAndRestoreController extends Controller
                 }
 
                 $dumpPath = $dumpFile->getPathname();
+                $this->importDatabase($dumpPath);
             } elseif ($file->getClientOriginalExtension() === 'sql') {
                 // Ruta directa para archivos SQL
                 $dumpPath = Storage::disk('backups')->path($filePath);
+                $this->importDatabase($dumpPath);
             } else {
                 throw new Exception('Formato de archivo no soportado. Solo se permiten archivos ZIP y SQL.');
             }
+            Storage::disk('backups')->delete($filePath);
 
             return response()->json([
                 'message' => 'Restauración completada con éxito.',
@@ -150,6 +153,29 @@ class BackupAndRestoreController extends Controller
             ], 500);
         }
     }
+
+    protected function importDatabase($dumpPath)
+    {
+        $dbHost = env('DB_HOST');
+        $dbUsername = env('DB_USERNAME');
+        $dbPassword = env('DB_PASSWORD');
+        $dbName = env('DB_DATABASE');
+
+        // Comando con parámetros escapados para seguridad
+        $command = 'mysql ' .
+            escapeshellarg("--host={$dbHost}") . ' ' .
+            escapeshellarg("--user={$dbUsername}") . ' ' .
+            escapeshellarg("--password={$dbPassword}") . ' ' .
+            escapeshellarg($dbName) . ' ' .
+            '< ' . escapeshellarg($dumpPath);
+
+        $output = shell_exec($command);
+
+        if ($output === null) {
+            throw new Exception('Error al ejecutar la restauración de la base de datos.');
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
