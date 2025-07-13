@@ -11,7 +11,7 @@ import {
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { toFormData } from "axios";
 import { format } from "date-fns";
-import { lazy, Suspense, useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
@@ -43,7 +43,6 @@ export default function BackupAndRestore({ backups }: Props) {
 
 	const onSubmit = async (data: FormStruture) => {
 		try {
-            console.log(data.file);
 			const formData = toFormData(data, new FormData());
 			await axios.post(route("backup.restore"), formData);
 		} catch (e) {
@@ -51,38 +50,41 @@ export default function BackupAndRestore({ backups }: Props) {
 		}
 	};
 
-	const Columns: GridColDef[] = [
-		{ field: "name", headerName: "Nombre", width: 200 },
-		{
-			field: "size",
-			headerName: "Tamaño",
-			type: "number",
-			valueGetter: (value) => `${(Number(value) / 1024).toFixed(2)} KB`,
-		},
-		{
-			field: "lastModified",
-			headerName: "Modificado",
-			type: "dateTime",
-			width: 200,
-			valueGetter: (value) =>
-				new Date(format(value * 1000, "dd/MM/yyyy HH:mm:ss")),
-		},
-		{
-			field: "url",
-			headerName: "Acciones",
-			type: "actions",
-			renderCell: (params) => (
-				<div className="flex">
-					<IconButton
-						color="primary"
-						onClick={() => window.open(params.row.url, "_blank")}
-					>
-						<FileDownloadIcon />
-					</IconButton>
-				</div>
-			),
-		},
-	];
+	const Columns = useMemo<GridColDef[]>(
+		() => [
+			{ field: "name", headerName: "Nombre", width: 200 },
+			{
+				field: "size",
+				headerName: "Tamaño",
+				type: "number",
+				valueGetter: (value) => `${(Number(value) / 1024).toFixed(2)} KB`,
+			},
+			{
+				field: "lastModified",
+				headerName: "Modificado",
+				type: "dateTime",
+				width: 200,
+				valueGetter: (value) =>
+					new Date(format(value * 1000, "dd/MM/yyyy HH:mm:ss")),
+			},
+			{
+				field: "url",
+				headerName: "Acciones",
+				type: "actions",
+				renderCell: (params) => (
+					<div className="flex">
+						<IconButton
+							color="primary"
+							onClick={() => window.open(params.row.url, "_blank")}
+						>
+							<FileDownloadIcon />
+						</IconButton>
+					</div>
+				),
+			},
+		],
+		[],
+	);
 
 	const handleBackup = useCallback(async () => {
 		setLoading(true);
@@ -124,9 +126,9 @@ export default function BackupAndRestore({ backups }: Props) {
 										<OutlinedInput
 											type="file"
 											size="small"
-                                            inputProps={{
-                                                accept: ".zip,.sql",
-                                            }}
+											inputProps={{
+												accept: ".zip,.sql",
+											}}
 											{...register("file", {
 												required: "Es requirido un archivo",
 											})}
