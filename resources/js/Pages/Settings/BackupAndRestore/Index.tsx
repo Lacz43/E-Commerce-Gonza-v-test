@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
+const ModalStyled = lazy(() => import("@/Components/Modals/ModalStyled"));
 
 type BackupAndRestore = {
 	name: string;
@@ -35,6 +36,7 @@ type Props = {
 export default function BackupAndRestore({ backups }: Props) {
 	console.log(backups);
 	const [loading, setLoading] = useState(false);
+	const [open, setOpen] = useState(false);
 	const {
 		register,
 		handleSubmit,
@@ -91,6 +93,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		try {
 			await axios.post(route("backup.trigger"));
 			setLoading(false);
+			setOpen(false);
 			router.reload();
 		} catch (e) {
 			console.log(e);
@@ -115,8 +118,7 @@ export default function BackupAndRestore({ backups }: Props) {
 								variant="contained"
 								size="medium"
 								endIcon={<BackupIcon />}
-								onClick={handleBackup}
-								loading={loading}
+								onClick={() => setOpen(true)}
 							>
 								<b>Respaldar</b>
 							</Button>
@@ -164,6 +166,34 @@ export default function BackupAndRestore({ backups }: Props) {
 					</div>
 				</div>
 			</div>
+			<Suspense>
+				<ModalStyled
+					header={<b>Respaldo</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>¿Desea realizar el respaldo?</p>
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => setOpen(false)} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={handleBackup}
+								variant="contained"
+								color="error"
+								loading={loading}
+							>
+								<b>Respaldar</b>
+							</Button>
+						</div>
+					}
+					show={open}
+					onClose={() => setOpen(false)}
+					maxWidth="sm"
+				/>
+			</Suspense>
 		</AuthenticatedLayout>
 	);
 }
