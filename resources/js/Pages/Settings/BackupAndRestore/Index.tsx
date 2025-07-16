@@ -12,7 +12,7 @@ import {
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { toFormData } from "axios";
 import { format } from "date-fns";
-import { lazy, Suspense, useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
@@ -40,6 +40,7 @@ export default function BackupAndRestore({ backups }: Props) {
 	console.log(backups);
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState<modal>(null);
+	const fileName = useRef<string | null>(null);
 	const {
 		register,
 		handleSubmit,
@@ -85,7 +86,13 @@ export default function BackupAndRestore({ backups }: Props) {
 						>
 							<FileDownloadIcon />
 						</IconButton>
-						<IconButton color="error" onClick={() => setOpen("delete")}>
+						<IconButton
+							color="error"
+							onClick={() => {
+								setOpen("delete");
+								fileName.current = params.row.name;
+							}}
+						>
 							<DeleteIcon />
 						</IconButton>
 					</div>
@@ -106,6 +113,21 @@ export default function BackupAndRestore({ backups }: Props) {
 			console.log(e);
 		}
 	}, []);
+
+	const handleDelete = useCallback(async () => {
+        if (!fileName.current) return;
+		setLoading(true);
+		try {
+			await axios.delete(
+				route("backup.delete", { file: fileName.current }),
+			);
+			setLoading(false);
+			setOpen(null);
+			router.reload();
+		} catch (e) {
+			console.log(e);
+		}
+	}, [fileName]);
 
 	return (
 		<AuthenticatedLayout
@@ -233,7 +255,9 @@ export default function BackupAndRestore({ backups }: Props) {
 					header={<b>Borrar</b>}
 					body={
 						<div className="text-center overflow-hidden">
-							<p>¿Desea <b>borrar</b> este respaldo?</p>
+							<p>
+								¿Desea <b>borrar</b> este respaldo?
+							</p>
 						</div>
 					}
 					footer={
@@ -242,7 +266,7 @@ export default function BackupAndRestore({ backups }: Props) {
 								<b>Cancelar</b>
 							</Button>
 							<Button
-								onClick={handleBackup}
+								onClick={handleDelete}
 								variant="contained"
 								color="error"
 								loading={loading}
