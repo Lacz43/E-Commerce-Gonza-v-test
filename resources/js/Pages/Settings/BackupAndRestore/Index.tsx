@@ -49,6 +49,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		try {
 			const formData = toFormData(data, new FormData());
 			await axios.post(route("backup.restore"), formData);
+            setOpen(null);
 		} catch (e) {
 			console.log(e);
 		}
@@ -141,8 +142,7 @@ export default function BackupAndRestore({ backups }: Props) {
 											variant="contained"
 											size="medium"
 											endIcon={<BackupIcon />}
-											loading={isSubmitting}
-											onClick={handleSubmit(onSubmit)}
+											onClick={() => setOpen("restore")}
 										>
 											<b>Restaurar</b>
 										</Button>
@@ -192,6 +192,33 @@ export default function BackupAndRestore({ backups }: Props) {
 						</div>
 					}
 					show={open === "backup"}
+					onClose={() => setOpen(null)}
+					maxWidth="sm"
+				/>
+				<ModalStyled
+					header={<b>Restaurar</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>¿Desea restaurar <b>toda la base de datos</b>?</p>
+                            Tenga en cuenta que el proceso de restauración puede tardar varios minutos dependiendo del tamaño de la base de datos.
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => setOpen(null)} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={handleSubmit(onSubmit)}
+								variant="contained"
+								color="error"
+								loading={isSubmitting}
+							>
+								<b>Restaurar</b>
+							</Button>
+						</div>
+					}
+					show={open === "restore"}
 					onClose={() => setOpen(null)}
 					maxWidth="sm"
 				/>
