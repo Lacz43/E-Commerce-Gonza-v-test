@@ -33,10 +33,12 @@ type Props = {
 	backups: paginateResponse<BackupAndRestore>;
 };
 
+type modal = "backup" | "restore" | "delete" | null;
+
 export default function BackupAndRestore({ backups }: Props) {
 	console.log(backups);
 	const [loading, setLoading] = useState(false);
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState<modal>(null);
 	const {
 		register,
 		handleSubmit,
@@ -93,7 +95,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		try {
 			await axios.post(route("backup.trigger"));
 			setLoading(false);
-			setOpen(false);
+			setOpen(null);
 			router.reload();
 		} catch (e) {
 			console.log(e);
@@ -118,7 +120,7 @@ export default function BackupAndRestore({ backups }: Props) {
 								variant="contained"
 								size="medium"
 								endIcon={<BackupIcon />}
-								onClick={() => setOpen(true)}
+								onClick={() => setOpen("backup")}
 							>
 								<b>Respaldar</b>
 							</Button>
@@ -176,7 +178,7 @@ export default function BackupAndRestore({ backups }: Props) {
 					}
 					footer={
 						<div className="flex gap-2">
-							<Button onClick={() => setOpen(false)} variant="contained">
+							<Button onClick={() => setOpen(null)} variant="contained">
 								<b>Cancelar</b>
 							</Button>
 							<Button
@@ -189,8 +191,8 @@ export default function BackupAndRestore({ backups }: Props) {
 							</Button>
 						</div>
 					}
-					show={open}
-					onClose={() => setOpen(false)}
+					show={open === "backup"}
+					onClose={() => setOpen(null)}
 					maxWidth="sm"
 				/>
 			</Suspense>
