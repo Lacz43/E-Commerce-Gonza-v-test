@@ -1,6 +1,7 @@
 import { Head, router } from "@inertiajs/react";
 import BackupIcon from "@mui/icons-material/Backup";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
 	Button,
 	FormControl,
@@ -49,7 +50,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		try {
 			const formData = toFormData(data, new FormData());
 			await axios.post(route("backup.restore"), formData);
-            setOpen(null);
+			setOpen(null);
 		} catch (e) {
 			console.log(e);
 		}
@@ -83,6 +84,9 @@ export default function BackupAndRestore({ backups }: Props) {
 							onClick={() => window.open(params.row.url, "_blank")}
 						>
 							<FileDownloadIcon />
+						</IconButton>
+						<IconButton color="error" onClick={() => setOpen("delete")}>
+							<DeleteIcon />
 						</IconButton>
 					</div>
 				),
@@ -199,8 +203,11 @@ export default function BackupAndRestore({ backups }: Props) {
 					header={<b>Restaurar</b>}
 					body={
 						<div className="text-center overflow-hidden">
-							<p>¿Desea restaurar <b>toda la base de datos</b>?</p>
-                            Tenga en cuenta que el proceso de restauración puede tardar varios minutos dependiendo del tamaño de la base de datos.
+							<p>
+								¿Desea restaurar <b>toda la base de datos</b>?
+							</p>
+							Tenga en cuenta que el proceso de restauración puede tardar varios
+							minutos dependiendo del tamaño de la base de datos.
 						</div>
 					}
 					footer={
@@ -219,6 +226,32 @@ export default function BackupAndRestore({ backups }: Props) {
 						</div>
 					}
 					show={open === "restore"}
+					onClose={() => setOpen(null)}
+					maxWidth="sm"
+				/>
+				<ModalStyled
+					header={<b>Borrar</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>¿Desea <b>borrar</b> este respaldo?</p>
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => setOpen(null)} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={handleBackup}
+								variant="contained"
+								color="error"
+								loading={loading}
+							>
+								<b>Borrar</b>
+							</Button>
+						</div>
+					}
+					show={open === "delete"}
 					onClose={() => setOpen(null)}
 					maxWidth="sm"
 				/>
