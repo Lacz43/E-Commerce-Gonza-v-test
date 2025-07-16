@@ -219,8 +219,14 @@ class BackupAndRestoreController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BackupAndRestore $backupAndRestore)
+    public function destroy(Request $request)
     {
-        //
+        $request->validate(['file' => 'required|string']);
+        $path = config('backup.backup.destination.path', '');
+        Storage::disk('backups')->delete($path.'/'.$request->file);
+
+        return response()->json([
+            'message' => 'Respaldo borrado con éxito.',
+        ]);
     }
 }
