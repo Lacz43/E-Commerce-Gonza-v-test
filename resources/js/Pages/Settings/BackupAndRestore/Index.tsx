@@ -1,7 +1,7 @@
 import { Head, router } from "@inertiajs/react";
 import BackupIcon from "@mui/icons-material/Backup";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {
 	Button,
 	FormControl,
@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { toFormData } from "axios";
-import { format } from "date-fns";
 import { lazy, Suspense, useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -72,7 +71,7 @@ export default function BackupAndRestore({ backups }: Props) {
 				type: "dateTime",
 				width: 200,
 				valueGetter: (value) =>
-					new Date(format(value * 1000, "dd/MM/yyyy HH:mm:ss")),
+					new Date(value * 1000),
 			},
 			{
 				field: "url",
@@ -115,12 +114,10 @@ export default function BackupAndRestore({ backups }: Props) {
 	}, []);
 
 	const handleDelete = useCallback(async () => {
-        if (!fileName.current) return;
+		if (!fileName.current) return;
 		setLoading(true);
 		try {
-			await axios.delete(
-				route("backup.delete", { file: fileName.current }),
-			);
+			await axios.delete(route("backup.delete", { file: fileName.current }));
 			setLoading(false);
 			setOpen(null);
 			router.reload();
