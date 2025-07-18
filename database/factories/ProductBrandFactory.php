@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Brand;
-use App\Models\Products;
+use App\Models\ProductBrand;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,15 +11,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProductBrandFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $model = ProductBrand::class;
+
+    public function definition()
     {
         return [
-            'product_id' => Products::inRandomOrder()->first()->id,
             'brand_id' => Brand::inRandomOrder()->first()->id,
         ];
     }

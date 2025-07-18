@@ -35,6 +35,6 @@ class ProductsFactory extends Factory
 
     public function withBrands()
     {
-        return $this->has(ProductBrand::factory(), 'brand');
+        return $this->has(ProductBrand::factory(), 'productBrand');
     }
 }

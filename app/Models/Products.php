@@ -44,6 +44,11 @@ class Products extends Model
         return $this->hasOneThrough(Brand::class, ProductBrand::class, 'product_id', 'id', 'id', 'brand_id');
     }
 
+    public function productBrand(): HasOne
+    {
+        return $this->hasOne(ProductBrand::class, 'product_id', 'id');
+    }
+
     public function category(): HasOne
     {
         return $this->hasOne(ProductCategory::class, 'id', 'category_id');
