@@ -76,7 +76,7 @@ class ProductsController extends Controller
 
     public function edit(Products $product)
     {
-        $product = $product->with(['images', 'brand', 'category'])->first();
+        $product = $product->load(['images', 'brand', 'category']);
         Debugbar::info($product);
         return Inertia::render('Products/Edit', ['product' => $product]);
     }
