@@ -14,6 +14,7 @@ import axios, { toFormData } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AutoBackup from "./Partials/AutoBackup";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalStyled = lazy(() => import("@/Components/Modals/ModalStyled"));
@@ -70,8 +71,7 @@ export default function BackupAndRestore({ backups }: Props) {
 				headerName: "Modificado",
 				type: "dateTime",
 				width: 200,
-				valueGetter: (value) =>
-					new Date(value * 1000),
+				valueGetter: (value) => new Date(value * 1000),
 			},
 			{
 				field: "url",
@@ -175,6 +175,9 @@ export default function BackupAndRestore({ backups }: Props) {
 									</FormHelperText>
 								</FormControl>
 							</div>
+						</div>
+						<div className="text-gray-900">
+							<AutoBackup />
 						</div>
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
