@@ -10,6 +10,10 @@ Route::middleware('auth', 'permission:show settings')->group(function () {
     Route::post('/settings/backup/restore', [BackupAndRestoreController::class, 'restoreBackup'])->name('backup.restore');
 });
 
+Route::middleware('auth', 'permission:create settings')->group(function () {
+    Route::post('/settings/backup/toggle', [BackupAndRestoreController::class, 'toggleBackup'])->name('backup.toggle');
+});
+
 Route::middleware('auth', 'permission:delete settings')->group(function () {
     Route::delete('/settings/backup/delete', [BackupAndRestoreController::class, 'destroy'])->name('backup.delete');
 });

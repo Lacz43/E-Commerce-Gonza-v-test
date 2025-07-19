@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BackupAndRestore;
+use App\Settings\BackupSettings;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Exception;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use ZipArchive;
@@ -176,6 +178,51 @@ class BackupAndRestoreController extends Controller
         }
     }
 
+
+    public function toggleBackup(Request $request, BackupSettings $settings)
+    {
+        $request->validate([
+            'active' => 'required|boolean',
+            'time' => 'sometimes|string|nullable',
+            'schedule' => 'required|string',
+        ]);
+
+        // Actualizar los settings directamente
+        $settings->active = $request->active;
+        $settings->schedule = $request->schedule;
+
+        // Solo actualizar el tiempo si está presente
+        if ($request->has('time')) {
+            $settings->time = $request->time;
+        }
+
+        // Guardar todos los cambios
+        $settings->save();
+
+        // Manejar la programación del backup
+        if ($settings->active) {
+            $schedule = Schedule::command('backup:run --only-db');
+
+            match ($settings->schedule) {
+                'daily' => $schedule->daily(),
+                'weekly' => $schedule->weekly(),
+                'monthly' => $schedule->monthly(),
+                'yearly' => $schedule->yearly(),
+                default => $schedule->daily(),
+            };
+
+            if (!empty($settings->time)) {
+                $schedule->at($settings->time);
+            }
+        } else {
+            Schedule::command('backup:run --only-db')->delete();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Configuración de backup actualizada']);
+
+    }
     /**
      * Show the form for creating a new resource.
      */
