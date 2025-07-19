@@ -30,7 +30,7 @@ export default function AutoBackup() {
 
 	const onSubmit = async (data: FormStruture) => {
 		try {
-		    axios.post(route("backup.toggle"), data);
+			axios.post(route("backup.toggle"), data);
 		} catch (error) {
 			console.log(error);
 		}
@@ -66,34 +66,40 @@ export default function AutoBackup() {
 					/>
 				)}
 			/>
-			<FormControl variant="filled" className="w-full" required>
-				<InputLabel id="demo-simple-select-filled-label">Frecuencia</InputLabel>
-				<Select
-					labelId="demo-simple-select-filled-label"
-					id="demo-simple-select-filled"
-					defaultValue={""}
-					disabled={isSubmitting}
-					{...register("schedule", { required: "Es requerido una frecuencia" })}
-				>
-					<MenuItem value="">
-						<em>None</em>
-					</MenuItem>
-					<MenuItem value={"daily"}>Diariamente</MenuItem>
-					<MenuItem value={"weekly"}>Semanalmente</MenuItem>
-					<MenuItem value={"monthly"}>Mensualmente</MenuItem>
-					<MenuItem value={"yearly"}>Anualmente</MenuItem>
-				</Select>
-				<FormHelperText>{errors?.schedule?.message}</FormHelperText>
-			</FormControl>
-			<TextField
-				className="w-full"
-				type="time"
-				id="time"
-				label="Hora"
-				variant="filled"
-				{...register("time")}
-				defaultValue={getValues().time}
-			/>
+			<div className="flex gap-3">
+				<FormControl variant="filled" className="w-full" required>
+					<InputLabel id="demo-simple-select-filled-label">
+						Frecuencia
+					</InputLabel>
+					<Select
+						labelId="demo-simple-select-filled-label"
+						id="demo-simple-select-filled"
+						defaultValue={""}
+						disabled={isSubmitting}
+						{...register("schedule", {
+							required: "Es requerido una frecuencia",
+						})}
+					>
+						<MenuItem value="">
+							<em>None</em>
+						</MenuItem>
+						<MenuItem value={"daily"}>Diariamente</MenuItem>
+						<MenuItem value={"weekly"}>Semanalmente</MenuItem>
+						<MenuItem value={"monthly"}>Mensualmente</MenuItem>
+						<MenuItem value={"yearly"}>Anualmente</MenuItem>
+					</Select>
+					<FormHelperText>{errors?.schedule?.message}</FormHelperText>
+				</FormControl>
+				<TextField
+					className="w-full"
+					type="time"
+					id="time"
+					label="Hora"
+					variant="filled"
+					{...register("time")}
+					defaultValue={getValues().time}
+				/>
+			</div>
 		</div>
 	);
 }
