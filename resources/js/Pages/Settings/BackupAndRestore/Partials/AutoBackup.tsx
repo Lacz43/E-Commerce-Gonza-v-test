@@ -9,7 +9,7 @@ import {
 	TextField,
 } from "@mui/material";
 import axios from "axios";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type FormStruture = {
@@ -28,13 +28,28 @@ export default function AutoBackup() {
 		formState: { isSubmitting, errors, isValid },
 	} = useForm<FormStruture>({ mode: "onChange" });
 
-	const onSubmit = async (data: FormStruture) => {
-		try {
-			axios.post(route("backup.toggle"), data);
-		} catch (error) {
-			console.log(error);
+	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
+
+	useEffect(
+		() => () => {
+			debounceRef.current && clearTimeout(debounceRef.current);
+		},
+		[],
+	);
+
+	const onSubmit = useCallback((data: FormStruture) => {
+		if (debounceRef.current) {
+			clearTimeout(debounceRef.current);
 		}
-	};
+
+		debounceRef.current = setTimeout(async () => {
+			try {
+				axios.post(route("backup.toggle"), data);
+			} catch (error) {
+				console.log(error);
+			}
+		}, 1000);
+	}, []);
 
 	useEffect(() => {
 		console.log(isValid);
@@ -76,9 +91,8 @@ export default function AutoBackup() {
 						id="demo-simple-select-filled"
 						defaultValue={""}
 						disabled={isSubmitting}
-						{...register("schedule", {
-							required: "Es requerido una frecuencia",
-						})}
+						{...register("schedule")}
+						onChangeCapture={handleSubmit(onSubmit)}
 					>
 						<MenuItem value="">
 							<em>None</em>
@@ -98,6 +112,7 @@ export default function AutoBackup() {
 					variant="filled"
 					{...register("time")}
 					defaultValue={getValues().time}
+					onChangeCapture={handleSubmit(onSubmit)}
 				/>
 			</div>
 		</div>
