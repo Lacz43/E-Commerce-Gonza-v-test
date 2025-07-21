@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BackupAndRestore;
 use App\Settings\BackupSettings;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use ZipArchive;
@@ -23,11 +20,11 @@ class BackupAndRestoreController extends Controller
      */
     public function index(Request $request)
     {
-        // List files in the 'backups' disk and optional path subfolder
+        // Lista todos los archivos en el disco 'backups'
         $path = config('backup.backup.destination.path', '');
         $files = Storage::disk('backups')->files($path);
 
-        // Prepare data for frontend
+        // obtingemos los datos para enviar al frontend
         $backups = collect($files)->map(function ($file) {
             return [
                 'id' => $file,
@@ -36,7 +33,7 @@ class BackupAndRestoreController extends Controller
                 'lastModified' => Storage::disk('backups')->lastModified($file),
                 'url' => route('backup.download', ['file' => encrypt($file)]),
             ];
-        })->sortByDesc('lastModified');
+        })->sortByDesc('lastModified'); // ordenamos por fecha de modificacion
 
         $perPage = $request->get('perPage', 20);
         $currentPage = $request->get('page', 1);
@@ -59,6 +56,9 @@ class BackupAndRestoreController extends Controller
         ]);
     }
 
+    /**
+     * Ejecuta el comando de respaldo
+     */
     public function triggerBackup()
     {
         try {
@@ -75,19 +75,25 @@ class BackupAndRestoreController extends Controller
         ]);
     }
 
+    /**
+     * Descarga el archivo de respaldo
+     */
     public function download($file)
     {
-        // Decrypt file path
+        //  desciframo el archivo
         $path = decrypt($file);
 
         if (! Storage::disk('backups')->exists($path)) {
             abort(404);
         }
 
-        // Stream download
+        // descarga el archivo
         return Storage::disk('backups')->download($path, basename($path));
     }
 
+    /**
+     * Restaura el archivo de respaldo
+     */
     public function restoreBackup(Request $request)
     {
         $request->validate([
@@ -156,6 +162,9 @@ class BackupAndRestoreController extends Controller
         }
     }
 
+    /**
+     * ejecuta el comando de restauracion de la base de datos
+     */
     protected function importDatabase($dumpPath)
     {
         $dbHost = env('DB_HOST');
@@ -178,7 +187,9 @@ class BackupAndRestoreController extends Controller
         }
     }
 
-
+    /**
+     * Cambia la configuracion de respaldo automático
+     */
     public function toggleBackup(Request $request, BackupSettings $settings)
     {
         $request->validate([
@@ -207,6 +218,9 @@ class BackupAndRestoreController extends Controller
 
     }
 
+    /**
+     * Obtiene la configuracion de respaldo
+     */
     public function backupSettings()
     {
         $settings = app(BackupSettings::class);
@@ -215,45 +229,6 @@ class BackupAndRestoreController extends Controller
             'schedule' => $settings->schedule,
             'time' => $settings->time,
         ]);
-    }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(BackupAndRestore $backupAndRestore)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BackupAndRestore $backupAndRestore)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, BackupAndRestore $backupAndRestore)
-    {
-        //
     }
 
     /**

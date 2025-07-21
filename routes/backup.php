@@ -3,6 +3,12 @@
 use App\Settings\BackupSettings;
 use Illuminate\Console\Scheduling\Schedule;
 
+/*
+ * INFO:
+ * Se usa el scheduler para ejecutar el comando de respaldo
+ * Si la configuracion de respaldo esta activa, se ejecuta el comando de respaldo
+ */
+
 $settings = app(BackupSettings::class);
 
 if ($settings && $settings->active) {

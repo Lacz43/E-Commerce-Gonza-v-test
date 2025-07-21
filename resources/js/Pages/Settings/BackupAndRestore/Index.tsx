@@ -19,6 +19,19 @@ import AutoBackup from "./Partials/AutoBackup";
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalStyled = lazy(() => import("@/Components/Modals/ModalStyled"));
 
+/*
+ TODO:
+    Vista principal de generar respaldos y restaurar la base de datos
+*/
+
+/*
+ * INFO: BackupAndRestore
+ * name: nombre del archivo
+ * size: tamaño del archivo
+ * lastModified: fecha de modificacion del archivo
+ * url: url del archivo
+ */
+
 type BackupAndRestore = {
 	name: string;
 	size: number;
@@ -26,21 +39,26 @@ type BackupAndRestore = {
 	url: string;
 };
 
+/*
+ * INFO: FormStruture
+ * file: archivo que se quiere enviar al backend
+ */
 type FormStruture = {
 	file: File;
 };
 
+// INFO: Props: propiedades que reciben el componente
 type Props = {
 	backups: paginateResponse<BackupAndRestore>;
 };
 
+// INFO: modal: modal que se muestra al hacer click
 type modal = "backup" | "restore" | "delete" | null;
 
 export default function BackupAndRestore({ backups }: Props) {
-	console.log(backups);
 	const [loading, setLoading] = useState(false);
-	const [open, setOpen] = useState<modal>(null);
-	const fileName = useRef<string | null>(null);
+	const [open, setOpen] = useState<modal>(null); // modal que se muestra al hacer click
+	const fileName = useRef<string | null>(null); // nombre del archivo que se quiere enviar al backend
 	const {
 		register,
 		handleSubmit,
@@ -49,7 +67,7 @@ export default function BackupAndRestore({ backups }: Props) {
 
 	const onSubmit = async (data: FormStruture) => {
 		try {
-			const formData = toFormData(data, new FormData());
+			const formData = toFormData(data, new FormData()); // convertimos el formulario a un objeto FormData para poder enviar el archivo
 			await axios.post(route("backup.restore"), formData);
 			setOpen(null);
 		} catch (e) {
@@ -57,6 +75,10 @@ export default function BackupAndRestore({ backups }: Props) {
 		}
 	};
 
+	/*
+	 * INFO: Columns: columnas que se mostraran en la tabla
+	 * se usa useMemo para no renderizar la tabla cada vez que cambia el estado
+	 */
 	const Columns = useMemo<GridColDef[]>(
 		() => [
 			{ field: "name", headerName: "Nombre", width: 200 },
@@ -64,24 +86,24 @@ export default function BackupAndRestore({ backups }: Props) {
 				field: "size",
 				headerName: "Tamaño",
 				type: "number",
-				valueGetter: (value) => `${(Number(value) / 1024).toFixed(2)} KB`,
+				valueGetter: (value) => `${(Number(value) / 1024).toFixed(2)} KB`, // convertimos el tamaño en KB
 			},
 			{
 				field: "lastModified",
 				headerName: "Modificado",
 				type: "dateTime",
 				width: 200,
-				valueGetter: (value) => new Date(value * 1000),
+				valueGetter: (value) => new Date(value * 1000), // convertimos el timestamp en fecha
 			},
 			{
 				field: "url",
 				headerName: "Acciones",
 				type: "actions",
-				renderCell: (params) => (
+				renderCell: (params) => ( // renderizamos el boton de descarga y borrado
 					<div className="flex">
 						<IconButton
 							color="primary"
-							onClick={() => window.open(params.row.url, "_blank")}
+							onClick={() => window.open(params.row.url, "_blank")} // abrimos el archivo en una nueva pestaña para descargar
 						>
 							<FileDownloadIcon />
 						</IconButton>
@@ -89,7 +111,7 @@ export default function BackupAndRestore({ backups }: Props) {
 							color="error"
 							onClick={() => {
 								setOpen("delete");
-								fileName.current = params.row.name;
+								fileName.current = params.row.name; // guardamos el nombre del archivo para borrarlo
 							}}
 						>
 							<DeleteIcon />
@@ -101,6 +123,9 @@ export default function BackupAndRestore({ backups }: Props) {
 		[],
 	);
 
+    /* INFO: handleBackup: funcion que se ejecuta cuando se hace click en el boton de respaldo
+     * se utiliza useCallback para no volver a ejecutar la funcion cuando cambie el estado
+     */
 	const handleBackup = useCallback(async () => {
 		setLoading(true);
 		try {
@@ -113,6 +138,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		}
 	}, []);
 
+    /* INFO: handleDelete: funcion que se ejecuta cuando se hace click en el boton de borrado */
 	const handleDelete = useCallback(async () => {
 		if (!fileName.current) return;
 		setLoading(true);
@@ -124,7 +150,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		} catch (e) {
 			console.log(e);
 		}
-	}, [fileName]);
+	}, [fileName]); // se ejecuta cuando cambie fileName
 
 	return (
 		<AuthenticatedLayout
@@ -155,7 +181,7 @@ export default function BackupAndRestore({ backups }: Props) {
 											type="file"
 											size="small"
 											inputProps={{
-												accept: ".zip,.sql",
+												accept: ".zip,.sql", // tipos de archivos que se pueden enviar
 											}}
 											{...register("file", {
 												required: "Es requirido un archivo",
