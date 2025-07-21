@@ -138,7 +138,7 @@ export default function BackupAndRestore({ backups }: Props) {
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
 					<div className="flex justify-end mb-3 mx-3"></div>
-					<div className="bg-white shadow-lg sm:rounded-lg grid grid-cols-2 gap-4 mb-3 p-2">
+					<div className="bg-white shadow-lg sm:rounded-lg grid grid-cols-2 gap-4 mb-3 p-2 max-md:grid-cols-1">
 						<div className="text-gray-900">
 							<Button
 								variant="contained"
