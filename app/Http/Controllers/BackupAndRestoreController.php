@@ -182,41 +182,24 @@ class BackupAndRestoreController extends Controller
     public function toggleBackup(Request $request, BackupSettings $settings)
     {
         $request->validate([
-            'active' => 'required|boolean',
+            'active' => 'sometimes|boolean',
             'time' => 'sometimes|string|nullable',
-            'schedule' => 'required|string',
+            'schedule' => 'sometimes|string',
         ]);
 
         // Actualizar los settings directamente
-        $settings->active = $request->active;
-        $settings->schedule = $request->schedule;
-
-        // Solo actualizar el tiempo si está presente
+        if ($request->has('active')) {
+            $settings->active = $request->active;
+        }
+        if ($request->has('schedule')) {
+            $settings->schedule = $request->schedule;
+        }
         if ($request->has('time')) {
             $settings->time = $request->time;
         }
 
         // Guardar todos los cambios
         $settings->save();
-
-        // Manejar la programación del backup
-        if ($settings->active) {
-            $schedule = Schedule::command('backup:run --only-db');
-
-            match ($settings->schedule) {
-                'daily' => $schedule->daily(),
-                'weekly' => $schedule->weekly(),
-                'monthly' => $schedule->monthly(),
-                'yearly' => $schedule->yearly(),
-                default => $schedule->daily(),
-            };
-
-            if (!empty($settings->time)) {
-                $schedule->at($settings->time);
-            }
-        } else {
-            Schedule::command('backup:run --only-db')->delete();
-        }
 
         return response()->json([
             'status' => 'success',
