@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth', 'permission:show backups')->group(function () {
     Route::get('/settings/backup/index', [BackupAndRestoreController::class, 'index'])->name('backup.index');
     Route::get('/settings/backup/download/{file}', [BackupAndRestoreController::class, 'download'])->name('backup.download');
+    Route::get('/settings/backup', [BackupAndRestoreController::class, 'backupSettings'])->name('backup.settings');
 });
 
 Route::middleware('auth', 'permission:create backups')->group(function () {

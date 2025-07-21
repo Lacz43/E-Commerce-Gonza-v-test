@@ -206,6 +206,16 @@ class BackupAndRestoreController extends Controller
             'message' => 'Configuración de backup actualizada']);
 
     }
+
+    public function backupSettings()
+    {
+        $settings = app(BackupSettings::class);
+        return response()->json([
+            'active' => $settings->active,
+            'schedule' => $settings->schedule,
+            'time' => $settings->time,
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
