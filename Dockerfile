@@ -16,7 +16,6 @@ RUN apt-get update \
     libonig-dev \
     curl \
     nano \
-    cron \
     mariadb-client
 
 # Instalar extensiones PHP necesarias para Laravel
@@ -25,15 +24,6 @@ RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
 # Instalamos Composer
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Añadimos el crontab para Laravel Scheduler
-COPY docker/laravel-cron /etc/cron.d/laravel-cron
-RUN chmod 0644 /etc/cron.d/laravel-cron \
-    && crontab /etc/cron.d/laravel-cron
-
-# Creamos log de cron y ajustamos permisos
-RUN touch /var/log/cron.log \
-    && chown www-data:www-data /var/log/cron.log
 
 # Opcional: establece el directorio de trabajo
 WORKDIR /var/www
@@ -56,6 +46,10 @@ RUN corepack enable pnpm \
 ############################################
 FROM base AS prod
 
+# Instalamos cron
+RUN apt-get update \
+ && apt-get install -y cron
+
 # Copiamos vendor desde base (podrías hacerlo en otro stage "composer",
 # pero para brevedad usamos base + composer install)
 COPY --from=base /usr/local/bin/composer /usr/local/bin/composer
@@ -66,6 +60,15 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 
 # Copiamos assets compilados
 COPY --from=node-builder /var/www/html/public ./public
+
+# Añadimos el crontab para Laravel Scheduler
+COPY docker/laravel-cron /etc/cron.d/laravel-cron
+RUN chmod 0644 /etc/cron.d/laravel-cron \
+    && crontab /etc/cron.d/laravel-cron
+
+# Creamos log de cron y ajustamos permisos
+RUN touch /var/log/cron.log \
+    && chown www-data:www-data /var/log/cron.log
 
 # Exponemos puerto FPM (si lo necesitas) y arrancamos
 EXPOSE 8000
@@ -83,6 +86,7 @@ RUN apt-get install -y nodejs
 # Instalar pnpm
 RUN corepack enable pnpm
 RUN corepack use pnpm@10.9
+RUN pnpm install
 
 # Inicia un bash interactivo
 CMD ["bash"]
