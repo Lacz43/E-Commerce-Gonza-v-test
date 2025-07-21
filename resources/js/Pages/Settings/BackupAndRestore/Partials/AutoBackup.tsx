@@ -8,8 +8,9 @@ import {
 	Switch,
 	TextField,
 } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type FormStruture = {
@@ -27,16 +28,19 @@ export default function AutoBackup() {
 		watch,
 		formState: { isSubmitting, errors, isValid },
 	} = useForm<FormStruture>({ mode: "onChange" });
+	const [loading, setLoading] = useState(false);
 
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
 
 	useEffect(() => {
+		setLoading(true);
 		async function fetchData() {
 			try {
 				const response = await axios.get(route("backup.settings"));
 				setValue("active", response.data.active);
 				setValue("schedule", response.data.schedule);
 				setValue("time", response.data.time);
+				setLoading(false);
 			} catch (error) {
 				console.log(error);
 			}
@@ -51,14 +55,16 @@ export default function AutoBackup() {
 		if (debounceRef.current) {
 			clearTimeout(debounceRef.current);
 		}
+        setLoading(true);
 
 		debounceRef.current = setTimeout(async () => {
 			try {
 				axios.post(route("backup.toggle"), data);
+                setLoading(false);
 			} catch (error) {
 				console.log(error);
 			}
-		}, 1000);
+		}, 1500);
 	}, []);
 
 	useEffect(() => {
@@ -70,27 +76,35 @@ export default function AutoBackup() {
 
 	return (
 		<div>
-			<Controller
-				name="active"
-				control={control}
-				render={({ field: { onChange, value } }) => (
-					<FormControlLabel
-						control={
-							<Switch
-								disabled={isSubmitting}
-								checked={watch("active") ?? false}
-								value={value}
-								onChange={(_e, checked) => {
-									onChange(checked);
-									handleSubmit(onSubmit)();
-								}}
-							/>
-						}
-						label="Backups automaticos"
-						labelPlacement="start"
-					/>
-				)}
-			/>
+			<div className="flex">
+				<Controller
+					name="active"
+					control={control}
+					render={({ field: { onChange, value } }) => (
+						<FormControlLabel
+							control={
+								<Switch
+									disabled={isSubmitting}
+									checked={watch("active") ?? false}
+									value={value}
+									onChange={(_e, checked) => {
+										onChange(checked);
+										handleSubmit(onSubmit)();
+									}}
+								/>
+							}
+							label="Backups automaticos"
+							labelPlacement="start"
+						/>
+					)}
+				/>
+				<CircularProgress
+					size={25}
+					className="my-auto ml-4"
+					color="inherit"
+					hidden={!loading}
+				/>
+			</div>
 			<div className="flex gap-3">
 				<FormControl variant="filled" className="w-full" required>
 					<InputLabel id="demo-simple-select-filled-label">
