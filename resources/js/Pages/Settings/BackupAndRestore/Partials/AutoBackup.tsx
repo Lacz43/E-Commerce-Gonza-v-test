@@ -27,7 +27,7 @@ export default function AutoBackup() {
 		register,
 		watch,
 		formState: { isSubmitting, errors, isValid },
-	} = useForm<FormStruture>({ mode: "onChange" });
+	} = useForm<FormStruture>({ mode: "onChange" }); // se usa mode: "onChange" para que el valor del input se actualice cuando se cambie el switch
 	const [loading, setLoading] = useState(false);
 
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
@@ -36,6 +36,7 @@ export default function AutoBackup() {
 		setLoading(true);
 		async function fetchData() {
 			try {
+                //  cargamos los datos de la configuracio desde el backend
 				const response = await axios.get(route("backup.settings"));
 				setValue("active", response.data.active);
 				setValue("schedule", response.data.schedule);
@@ -47,26 +48,29 @@ export default function AutoBackup() {
 		}
 		fetchData();
 		return () => {
+            // limpiamos el timeout al desmontar el componente
 			debounceRef.current && clearTimeout(debounceRef.current);
 		};
 	}, []);
 
+    //  onSubmit envia los datos de configuracion del backup a la api
 	const onSubmit = useCallback((data: FormStruture) => {
 		if (debounceRef.current) {
 			clearTimeout(debounceRef.current);
 		}
-        setLoading(true);
+		setLoading(true);
 
-		debounceRef.current = setTimeout(async () => {
+		debounceRef.current = setTimeout(async () => { // setea el timeout y ejecuta la funcion
 			try {
 				axios.post(route("backup.toggle"), data);
-                setLoading(false);
+				setLoading(false);
 			} catch (error) {
 				console.log(error);
 			}
 		}, 1500);
 	}, []);
 
+    //  esto cambia el valor del switch al validar el formulario
 	useEffect(() => {
 		console.log(isValid);
 		if (!isValid) {
@@ -85,11 +89,11 @@ export default function AutoBackup() {
 							control={
 								<Switch
 									disabled={isSubmitting}
-									checked={watch("active") ?? false}
-									value={value}
+									checked={watch("active") ?? false} // valor del switch
+									value={value} // valor del switch
 									onChange={(_e, checked) => {
-										onChange(checked);
-										handleSubmit(onSubmit)();
+										onChange(checked); // cambia el valor del switch
+										handleSubmit(onSubmit)(); // envia los datos al backend
 									}}
 								/>
 							}
@@ -113,8 +117,8 @@ export default function AutoBackup() {
 					<Select
 						labelId="demo-simple-select-filled-label"
 						id="demo-simple-select-filled"
-						defaultValue={""}
-						value={watch("schedule") ?? ""}
+						defaultValue={""} // valor por defecto
+						value={watch("schedule") ?? ""} // valor del select cuando se carga el componente
 						disabled={isSubmitting}
 						{...register("schedule", { required: "Es requerido un valor." })}
 						onChange={() => handleSubmit(onSubmit)()}
