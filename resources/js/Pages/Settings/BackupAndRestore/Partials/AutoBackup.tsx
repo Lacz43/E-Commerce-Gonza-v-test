@@ -22,20 +22,30 @@ export default function AutoBackup() {
 	const {
 		handleSubmit,
 		control,
-		getValues,
 		setValue,
 		register,
+		watch,
 		formState: { isSubmitting, errors, isValid },
 	} = useForm<FormStruture>({ mode: "onChange" });
 
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
 
-	useEffect(
-		() => () => {
+	useEffect(() => {
+		async function fetchData() {
+			try {
+				const response = await axios.get(route("backup.settings"));
+				setValue("active", response.data.active);
+				setValue("schedule", response.data.schedule);
+				setValue("time", response.data.time);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		fetchData();
+		return () => {
 			debounceRef.current && clearTimeout(debounceRef.current);
-		},
-		[],
-	);
+		};
+	}, []);
 
 	const onSubmit = useCallback((data: FormStruture) => {
 		if (debounceRef.current) {
@@ -68,7 +78,7 @@ export default function AutoBackup() {
 						control={
 							<Switch
 								disabled={isSubmitting}
-								checked={isValid ? value : false}
+								checked={watch("active") ?? false}
 								value={value}
 								onChange={(_e, checked) => {
 									onChange(checked);
@@ -90,9 +100,10 @@ export default function AutoBackup() {
 						labelId="demo-simple-select-filled-label"
 						id="demo-simple-select-filled"
 						defaultValue={""}
+						value={watch("schedule") ?? ""}
 						disabled={isSubmitting}
-						{...register("schedule")}
-						onChangeCapture={handleSubmit(onSubmit)}
+						{...register("schedule", { required: "Es requerido un valor." })}
+						onChange={() => handleSubmit(onSubmit)()}
 					>
 						<MenuItem value="">
 							<em>None</em>
@@ -109,9 +120,9 @@ export default function AutoBackup() {
 					type="time"
 					id="time"
 					label="Hora"
+					value={watch("time") ?? ""}
 					variant="filled"
 					{...register("time")}
-					defaultValue={getValues().time}
 					onChangeCapture={handleSubmit(onSubmit)}
 				/>
 			</div>
