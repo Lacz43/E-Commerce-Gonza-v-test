@@ -2,7 +2,7 @@ services:
     dev:
         build:
             context: .
-            dockerfile: docker/Dockerfile.dev
+            target: dev
         container_name: gonzaplus_dev
         ports:
             - "8000:8000"
@@ -20,7 +20,7 @@ services:
     prod:
         build:
             context: .
-            dockerfile: docker/Dockerfile.prod
+            target: prod
         container_name: gonzaplus_prod
         ports:
             - "80:80"
