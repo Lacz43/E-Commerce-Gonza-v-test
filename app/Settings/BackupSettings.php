@@ -12,9 +12,9 @@ use Spatie\LaravelSettings\Settings;
  */
 class BackupSettings extends Settings
 {
-    public bool $active;
-    public string $schedule;
-    public ?string $time;
+    public bool $active = false;
+    public string $schedule = "daily";
+    public ?string $time = null;
 
     public static function group(): string
     {
