@@ -14,6 +14,7 @@ services:
         tty: true # Permite usar la consola interactiva
         depends_on:
             - db
+            - phpmyadmin
         networks:
             - network # 👈 Asegúrate de que el app esté en la misma red que db
 
@@ -56,6 +57,22 @@ services:
             - db_data:/var/lib/mysql
         ports:
             - "3306:3306" # Puerto local:puerto contenedor
+        networks:
+            - network
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: phpmyadmin
+        ports:
+            - "8080:80"
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            PMA_USER: admin
+            PMA_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: password
+        depends_on:
+            - db
         networks:
             - network
 

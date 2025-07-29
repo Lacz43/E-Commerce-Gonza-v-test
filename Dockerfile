@@ -16,7 +16,8 @@ RUN apt-get update \
     libonig-dev \
     curl \
     nano \
-    mariadb-client
+    mariadb-client \
+    supervisor
 
 # Instalar extensiones PHP necesarias para Laravel
 RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
@@ -27,6 +28,9 @@ RUN curl -sS https://getcomposer.org/installer \
 
 # Opcional: establece el directorio de trabajo
 WORKDIR /var/www
+
+# Configurar supervisord
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN git config --global --add safe.directory /var/www/html
 
@@ -88,7 +92,7 @@ RUN corepack enable pnpm
 RUN corepack use pnpm@10.9
 RUN pnpm install
 
-# Inicia un bash interactivo
-CMD ["bash"]
+# Inicia todos los procesos
+CMD ["supervisord", "-n"]
 
 EXPOSE 8000
