@@ -7,5 +7,6 @@ return [
     'product_brands',
     'settings',
     'backups',
-    'sales'
+    'sales',
+    'users',
 ];
