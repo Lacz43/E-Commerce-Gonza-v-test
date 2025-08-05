@@ -6,6 +6,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import { ModalProvider } from "./Context/Modal";
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -17,9 +18,13 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
-    },
-    progress: {
-        color: '#4B5563',
-    },
+		root.render(
+			<ModalProvider>
+				<App {...props} />
+			</ModalProvider>,
+		);
+	},
+	progress: {
+		color: "#4B5563",
+	},
 });
