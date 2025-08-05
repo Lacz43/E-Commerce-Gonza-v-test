@@ -1,0 +1,76 @@
+import { Box, Modal } from "@mui/material";
+import { createContext, type ReactNode, useContext, useState } from "react";
+
+type Props = {
+	children: ReactNode;
+};
+
+/*
+ * Tipo ModalContextType
+ * openModal: Función para abrir el modal
+ * closeModal: Función para cerrar el modal
+ */
+interface ModalContextType {
+	openModal: (getContentFn: () => ReactNode) => void;
+	closeModal: () => void;
+}
+
+const style = {
+	position: "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	bgcolor: "background.paper",
+	border: "2px solid #000",
+};
+
+/*
+ * Contexto ModalContext
+ * Usado para almacenar el estado del Modal
+ */
+const ModalContext = createContext<ModalContextType | undefined>(undefined);
+
+/*
+ * Componente ModalProvider
+ * Usado para proveer el contexto ModalContext
+ */
+export function ModalProvider({ children }: Props) {
+	const [isOpen, setIsOpen] = useState(false);
+	const [getContent, setGetContent] = useState<() => ReactNode>(
+		() => () => null,
+	);
+
+	const openModal = (getContentFn: () => ReactNode) => {
+		setGetContent(() => getContentFn);
+		setIsOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsOpen(false);
+		setTimeout(() => setGetContent(() => () => null), 300); // resetear el contenido después de cerrar (para limpiar estado)
+	};
+
+	return (
+		<ModalContext.Provider value={{ openModal, closeModal }}>
+			{children}
+			{isOpen && (
+				<Modal open={isOpen} onClose={closeModal}>
+					<Box sx={style}>{getContent()}</Box>
+				</Modal>
+			)}
+		</ModalContext.Provider>
+	);
+}
+
+/*
+ * Usar ModalContext para obtener el contexto del ModalProvider
+ * Si no se encuentra, lanzar un error
+ * Si se encuentra, retornar el contexto
+ */
+export function useModal() {
+	const context = useContext(ModalContext);
+	if (!context) {
+		throw new Error("useModal must be used within a ModalProvider");
+	}
+	return context;
+}
