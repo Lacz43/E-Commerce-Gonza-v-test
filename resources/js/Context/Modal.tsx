@@ -6,12 +6,18 @@ type Props = {
 };
 
 /*
+ * Tipo de función que recibe el contenido del modal y cierra el modal
+ * closeModal: Función para cerrar el modal
+ */
+type Utils = (utils: { closeModal: () => void }) => ReactNode;
+
+/*
  * Tipo ModalContextType
  * openModal: Función para abrir el modal
  * closeModal: Función para cerrar el modal
  */
 interface ModalContextType {
-	openModal: (getContentFn: () => ReactNode) => void;
+	openModal: (getContentFn: Utils) => void;
 	closeModal: () => void;
 }
 
@@ -36,11 +42,13 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
  */
 export function ModalProvider({ children }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
-	const [getContent, setGetContent] = useState<() => ReactNode>(
-		() => () => null,
-	);
+	const [getContent, setGetContent] = useState<
+		(utils: { closeModal: () => void }) => ReactNode
+	>(() => () => null);
 
-	const openModal = (getContentFn: () => ReactNode) => {
+	const openModal = (
+		getContentFn: (utils: { closeModal: () => void }) => ReactNode,
+	) => {
 		setGetContent(() => getContentFn);
 		setIsOpen(true);
 	};
@@ -55,7 +63,7 @@ export function ModalProvider({ children }: Props) {
 			{children}
 			{isOpen && (
 				<Modal open={isOpen} onClose={closeModal}>
-					<Box sx={style}>{getContent()}</Box>
+					<Box sx={style}>{getContent({ closeModal })}</Box>
 				</Modal>
 			)}
 		</ModalContext.Provider>
