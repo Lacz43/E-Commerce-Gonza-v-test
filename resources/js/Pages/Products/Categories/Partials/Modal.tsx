@@ -4,7 +4,6 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ModalStyled from "@/Components/Modals/ModalStyled";
-import usePermissions from "@/Hook/usePermissions";
 
 export type ModalType = {
 	type: "create" | "edit";
@@ -13,15 +12,15 @@ export type ModalType = {
 
 type Props = {
 	openModal: ModalType | null;
-	setOpenModal: React.Dispatch<React.SetStateAction<ModalType | null>>;
-    name: string;
+	name: string;
+	onClose: () => void;
 };
 
 type FormStruture = {
 	name: string;
 };
 
-export default function Modal({ openModal, setOpenModal, name }: Props) {
+export default function Modal({ openModal, name, onClose }: Props) {
 	const {
 		register,
 		handleSubmit,
@@ -30,8 +29,6 @@ export default function Modal({ openModal, setOpenModal, name }: Props) {
 		formState: { errors, isSubmitting },
 	} = useForm<FormStruture>();
 
-	const { hasPermission } = usePermissions();
-
 	useEffect(() => {
 		if (openModal?.id) {
 			setValue("name", name);
@@ -39,15 +36,9 @@ export default function Modal({ openModal, setOpenModal, name }: Props) {
 	}, [openModal]);
 
 	const path = () => {
-		if (
-			openModal?.type === "create" &&
-			hasPermission(["create product_categories"])
-		) {
+		if (openModal?.type === "create") {
 			return { url: route("products.categories.store"), method: "post" };
-		} else if (
-			openModal?.type === "edit" &&
-			hasPermission(["edit product_categories"])
-		) {
+		} else if (openModal?.type === "edit") {
 			return {
 				url: route("products.categories.update", openModal?.id),
 				method: "patch",
@@ -61,9 +52,9 @@ export default function Modal({ openModal, setOpenModal, name }: Props) {
 			const r = path();
 			if (!r) return;
 			await axios(r.url, { method: r.method, data: data });
-			setOpenModal(null);
+			onClose();
 			reset();
-			router.reload({showProgress: true});
+			router.reload({ showProgress: true });
 		} catch (e) {
 			console.log(e);
 		}
@@ -71,8 +62,7 @@ export default function Modal({ openModal, setOpenModal, name }: Props) {
 
 	return (
 		<ModalStyled
-			show={openModal !== null}
-			onClose={() => setOpenModal(null)}
+			onClose={() => onClose()}
 			header={
 				<h2 className="text-xl font-semibold leading-tight text-gray-800">
 					{openModal?.type === "create" ? "Nueva" : "Editar"} Categoria
@@ -96,11 +86,7 @@ export default function Modal({ openModal, setOpenModal, name }: Props) {
 			}
 			footer={
 				<div className="flex justify-end gap-2">
-					<Button
-						onClick={() => setOpenModal(null)}
-						color="info"
-						variant="contained"
-					>
+					<Button onClick={() => onClose()} color="info" variant="contained">
 						<b>Cancelar</b>
 					</Button>
 					<Button
