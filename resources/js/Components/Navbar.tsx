@@ -1,12 +1,14 @@
 import { Link, usePage } from "@inertiajs/react";
-import { IconButton, type IconButtonProps } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { IconButton, type IconButtonProps } from "@mui/material";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import shoppingCart from "@/shoppingCart";
-import { paths } from "@/paths";
 import Avatar from "@/Components/Avatar";
+import { useModal } from "@/Context/Modal";
+import { paths } from "@/paths";
+import shoppingCart from "@/shoppingCart";
+import CartModal from "./CartModal";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -19,7 +21,8 @@ const AvatarIcon = styled(IconButton)<IconButtonProps>(() => ({
 	padding: "0",
 }));
 
-export default function Navbar({ openCar }: { openCar?: () => void }) {
+export default function Navbar() {
+	const { openModal } = useModal();
 	const user = (usePage().props as unknown as Auth).auth.user;
 	const [total, setTotal] = useState(0);
 
@@ -40,7 +43,12 @@ export default function Navbar({ openCar }: { openCar?: () => void }) {
 	return (
 		<div className="bg-white w-full px-5 py-2 max-md:py-1 sm:px-20 sticky top-0 z-50 mb-4 flex justify-end items-center shadow-xl">
 			<div className="mr-auto">
-				<IconButton id="shopping-cart" onClick={() => openCar?.()}>
+				<IconButton
+					id="shopping-cart"
+					onClick={() =>
+						openModal(({ closeModal }) => <CartModal onClose={closeModal} />)
+					}
+				>
 					<ShoppingCartIcon />
 					<CartBadge badgeContent={total} color="primary" overlap="circular" />
 				</IconButton>
