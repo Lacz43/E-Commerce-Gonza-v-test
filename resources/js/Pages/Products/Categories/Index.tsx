@@ -31,7 +31,7 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 
 export default function Products({ categories }: Props) {
 	console.log(categories);
-	const { openModal } = useModal();
+	const { openModal, closeModal } = useModal();
 
 	const [loading, setLoading] = useState(false);
 
@@ -46,7 +46,7 @@ export default function Products({ categories }: Props) {
 					loading={loading}
 				/>
 			)),
-		[],
+		[categories.data],
 	);
 
 	const onDeleteConfig = useMemo(
@@ -62,6 +62,7 @@ export default function Products({ categories }: Props) {
 		try {
 			axios.delete(route("products.categories.delete", id));
 			setLoading(false);
+			closeModal();
 			router.reload({ showProgress: true });
 		} catch (e) {
 			console.log(e);
@@ -78,15 +79,18 @@ export default function Products({ categories }: Props) {
 		[categories.data],
 	);
 
-	const handleModalCrateOrEdit = useCallback((prop: ModalType) => {
-		openModal(({ closeModal }) => (
-			<Modal
-				openModal={prop}
-				name={categories.data.find((f) => f.id === prop.id)?.name ?? ""}
-				onClose={closeModal}
-			/>
-		));
-	}, [categories.data]);
+	const handleModalCrateOrEdit = useCallback(
+		(prop: ModalType) => {
+			openModal(({ closeModal }) => (
+				<Modal
+					openModal={prop}
+					name={categories.data.find((f) => f.id === prop.id)?.name ?? ""}
+					onClose={closeModal}
+				/>
+			));
+		},
+		[categories.data],
+	);
 
 	return (
 		<AuthenticatedLayout
