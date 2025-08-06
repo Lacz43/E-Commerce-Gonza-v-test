@@ -11,8 +11,9 @@ import {
 } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { toFormData } from "axios";
-import { lazy, Suspense, useCallback, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import AutoBackup from "./Partials/AutoBackup";
 
@@ -52,13 +53,10 @@ type Props = {
 	backups: paginateResponse<BackupAndRestore>;
 };
 
-// INFO: modal: modal que se muestra al hacer click
-type modal = "backup" | "restore" | "delete" | null;
-
 export default function BackupAndRestore({ backups }: Props) {
+	const { openModal, closeModal } = useModal();
 	const [loading, setLoading] = useState(false);
-	const [open, setOpen] = useState<modal>(null); // modal que se muestra al hacer click
-	const fileName = useRef<string | null>(null); // nombre del archivo que se quiere enviar al backend
+
 	const {
 		register,
 		handleSubmit,
@@ -69,7 +67,7 @@ export default function BackupAndRestore({ backups }: Props) {
 		try {
 			const formData = toFormData(data, new FormData()); // convertimos el formulario a un objeto FormData para poder enviar el archivo
 			await axios.post(route("backup.restore"), formData);
-			setOpen(null);
+            closeModal();
 		} catch (e) {
 			console.log(e);
 		}
@@ -99,7 +97,9 @@ export default function BackupAndRestore({ backups }: Props) {
 				field: "url",
 				headerName: "Acciones",
 				type: "actions",
-				renderCell: (params) => ( // renderizamos el boton de descarga y borrado
+				renderCell: (
+					params, // renderizamos el boton de descarga y borrado
+				) => (
 					<div className="flex">
 						<IconButton
 							color="primary"
@@ -110,8 +110,7 @@ export default function BackupAndRestore({ backups }: Props) {
 						<IconButton
 							color="error"
 							onClick={() => {
-								setOpen("delete");
-								fileName.current = params.row.name; // guardamos el nombre del archivo para borrarlo
+								deleteModal(params.row.name);
 							}}
 						>
 							<DeleteIcon />
@@ -123,34 +122,133 @@ export default function BackupAndRestore({ backups }: Props) {
 		[],
 	);
 
-    /* INFO: handleBackup: funcion que se ejecuta cuando se hace click en el boton de respaldo
-     * se utiliza useCallback para no volver a ejecutar la funcion cuando cambie el estado
-     */
+	/* INFO: handleBackup: funcion que se ejecuta cuando se hace click en el boton de respaldo
+	 * se utiliza useCallback para no volver a ejecutar la funcion cuando cambie el estado
+	 */
 	const handleBackup = useCallback(async () => {
 		setLoading(true);
 		try {
 			await axios.post(route("backup.trigger"));
 			setLoading(false);
-			setOpen(null);
+            closeModal();
 			router.reload();
 		} catch (e) {
 			console.log(e);
 		}
 	}, []);
 
-    /* INFO: handleDelete: funcion que se ejecuta cuando se hace click en el boton de borrado */
-	const handleDelete = useCallback(async () => {
-		if (!fileName.current) return;
+	/* INFO: handleDelete: funcion que se ejecuta cuando se hace click en el boton de borrado */
+	const handleDelete = useCallback(async (name: string) => {
+		if (!name) return;
 		setLoading(true);
 		try {
-			await axios.delete(route("backup.delete", { file: fileName.current }));
+			await axios.delete(route("backup.delete", { file: name }));
 			setLoading(false);
-			setOpen(null);
+            closeModal();
 			router.reload();
 		} catch (e) {
 			console.log(e);
 		}
-	}, [fileName]); // se ejecuta cuando cambie fileName
+	}, []);
+
+	const backupModal = useCallback(
+		() =>
+			openModal(({ closeModal }) => (
+				<ModalStyled
+					header={<b>Respaldo</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>¿Desea realizar el respaldo?</p>
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => closeModal()} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={handleBackup}
+								variant="contained"
+								color="error"
+								loading={loading}
+							>
+								<b>Respaldar</b>
+							</Button>
+						</div>
+					}
+					onClose={closeModal}
+				/>
+			)),
+		[],
+	);
+
+	const restoreModal = useCallback(
+		() =>
+			openModal(({ closeModal }) => (
+				<ModalStyled
+					header={<b>Restaurar</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>
+								¿Desea restaurar <b>toda la base de datos</b>?
+							</p>
+							Tenga en cuenta que el proceso de restauración puede tardar varios
+							minutos dependiendo del tamaño de la base de datos.
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => closeModal()} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={handleSubmit(onSubmit)}
+								variant="contained"
+								color="error"
+								loading={isSubmitting}
+							>
+								<b>Restaurar</b>
+							</Button>
+						</div>
+					}
+					onClose={closeModal}
+				/>
+			)),
+		[],
+	);
+
+	const deleteModal = useCallback(
+		(name: string) =>
+			openModal(({ closeModal }) => (
+				<ModalStyled
+					header={<b>Borrar</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>
+								¿Desea <b>borrar</b> este respaldo?
+							</p>
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => closeModal()} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={() => handleDelete(name)}
+								variant="contained"
+								color="error"
+								loading={loading}
+							>
+								<b>Borrar</b>
+							</Button>
+						</div>
+					}
+					onClose={() => closeModal()}
+				/>
+			)),
+		[],
+	);
 
 	return (
 		<AuthenticatedLayout
@@ -170,7 +268,7 @@ export default function BackupAndRestore({ backups }: Props) {
 								variant="contained"
 								size="medium"
 								endIcon={<BackupIcon />}
-								onClick={() => setOpen("backup")}
+								onClick={() => backupModal()}
 							>
 								<b>Respaldar</b>
 							</Button>
@@ -191,7 +289,7 @@ export default function BackupAndRestore({ backups }: Props) {
 											variant="contained"
 											size="medium"
 											endIcon={<BackupIcon />}
-											onClick={() => setOpen("restore")}
+											onClick={() => restoreModal()}
 										>
 											<b>Restaurar</b>
 										</Button>
@@ -220,92 +318,6 @@ export default function BackupAndRestore({ backups }: Props) {
 					</div>
 				</div>
 			</div>
-			<Suspense>
-				<ModalStyled
-					header={<b>Respaldo</b>}
-					body={
-						<div className="text-center overflow-hidden">
-							<p>¿Desea realizar el respaldo?</p>
-						</div>
-					}
-					footer={
-						<div className="flex gap-2">
-							<Button onClick={() => setOpen(null)} variant="contained">
-								<b>Cancelar</b>
-							</Button>
-							<Button
-								onClick={handleBackup}
-								variant="contained"
-								color="error"
-								loading={loading}
-							>
-								<b>Respaldar</b>
-							</Button>
-						</div>
-					}
-					show={open === "backup"}
-					onClose={() => setOpen(null)}
-					maxWidth="sm"
-				/>
-				<ModalStyled
-					header={<b>Restaurar</b>}
-					body={
-						<div className="text-center overflow-hidden">
-							<p>
-								¿Desea restaurar <b>toda la base de datos</b>?
-							</p>
-							Tenga en cuenta que el proceso de restauración puede tardar varios
-							minutos dependiendo del tamaño de la base de datos.
-						</div>
-					}
-					footer={
-						<div className="flex gap-2">
-							<Button onClick={() => setOpen(null)} variant="contained">
-								<b>Cancelar</b>
-							</Button>
-							<Button
-								onClick={handleSubmit(onSubmit)}
-								variant="contained"
-								color="error"
-								loading={isSubmitting}
-							>
-								<b>Restaurar</b>
-							</Button>
-						</div>
-					}
-					show={open === "restore"}
-					onClose={() => setOpen(null)}
-					maxWidth="sm"
-				/>
-				<ModalStyled
-					header={<b>Borrar</b>}
-					body={
-						<div className="text-center overflow-hidden">
-							<p>
-								¿Desea <b>borrar</b> este respaldo?
-							</p>
-						</div>
-					}
-					footer={
-						<div className="flex gap-2">
-							<Button onClick={() => setOpen(null)} variant="contained">
-								<b>Cancelar</b>
-							</Button>
-							<Button
-								onClick={handleDelete}
-								variant="contained"
-								color="error"
-								loading={loading}
-							>
-								<b>Borrar</b>
-							</Button>
-						</div>
-					}
-					show={open === "delete"}
-					onClose={() => setOpen(null)}
-					maxWidth="sm"
-				/>
-			</Suspense>
 		</AuthenticatedLayout>
 	);
 }
