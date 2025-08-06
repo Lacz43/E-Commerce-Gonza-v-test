@@ -157,7 +157,7 @@ class BackupAndRestoreController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'error' => 'Error al restaurar el respaldo: ' . $e->getMessage(),
+                'message' => 'Error al restaurar el respaldo: ' . $e->getMessage(),
             ], 500);
         }
     }
