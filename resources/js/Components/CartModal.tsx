@@ -1,17 +1,15 @@
-import ModalStyled from "@/Components/Modals/ModalStyled";
-import ProductsInCar from "@/Components/ProductsInCar";
 import { ShoppingCart, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
-import shoppingCart from "@/shoppingCart";
 import { useEffect, useState } from "react";
+import ModalStyled from "@/Components/Modals/ModalStyled";
+import ProductsInCar from "@/Components/ProductsInCar";
+import shoppingCart from "@/shoppingCart";
 
-export default function CartModal({
-	show,
-	setOpen,
-}: {
-	show: boolean;
-	setOpen: (open: boolean) => void;
-}) {
+type Props = {
+	onClose: () => void;
+};
+
+export default function CartModal({ onClose }: Props) {
 	const [items, setItems] = useState<Item[]>([]);
 
 	function emtyCart() {
@@ -21,11 +19,9 @@ export default function CartModal({
 	}
 
 	useEffect(() => {
-		if (show) {
-			const cart = new shoppingCart();
-			setItems(cart.items);
-		}
-	}, [show]);
+		const cart = new shoppingCart();
+		setItems(cart.items);
+	}, []);
 
 	useEffect(() => {
 		addEventListener("addCart", () => {
@@ -54,9 +50,7 @@ export default function CartModal({
 
 	return (
 		<ModalStyled
-			show={show}
-			onClose={() => setOpen(false)}
-			maxWidth="2xl"
+            onClose={onClose}
 			header={
 				<>
 					<h2 className="font-bold">Carrito</h2>
