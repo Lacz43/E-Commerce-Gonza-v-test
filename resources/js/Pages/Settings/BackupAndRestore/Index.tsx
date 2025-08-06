@@ -13,6 +13,7 @@ import type { GridColDef } from "@mui/x-data-grid";
 import axios, { toFormData } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import AutoBackup from "./Partials/AutoBackup";
@@ -66,10 +67,12 @@ export default function BackupAndRestore({ backups }: Props) {
 	const onSubmit = async (data: FormStruture) => {
 		try {
 			const formData = toFormData(data, new FormData()); // convertimos el formulario a un objeto FormData para poder enviar el archivo
-			await axios.post(route("backup.restore"), formData);
-            closeModal();
+			const response = await axios.post(route("backup.restore"), formData);
+			closeModal();
+			toast.success(response.data.message);
 		} catch (e) {
 			console.log(e);
+			toast.error(`Error al restaurar: ${e.response.data.message}`);
 		}
 	};
 
@@ -128,12 +131,14 @@ export default function BackupAndRestore({ backups }: Props) {
 	const handleBackup = useCallback(async () => {
 		setLoading(true);
 		try {
-			await axios.post(route("backup.trigger"));
+			const { data } = await axios.post(route("backup.trigger"));
 			setLoading(false);
-            closeModal();
+			closeModal();
 			router.reload();
+			toast.success(data.message);
 		} catch (e) {
 			console.log(e);
+			toast.error(`Error al ejecutar el backup: ${e.response.data.message}`);
 		}
 	}, []);
 
@@ -142,12 +147,16 @@ export default function BackupAndRestore({ backups }: Props) {
 		if (!name) return;
 		setLoading(true);
 		try {
-			await axios.delete(route("backup.delete", { file: name }));
+			const { data } = await axios.delete(
+				route("backup.delete", { file: name }),
+			);
 			setLoading(false);
-            closeModal();
+			closeModal();
 			router.reload();
+			toast.success(data.message);
 		} catch (e) {
 			console.log(e);
+			toast.error(`Error al eliminar respaldo: ${e.response.data.message}`);
 		}
 	}, []);
 
