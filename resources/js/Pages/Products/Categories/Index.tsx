@@ -2,6 +2,7 @@ import { Head, router } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import type { tableProps } from "@/Components/DataTable";
 import { useModal } from "@/Context/Modal";
@@ -60,12 +61,16 @@ export default function Products({ categories }: Props) {
 	async function HandleDelete(id: number) {
 		setLoading(true);
 		try {
-			axios.delete(route("products.categories.delete", id));
+			const { data } = await axios.delete(
+				route("products.categories.delete", id),
+			);
 			setLoading(false);
 			closeModal();
 			router.reload({ showProgress: true });
+			toast.success(data.message);
 		} catch (e) {
 			console.log(e);
+            toast.error(`Error al eliminar categoria: ${e.response.data.message}`);
 		}
 	}
 

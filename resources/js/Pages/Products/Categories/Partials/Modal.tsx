@@ -3,6 +3,7 @@ import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 
 export type ModalType = {
@@ -51,12 +52,16 @@ export default function Modal({ openModal, name, onClose }: Props) {
 		try {
 			const r = path();
 			if (!r) return;
-			await axios(r.url, { method: r.method, data: data });
+			const response = await axios(r.url, { method: r.method, data: data });
 			onClose();
 			reset();
 			router.reload({ showProgress: true });
+			toast.success(response.data.message);
 		} catch (e) {
 			console.log(e);
+			toast.error(
+				`Error al ${openModal?.type === "create" ? "Nueva" : "Editar"}: ${e.response.data.message}`,
+			);
 		}
 	};
 
