@@ -3,17 +3,15 @@ import Button from "@mui/material/Button";
 import ModalStyled from "./ModalStyled";
 
 type Props = {
-	show: boolean;
 	title: string;
 	id: number | null;
 	loading?: boolean;
 	onDeleteConfirm: (id: number) => void;
-	setOpen: () => void;
+	onClose: () => void;
 };
 
 export default function ModalDelete({
-	show,
-	setOpen,
+	onClose,
 	title,
 	id,
 	loading,
@@ -21,9 +19,7 @@ export default function ModalDelete({
 }: Props) {
 	return (
 		<ModalStyled
-			show={show}
-			onClose={setOpen}
-			maxWidth="sm"
+			onClose={onClose}
 			header={
 				<h2 className="text-xl font-semibold leading-tight text-gray-800">
 					Eliminar
@@ -60,7 +56,7 @@ export default function ModalDelete({
 						<Button
 							size="medium"
 							variant="contained"
-							onClick={setOpen}
+							onClick={onClose}
 							className="w-full"
 						>
 							<b>Cancelar</b>
