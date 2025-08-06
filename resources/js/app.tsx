@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
+import { Toaster } from "react-hot-toast";
 import { ModalProvider } from "./Context/Modal";
 
 createInertiaApp({
@@ -20,9 +21,12 @@ createInertiaApp({
 		const root = createRoot(el);
 
 		root.render(
-			<ModalProvider>
-				<App {...props} />
-			</ModalProvider>,
+			<>
+				<Toaster position="top-right"/>
+				<ModalProvider>
+					<App {...props} />
+				</ModalProvider>
+			</>,
 		);
 	},
 	progress: {
