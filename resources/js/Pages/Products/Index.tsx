@@ -10,6 +10,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import type { tableProps } from "@/Components/DataTable";
 import { useModal } from "@/Context/Modal";
@@ -73,13 +74,15 @@ export default function Products({
 		try {
 			axios.delete(route("products.delete", id));
 			setLoading(false);
-            closeModal();
+			closeModal();
+			toast.success("Producto eliminado exitosamente");
 			setProduct((prev) => ({
 				...prev,
 				data: prev.data.filter((item) => item.id !== id),
 			}));
 		} catch (e) {
 			console.log(e);
+			toast.error(`Error al eliminar producto: ${e}`);
 		}
 	}
 
