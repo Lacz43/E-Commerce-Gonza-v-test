@@ -60,7 +60,7 @@ export default function Products({
 	filtersFields,
 	sortFields,
 }: Props) {
-	const { openModal } = useModal();
+	const { openModal, closeModal } = useModal();
 	const [product, setProduct] = useState(products);
 	const [loading, setLoading] = useState(false);
 
@@ -73,6 +73,7 @@ export default function Products({
 		try {
 			axios.delete(route("products.delete", id));
 			setLoading(false);
+            closeModal();
 			setProduct((prev) => ({
 				...prev,
 				data: prev.data.filter((item) => item.id !== id),
