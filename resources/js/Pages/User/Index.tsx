@@ -1,7 +1,11 @@
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
-import { lazy, Suspense, useCallback, useMemo, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { lazy, Suspense, useCallback, useMemo } from "react";
+import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
+import ModalDelete from "@/Components/Modals/ModalDelete";
+import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CreateOrEdit from "./CreateOrEdit";
 
@@ -13,7 +17,7 @@ type Props = {
 
 export default function Products({ users }: Props) {
 	console.log(users);
-	const [open, setOpen] = useState<"create" | "edit" | undefined>();
+	const { openModal, closeModal } = useModal();
 
 	const columns = useMemo<GridColDef[]>(
 		() => [
@@ -41,13 +45,47 @@ export default function Products({ users }: Props) {
 	);
 
 	const handleEdit = useCallback((id: number) => {
-		console.log(id);
-		setOpen("edit");
+		modal("edit");
 	}, []);
 
-	const handleDelete = useCallback((id: number) => {
-		console.log(id);
-	}, []);
+	const handleDelete = useCallback(
+		(id: number) => {
+			openModal(({ closeModal }) => (
+				<ModalDelete
+					onClose={closeModal}
+					id={id}
+					title={users.data.find((f) => f.id === id)?.name ?? ""}
+					onDeleteConfirm={onDeleteConfig}
+				/>
+			));
+		},
+		[users.data],
+	);
+
+	const onDeleteConfig = useCallback(
+		async (id: number) => {
+			try {
+				const { data } = await axios.delete(route("users.destroy", id));
+				closeModal();
+				toast.success(data.message);
+				router.reload();
+			} catch (e) {
+				console.log(e);
+				toast.error(
+					`Error al eliminar usuario: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+				);
+			}
+		},
+		[users.data],
+	);
+
+	const modal = useCallback(
+		(type: "create" | "edit") =>
+			openModal(({ closeModal }) => (
+				<CreateOrEdit onClose={closeModal} type={type} />
+			)),
+		[],
+	);
 
 	return (
 		<AuthenticatedLayout
@@ -64,7 +102,7 @@ export default function Products({ users }: Props) {
 					<div className="flex justify-end mb-3 mx-3">
 						<CreateButton
 							permissions={["create users"]}
-							onAction={() => setOpen("create")}
+							onAction={() => modal("create")}
 						/>
 					</div>
 					<div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
@@ -84,11 +122,6 @@ export default function Products({ users }: Props) {
 					</div>
 				</div>
 			</div>
-			<CreateOrEdit
-				show={open !== undefined}
-				onClose={() => setOpen(undefined)}
-				type={open ?? "create"}
-			/>
 		</AuthenticatedLayout>
 	);
 }

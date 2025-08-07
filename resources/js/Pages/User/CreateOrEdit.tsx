@@ -1,17 +1,17 @@
 import { lazy, Suspense } from "react";
-import type { ModalProps } from "@/Components/Modals/Modal";
 
 const ModalStyled = lazy(() => import("@/Components/Modals/ModalStyled"));
 
-type Props = ModalProps & {
+type Props = {
     type: "edit" | "create";
+    onClose: () => void;
 }
 
 export default function Create(props: Props) {
 	return (
 		<Suspense>
 			<ModalStyled
-				{...props}
+                onClose={props.onClose}
 				header={
 					<h2 className="text-xl font-semibold leading-tight text-gray-800">
 					    {props.type === "edit" ? "Editar" : "Crear"} Usuario
