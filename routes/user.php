@@ -7,3 +7,5 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
 });
+
+Route::middleware('auth', 'permission:delete users')->delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
