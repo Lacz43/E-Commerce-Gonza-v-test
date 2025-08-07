@@ -1,5 +1,5 @@
 import { Head, router } from "@inertiajs/react";
-import axios, { toFormData } from "axios";
+import axios, { AxiosError, toFormData } from "axios";
 import toast from "react-hot-toast";
 import BackButtom from "@/Components/BackButtom";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -14,7 +14,7 @@ export default function Products() {
 			router.visit(route("products.index"));
 		} catch (e) {
 			console.log(e);
-			toast.error(`Error al registrar producto: ${e}`);
+			toast.error(`Error al registrar producto: ${e instanceof AxiosError ? e.response?.data.message : ""}`);
 		}
 	}
 

@@ -9,7 +9,7 @@ import {
 	TextField,
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -70,7 +70,7 @@ export default function AutoBackup() {
 			} catch (error) {
 				console.log(error);
 				toast.error(
-					`Error al cambiar la configuracion de respaldo: ${error.response.data.message}`,
+					`Error al cambiar la configuracion de respaldo: ${error instanceof AxiosError ? error.response?.data.message : ""}`,
 				);
 			}
 		}, 1500);

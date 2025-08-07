@@ -10,7 +10,7 @@ import {
 	OutlinedInput,
 } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import axios, { toFormData } from "axios";
+import axios, { AxiosError, toFormData } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -72,7 +72,9 @@ export default function BackupAndRestore({ backups }: Props) {
 			toast.success(response.data.message);
 		} catch (e) {
 			console.log(e);
-			toast.error(`Error al restaurar: ${e.response.data.message}`);
+			toast.error(
+				`Error al restaurar: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+			);
 		}
 	};
 
@@ -138,7 +140,9 @@ export default function BackupAndRestore({ backups }: Props) {
 			toast.success(data.message);
 		} catch (e) {
 			console.log(e);
-			toast.error(`Error al ejecutar el backup: ${e.response.data.message}`);
+			toast.error(
+				`Error al ejecutar el backup: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+			);
 		}
 	}, []);
 
@@ -156,7 +160,9 @@ export default function BackupAndRestore({ backups }: Props) {
 			toast.success(data.message);
 		} catch (e) {
 			console.log(e);
-			toast.error(`Error al eliminar respaldo: ${e.response.data.message}`);
+			toast.error(
+				`Error al eliminar respaldo: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+			);
 		}
 	}, []);
 

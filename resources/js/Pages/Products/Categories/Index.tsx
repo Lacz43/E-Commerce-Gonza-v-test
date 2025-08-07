@@ -1,6 +1,6 @@
 import { Head, router } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
@@ -70,7 +70,7 @@ export default function Products({ categories }: Props) {
 			toast.success(data.message);
 		} catch (e) {
 			console.log(e);
-            toast.error(`Error al eliminar categoria: ${e.response.data.message}`);
+            toast.error(`Error al eliminar categoria: ${e instanceof AxiosError ? e.response?.data.message : ""}`);
 		}
 	}
 
