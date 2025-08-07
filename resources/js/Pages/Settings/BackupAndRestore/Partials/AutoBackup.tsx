@@ -9,9 +9,10 @@ import {
 	TextField,
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type FormStruture = {
 	schedule: "daily" | "weekly" | "monthly" | "yearly" | "";
@@ -36,7 +37,7 @@ export default function AutoBackup() {
 		setLoading(true);
 		async function fetchData() {
 			try {
-                //  cargamos los datos de la configuracio desde el backend
+				//  cargamos los datos de la configuracio desde el backend
 				const response = await axios.get(route("backup.settings"));
 				setValue("active", response.data.active);
 				setValue("schedule", response.data.schedule);
@@ -48,29 +49,34 @@ export default function AutoBackup() {
 		}
 		fetchData();
 		return () => {
-            // limpiamos el timeout al desmontar el componente
+			// limpiamos el timeout al desmontar el componente
 			debounceRef.current && clearTimeout(debounceRef.current);
 		};
 	}, []);
 
-    //  onSubmit envia los datos de configuracion del backup a la api
+	//  onSubmit envia los datos de configuracion del backup a la api
 	const onSubmit = useCallback((data: FormStruture) => {
 		if (debounceRef.current) {
 			clearTimeout(debounceRef.current);
 		}
 		setLoading(true);
 
-		debounceRef.current = setTimeout(async () => { // setea el timeout y ejecuta la funcion
+		debounceRef.current = setTimeout(async () => {
+			// setea el timeout y ejecuta la funcion
 			try {
-				axios.post(route("backup.toggle"), data);
+				const response = await axios.post(route("backup.toggle"), data);
 				setLoading(false);
+				toast.success(response.data.message);
 			} catch (error) {
 				console.log(error);
+				toast.error(
+					`Error al cambiar la configuracion de respaldo: ${error instanceof AxiosError ? error.response?.data.message : ""}`,
+				);
 			}
 		}, 1500);
 	}, []);
 
-    //  esto cambia el valor del switch al validar el formulario
+	//  esto cambia el valor del switch al validar el formulario
 	useEffect(() => {
 		console.log(isValid);
 		if (!isValid) {

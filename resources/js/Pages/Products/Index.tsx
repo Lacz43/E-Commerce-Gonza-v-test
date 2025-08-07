@@ -1,5 +1,4 @@
-import { Head, Link, router } from "@inertiajs/react";
-import { Button } from "@mui/material";
+import { Head, router } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import {
@@ -11,8 +10,10 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import toast from "react-hot-toast";
+import CreateButton from "@/Components/CreateButton";
 import type { tableProps } from "@/Components/DataTable";
-import PermissionGate from "@/Components/PermissionGate";
+import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
@@ -60,8 +61,8 @@ export default function Products({
 	filtersFields,
 	sortFields,
 }: Props) {
+	const { openModal, closeModal } = useModal();
 	const [product, setProduct] = useState(products);
-	const [selected, setSelect] = useState<null | number>(null);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -73,17 +74,31 @@ export default function Products({
 		try {
 			axios.delete(route("products.delete", id));
 			setLoading(false);
-			setSelect(null);
+			closeModal();
+			toast.success("Producto eliminado exitosamente");
 			setProduct((prev) => ({
 				...prev,
 				data: prev.data.filter((item) => item.id !== id),
 			}));
 		} catch (e) {
 			console.log(e);
+			toast.error(`Error al eliminar producto: ${e}`);
 		}
 	}
 
-	const handleDeleteClick = useCallback((id: number) => setSelect(id), []);
+	const handleDeleteClick = useCallback(
+		(id: number) =>
+			openModal(({ closeModal }) => (
+				<ModalDelete
+					onClose={closeModal}
+					id={id}
+					loading={loading}
+					title={products.data.find((f) => f.id === id)?.name ?? ""}
+					onDeleteConfirm={HandleDelete}
+				/>
+			)),
+		[],
+	);
 
 	const onEditConfig = useMemo(
 		() => ({
@@ -122,13 +137,10 @@ export default function Products({
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
 					<div className="flex justify-end mb-3 mx-3">
-						<PermissionGate permission={["create products"]}>
-							<Link href={route("products.create")}>
-								<Button variant="contained" size="small">
-									<b>Nuevo</b>
-								</Button>
-							</Link>
-						</PermissionGate>
+						<CreateButton
+							permissions={["create products"]}
+							onAction={() => router.visit(route("products.create"))}
+						/>
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
@@ -144,16 +156,6 @@ export default function Products({
 					</div>
 				</div>
 			</div>
-			<Suspense>
-				<ModalDelete
-					show={selected !== null}
-					setOpen={() => setSelect(null)}
-					id={selected}
-					loading={loading}
-					title={products.data.find((f) => f.id === selected)?.name ?? ""}
-					onDeleteConfirm={HandleDelete}
-				/>
-			</Suspense>
 		</AuthenticatedLayout>
 	);
 }

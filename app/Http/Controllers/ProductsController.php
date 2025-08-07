@@ -48,12 +48,12 @@ class ProductsController extends Controller
 
         $category = ProductCategory::createOrReadCategory($request['category']);
         if (!$category) {
-            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear categorias.']);
+            return response()->json(['message' => 'No tienes permiso para crear categorias.'], 403);
         }
 
         $brand = Brand::createOrReadBrand($request['brand']);
         if (!$brand) {
-            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
+            return response()->json(['message' => 'No tienes permiso para crear marcas.'], 403);
         }
 
         $product = Products::create([
@@ -71,7 +71,9 @@ class ProductsController extends Controller
         ]);
 
         ProductImage::saveImages($product->id, $request->file('images'), $data['image_used'] ?? null);
-        return json_encode(["test" => "test"]);
+        return response()->json([
+            'message' => 'Producto creado exitosamente',
+        ]);
     }
 
     public function edit(Products $product)
@@ -87,12 +89,12 @@ class ProductsController extends Controller
 
         $category = ProductCategory::createOrReadCategory($request['category']);
         if (!$category) {
-            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear categorias.']);
+            return response()->json(["message" => "No tienes permiso para crear categorias."], 403);
         }
 
         $brand = Brand::createOrReadBrand($request['brand']);
         if (!$brand) {
-            return redirect()->back()->withErrors(['error' => 'No tienes permiso para crear marcas.']);
+            return response()->json(["message" => "No tienes permiso para crear categorias."], 403);
         }
 
         $product->update([
@@ -108,7 +110,7 @@ class ProductsController extends Controller
         Storage::disk('public')->deleteDirectory('products/' . $product->id);
         ProductImage::saveImages($product->id, $request->file('images'), $request['image_used'] ?? null);
 
-        return json_encode(["test" => "test"]);
+        return response()->json(["message" => "Producto actualizado exitosamente"]);
     }
 
     /**
