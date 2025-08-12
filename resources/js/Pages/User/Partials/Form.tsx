@@ -87,20 +87,31 @@ export default function Form({ ref }: Props) {
 					type={showPassword ? "text" : "password"}
 					endAdornment={
 						<InputAdornment position="end">
-							<IconButton
-								aria-label={
-									showPassword ? "hide the password" : "display the password"
+							<Tooltip
+								title={
+									showPassword
+										? "Ocultar la contraseña"
+										: "Mostrar la contraseña"
 								}
-								onClick={handleClickShowPassword}
-								onMouseDown={handleMouseDownPassword}
-								onMouseUp={handleMouseUpPassword}
-								edge="end"
+                                arrow
 							>
-								{showPassword ? <VisibilityOff /> : <Visibility />}
-							</IconButton>
+								<IconButton
+									aria-label={
+										showPassword
+											? "Ocultar la contraseña"
+											: "Mostrar la contraseña"
+									}
+									onClick={handleClickShowPassword}
+									onMouseDown={handleMouseDownPassword}
+									onMouseUp={handleMouseUpPassword}
+									edge="end"
+								>
+									{showPassword ? <VisibilityOff /> : <Visibility />}
+								</IconButton>
+							</Tooltip>
 						</InputAdornment>
 					}
-                    {...register("password", { required: "Proporsione una contraseña" })}
+					{...register("password", { required: "Proporsione una contraseña" })}
 				/>
 				<FormHelperText>{errors.password?.message}</FormHelperText>
 			</FormControl>
