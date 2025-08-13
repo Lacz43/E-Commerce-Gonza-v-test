@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -20,6 +21,11 @@ class UserController extends Controller
         return Inertia::render('User/Index', [
             'users' => $users,
         ]);
+    }
+
+    public function roles()
+    {
+        return Role::all();
     }
 
     /**
