@@ -45,7 +45,7 @@ export default function Products({ users }: Props) {
 	);
 
 	const handleEdit = useCallback((id: number) => {
-		modal("edit");
+		modal("edit", id);
 	}, []);
 
 	const handleDelete = useCallback(
@@ -80,9 +80,13 @@ export default function Products({ users }: Props) {
 	);
 
 	const modal = useCallback(
-		(type: "create" | "edit") =>
+		(type: "create" | "edit", id?: number) =>
 			openModal(({ closeModal }) => (
-				<CreateOrEdit onClose={closeModal} type={type} />
+				<CreateOrEdit
+					onClose={closeModal}
+					type={type}
+					user={users.data.find((f) => f.id === id)}
+				/>
 			)),
 		[],
 	);
