@@ -30,7 +30,7 @@ export type FormHandle = {
 
 type Props = {
 	ref: React.Ref<FormHandle>;
-    user?: User;
+	user?: User;
 };
 
 /*
@@ -43,14 +43,14 @@ export default function Form({ ref, user }: Props) {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormStructure>({
-        defaultValues: {
-            ...user,
-            role: user?.roles[0].id,
-        },
-    });
+		defaultValues: {
+			...user,
+			role: user?.roles[0].id,
+		},
+	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [roles, setRoles] = useState<Roles[]>([]);
-    const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -75,12 +75,12 @@ export default function Form({ ref, user }: Props) {
 	}));
 
 	useEffect(() => {
-        setLoading(true);
+		setLoading(true);
 		(async () => {
 			try {
 				const { data } = await axios.get(route("roles"));
 				setRoles(data);
-                setLoading(false);
+				setLoading(false);
 			} catch (e) {
 				console.log(e);
 				toast.error(
@@ -117,7 +117,7 @@ export default function Form({ ref, user }: Props) {
 					label="role"
 					variant="filled"
 					defaultValue={user?.roles[0].id || undefined}
-                    disabled={loading}
+					disabled={loading}
 					{...register("role")}
 				>
 					<MenuItem value={undefined}>Ninguno</MenuItem>
@@ -143,7 +143,7 @@ export default function Form({ ref, user }: Props) {
 										? "Ocultar la contraseña"
 										: "Mostrar la contraseña"
 								}
-                                arrow
+								arrow
 							>
 								<IconButton
 									aria-label={
@@ -161,7 +161,9 @@ export default function Form({ ref, user }: Props) {
 							</Tooltip>
 						</InputAdornment>
 					}
-					{...register("password", { required: "Proporsione una contraseña" })}
+					{...register("password", {
+						required: user !== undefined ? false : "Proporsione una contraseña",
+					})}
 				/>
 				<FormHelperText>{errors.password?.message}</FormHelperText>
 			</FormControl>
