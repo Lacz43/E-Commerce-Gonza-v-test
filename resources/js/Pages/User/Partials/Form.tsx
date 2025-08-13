@@ -6,17 +6,22 @@ import {
 	IconButton,
 	InputAdornment,
 	InputLabel,
+	MenuItem,
+	Select,
 	TextField,
+	Tooltip,
 } from "@mui/material";
-import { useCallback, useImperativeHandle, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { useCallback, useEffect, useImperativeHandle, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type FormStructure = {
 	name: string;
 	email: string;
-	password: string;
+	password?: string;
 	password_confirmation: string;
-	roles: string[];
+	role: number | undefined;
 };
 
 export type FormHandle = {
@@ -25,19 +30,27 @@ export type FormHandle = {
 
 type Props = {
 	ref: React.Ref<FormHandle>;
+    user?: User;
 };
 
 /*
  * Form
  * Componente para crear un formulario de usuario
  */
-export default function Form({ ref }: Props) {
+export default function Form({ ref, user }: Props) {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<FormStructure>();
+	} = useForm<FormStructure>({
+        defaultValues: {
+            ...user,
+            role: user?.roles[0].id,
+        },
+    });
 	const [showPassword, setShowPassword] = useState(false);
+	const [roles, setRoles] = useState<Roles[]>([]);
+    const [loading, setLoading] = useState(false);
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -61,10 +74,26 @@ export default function Form({ ref }: Props) {
 		submit: () => handleSubmit(handleSubmitForm)(),
 	}));
 
+	useEffect(() => {
+        setLoading(true);
+		(async () => {
+			try {
+				const { data } = await axios.get(route("roles"));
+				setRoles(data);
+                setLoading(false);
+			} catch (e) {
+				console.log(e);
+				toast.error(
+					`Error al cargar los roles: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+				);
+			}
+		})();
+	}, []);
+
 	return (
 		<div className="flex flex-col gap-4">
 			<TextField
-				id="filled-basic"
+				id="user-email"
 				label="Correo"
 				type="email"
 				variant="filled"
@@ -72,13 +101,34 @@ export default function Form({ ref }: Props) {
 				helperText={errors.email?.message}
 			/>
 			<TextField
-				id="filled-basic"
+				id="user-name"
 				label="Nombre"
 				type="text"
 				variant="filled"
 				{...register("name", { required: "Proporsione un nombre" })}
 				helperText={errors.name?.message}
 			/>
+
+			<FormControl fullWidth>
+				<InputLabel id="demo-simple-select-label">Rol</InputLabel>
+				<Select
+					labelId="demo-simple-select-label"
+					id="user-role"
+					label="role"
+					variant="filled"
+					defaultValue={user?.roles[0].id || undefined}
+                    disabled={loading}
+					{...register("role")}
+				>
+					<MenuItem value={undefined}>Ninguno</MenuItem>
+					{roles.map((role) => (
+						<MenuItem value={role.id} key={role.id}>
+							{role.name}
+						</MenuItem>
+					))}
+				</Select>
+				<FormHelperText>{errors.role?.message}</FormHelperText>
+			</FormControl>
 
 			<FormControl variant="filled">
 				<InputLabel htmlFor="filled-adornment-password">Contraseña</InputLabel>
