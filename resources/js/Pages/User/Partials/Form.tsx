@@ -32,13 +32,14 @@ export type FormHandle = {
 type Props = {
 	ref: React.Ref<FormHandle>;
 	user?: User;
+	onSuccess?: () => void;
 };
 
 /*
  * Form
  * Componente para crear un formulario de usuario
  */
-export default function Form({ ref, user }: Props) {
+export default function Form({ ref, user, onSuccess }: Props) {
 	const {
 		register,
 		handleSubmit,
@@ -93,6 +94,7 @@ export default function Form({ ref, user }: Props) {
 					toast.success(resp.message || "Usuario creado");
 				}
 				router.reload();
+				onSuccess?.();
 			} catch (e) {
 				if (e instanceof AxiosError) {
 					if (e.response?.status === 422) {
@@ -109,7 +111,7 @@ export default function Form({ ref, user }: Props) {
 				}
 			}
 		},
-		[user, setError],
+		[user, setError, onSuccess],
 	);
 
 	useImperativeHandle(ref, () => ({
@@ -135,7 +137,7 @@ export default function Form({ ref, user }: Props) {
 	return (
 		<div className="flex flex-col gap-4">
 			<TextField
-				id="user-email"
+				id={useI}
 				label="Correo"
 				type="email"
 				variant="filled"

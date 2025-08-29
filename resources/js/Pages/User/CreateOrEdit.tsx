@@ -6,7 +6,7 @@ const ModalStyled = lazy(() => import("@/Components/Modals/ModalStyled"));
 
 type Props = {
 	type: "edit" | "create";
-    user?: User;
+	user?: User;
 	onClose: () => void;
 };
 
@@ -26,7 +26,7 @@ export default function Create(props: Props) {
 				}
 				body={
 					<div className="p-6 text-gray-900">
-						<Form ref={ref} user={props.user} />
+						<Form ref={ref} user={props.user} onSuccess={props.onClose} />
 					</div>
 				}
 				footer={
