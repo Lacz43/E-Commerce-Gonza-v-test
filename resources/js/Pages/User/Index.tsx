@@ -44,24 +44,6 @@ export default function Products({ users }: Props) {
 		[],
 	);
 
-	const handleEdit = useCallback((id: number) => {
-		modal("edit", id);
-	}, []);
-
-	const handleDelete = useCallback(
-		(id: number) => {
-			openModal(({ closeModal }) => (
-				<ModalDelete
-					onClose={closeModal}
-					id={id}
-					title={users.data.find((f) => f.id === id)?.name ?? ""}
-					onDeleteConfirm={onDeleteConfig}
-				/>
-			));
-		},
-		[users.data],
-	);
-
 	const onDeleteConfig = useCallback(
 		async (id: number) => {
 			try {
@@ -76,7 +58,21 @@ export default function Products({ users }: Props) {
 				);
 			}
 		},
-		[users.data],
+		[closeModal],
+	);
+
+	const handleDelete = useCallback(
+		(id: number) => {
+			openModal(({ closeModal }) => (
+				<ModalDelete
+					onClose={closeModal}
+					id={id}
+					title={users.data.find((f) => f.id === id)?.name ?? ""}
+					onDeleteConfirm={onDeleteConfig}
+				/>
+			));
+		},
+		[users.data, openModal, onDeleteConfig],
 	);
 
 	const modal = useCallback(
@@ -88,7 +84,14 @@ export default function Products({ users }: Props) {
 					user={users.data.find((f) => f.id === id)}
 				/>
 			)),
-		[],
+		[users.data, openModal],
+	);
+
+	const handleEdit = useCallback(
+		(id: number) => {
+			modal("edit", id);
+		},
+		[modal],
 	);
 
 	return (
