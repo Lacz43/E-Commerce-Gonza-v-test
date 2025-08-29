@@ -52,7 +52,7 @@ FROM base AS prod
 
 # Instalamos cron
 RUN apt-get update \
- && apt-get install -y cron
+    && apt-get install -y cron
 
 # Copiamos vendor desde base (podrías hacerlo en otro stage "composer",
 # pero para brevedad usamos base + composer install)
@@ -89,8 +89,8 @@ RUN apt-get install -y nodejs
 
 # Instalar pnpm
 RUN corepack enable pnpm
-RUN corepack use pnpm@10.9
-RUN pnpm install
+RUN corepack use pnpm@10.15 --yes
+RUN pnpm install --frozen-lockfile
 
 # Inicia todos los procesos
 CMD ["supervisord", "-n"]
