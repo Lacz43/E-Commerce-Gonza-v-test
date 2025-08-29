@@ -41,7 +41,31 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'role' => ['nullable', 'integer', 'exists:roles,id'],
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]);
+
+        if (!empty($validated['role'])) {
+            $role = Role::find($validated['role']);
+            if ($role) {
+                $user->assignRole($role);
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Usuario creado exitosamente',
+            'user' => $user->load('roles'),
+        ], 201);
     }
 
     /**
@@ -63,9 +87,38 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password' => ['nullable', 'string', 'min:6'],
+            'role' => ['nullable', 'integer', 'exists:roles,id'],
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if (!empty($validated['password'])) {
+            $user->password = $validated['password']; 
+        }
+        $user->save();
+
+        if (array_key_exists('role', $validated)) {
+            if ($validated['role']) {
+                $role = Role::find($validated['role']);
+                if ($role) {
+                    $user->syncRoles([$role]);
+                }
+            } else {
+                $user->syncRoles([]);
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Usuario actualizado exitosamente',
+            'user' => $user->load('roles'),
+        ]);
     }
 
     /**
