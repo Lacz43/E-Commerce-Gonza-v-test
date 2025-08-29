@@ -9,3 +9,6 @@ Route::middleware('auth', 'role:admin')->group(function () {
 });
 
 Route::middleware('auth', 'permission:delete users')->delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+Route::middleware('auth', 'permission:create users')->post('/users', [UserController::class, 'store'])->name('users.store');
+Route::middleware('auth', 'permission:edit users')->match(['put','patch'],'/users/{user}', [UserController::class, 'update'])->name('users.update');
