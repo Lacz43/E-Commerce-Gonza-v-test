@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
 	FilledInput,
@@ -13,7 +14,7 @@ import {
 } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useImperativeHandle, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 type FormStructure = {
@@ -42,10 +43,12 @@ export default function Form({ ref, user }: Props) {
 		register,
 		handleSubmit,
 		formState: { errors },
+		setError,
+		control,
 	} = useForm<FormStructure>({
 		defaultValues: {
 			...user,
-			role: user?.roles[0].id,
+			role: (user?.roles?.[0]?.id as number | undefined) ?? undefined,
 		},
 	});
 	const [showPassword, setShowPassword] = useState(false);
@@ -66,9 +69,48 @@ export default function Form({ ref, user }: Props) {
 		event.preventDefault();
 	};
 
-	const handleSubmitForm = useCallback(async (data: FormStructure) => {
-		console.log(data);
-	}, []);
+	const handleSubmitForm = useCallback(
+		async (data: FormStructure) => {
+			// Normalizar role (evitar "" y mandar undefined)
+			const payload = {
+				...data,
+				role: data.role === ("" as unknown) ? undefined : data.role,
+			};
+			try {
+				if (user) {
+					// update
+					const { data: resp } = await axios.put(
+						route("users.update", user.id),
+						payload,
+					);
+					toast.success(resp.message || "Usuario actualizado");
+				} else {
+					// create
+					const { data: resp } = await axios.post(
+						route("users.store"),
+						payload,
+					);
+					toast.success(resp.message || "Usuario creado");
+				}
+				router.reload();
+			} catch (e) {
+				if (e instanceof AxiosError) {
+					if (e.response?.status === 422) {
+						const valErrors = e.response.data.errors || {};
+						Object.keys(valErrors).forEach((field) => {
+							setError(field as keyof FormStructure, {
+								message: valErrors[field][0],
+							});
+						});
+					}
+					toast.error(e.response?.data.message || "Error al guardar usuario");
+				} else {
+					toast.error("Error inesperado");
+				}
+			}
+		},
+		[user, setError],
+	);
 
 	useImperativeHandle(ref, () => ({
 		submit: () => handleSubmit(handleSubmitForm)(),
@@ -109,26 +151,32 @@ export default function Form({ ref, user }: Props) {
 				helperText={errors.name?.message}
 			/>
 
-			<FormControl fullWidth>
-				<InputLabel id="demo-simple-select-label">Rol</InputLabel>
-				<Select
-					labelId="demo-simple-select-label"
-					id="user-role"
-					label="role"
-					variant="filled"
-					defaultValue={user?.roles[0].id || undefined}
-					disabled={loading}
-					{...register("role")}
-				>
-					<MenuItem value={undefined}>Ninguno</MenuItem>
-					{roles.map((role) => (
-						<MenuItem value={role.id} key={role.id}>
-							{role.name}
-						</MenuItem>
-					))}
-				</Select>
-				<FormHelperText>{errors.role?.message}</FormHelperText>
-			</FormControl>
+			<Controller
+				name="role"
+				control={control}
+				render={({ field }) => (
+					<FormControl fullWidth>
+						<InputLabel id="role-label">Rol</InputLabel>
+						<Select
+							labelId="role-label"
+							id="user-role"
+							label="Rol"
+							variant="filled"
+							disabled={loading}
+							{...field}
+							value={field.value === undefined ? "" : field.value}
+						>
+							<MenuItem value="">Ninguno</MenuItem>
+							{roles.map((role) => (
+								<MenuItem value={role.id} key={role.id}>
+									{role.name}
+								</MenuItem>
+							))}
+						</Select>
+						<FormHelperText>{errors.role?.message}</FormHelperText>
+					</FormControl>
+				)}
+			/>
 
 			<FormControl variant="filled">
 				<InputLabel htmlFor="filled-adornment-password">Contraseña</InputLabel>
