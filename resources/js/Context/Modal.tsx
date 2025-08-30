@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Box, Modal, SxProps } from "@mui/material";
 import { createContext, type ReactNode, useContext, useState } from "react";
 
 type Props = {
@@ -21,13 +21,15 @@ interface ModalContextType {
 	closeModal: () => void;
 }
 
-const style = {
+const style: SxProps = {
 	position: "absolute",
 	top: "50%",
 	left: "50%",
 	transform: "translate(-50%, -50%)",
 	bgcolor: "background.paper",
-	border: "2px solid #000",
+	borderRadius: 4,
+	boxShadow: 24,
+	overflow: "hidden",
 };
 
 /*
@@ -62,7 +64,7 @@ export function ModalProvider({ children }: Props) {
 		<ModalContext.Provider value={{ openModal, closeModal }}>
 			{children}
 			{isOpen && (
-				<Modal open={isOpen} onClose={closeModal}>
+				<Modal open={isOpen} onClose={closeModal} className="rounded-2xl">
 					<Box sx={style}>{getContent({ closeModal })}</Box>
 				</Modal>
 			)}
