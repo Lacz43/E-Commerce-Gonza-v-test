@@ -6,6 +6,7 @@ export default function Ecommerce({ children }: PropsWithChildren) {
 	const rootRef = useRef<HTMLDivElement | null>(null);
 	const navRef = useRef<HTMLDivElement | null>(null);
 
+	// Establecer la altura de la barra de navegación
 	useLayoutEffect(() => {
 		function setNavHeight() {
 			const h = navRef.current?.offsetHeight || 0;

@@ -53,7 +53,7 @@ export default function Welcome() {
 			<title>Gonza</title>
 			<div
 				className="relative flex flex-col items-center justify-center text-center px-4 overflow-hidden"
-				style={{ minHeight: "calc(100vh - var(--navbar-h, 0px))" }}
+				style={{ minHeight: "calc(100vh - var(--navbar-h, 0px))" }} // Establecer la altura mínima restante
 			>
 				<div className="relative max-w-3xl mt-auto">
 					<h1 className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-orange-500 to-emerald-600 bg-clip-text text-transparent drop-shadow-sm">
