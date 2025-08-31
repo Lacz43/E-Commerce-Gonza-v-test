@@ -1,18 +1,30 @@
-import { Link } from "@inertiajs/react";
 import type { PropsWithChildren } from "react";
-import ApplicationLogo from "@/Components/ApplicationLogo";
+import { useLayoutEffect, useRef } from "react";
 import Navbar from "@/Components/Navbar";
 
 export default function Ecommerce({ children }: PropsWithChildren) {
-	return (
-		<div className="flex min-h-screen flex-col items-center bg-gray-100 sm:justify-center sm:pt-0">
-			<Navbar />
-			<div>
-				<Link href="/">
-					<ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-				</Link>
-			</div>
+	const rootRef = useRef<HTMLDivElement | null>(null);
+	const navRef = useRef<HTMLDivElement | null>(null);
 
+	useLayoutEffect(() => {
+		function setNavHeight() {
+			const h = navRef.current?.offsetHeight || 0;
+
+			document.documentElement.style.setProperty("--navbar-h", `${h}px`);
+			if (rootRef.current)
+				rootRef.current.style.setProperty("--navbar-h", `${h}px`);
+		}
+		setNavHeight();
+		window.addEventListener("resize", setNavHeight);
+		return () => window.removeEventListener("resize", setNavHeight);
+	}, []);
+
+	return (
+		<div
+			ref={rootRef}
+			className="flex min-h-screen flex-col items-center bg-gray-100"
+		>
+			<Navbar ref={navRef} />
 			{children}
 		</div>
 	);
