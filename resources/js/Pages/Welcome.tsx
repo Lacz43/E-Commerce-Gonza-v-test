@@ -1,14 +1,16 @@
 // import { router } from "@inertiajs/react";
-import Ecommerce from "@/Layouts/EcommerceLayout";
+
 import ProductCard from "@/Components/ProductCard";
+import Ecommerce from "@/Layouts/EcommerceLayout";
 import "../../css/welcome.css";
-import { useEffect, lazy, Suspense } from "react";
+import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
+import { lazy, Suspense, useEffect } from "react";
+import type {
+	GenericInfiniteScroll,
+	InfiniteScrollProps,
+} from "@/Components/InfiniteScroll";
 import InputProductSearch from "@/Components/InputProductSearch";
 import shoppingCart from "@/shoppingCart";
-import type {
-	InfiniteScrollProps,
-	GenericInfiniteScroll,
-} from "@/Components/InfiniteScroll";
 
 // Importar InfiniteScroll de manera dinamica
 const _InfiniteScroll = lazy(
@@ -49,15 +51,36 @@ export default function Welcome() {
 	return (
 		<Ecommerce>
 			<title>Gonza</title>
-			<div className="h-dvh">
-				<h2 className="text-5xl font-bold text-center">Gonza</h2>
+			<div
+				className="relative flex flex-col items-center justify-center text-center px-4 overflow-hidden"
+				style={{ minHeight: "calc(100vh - var(--navbar-h, 0px))" }}
+			>
+				<div className="relative max-w-3xl mt-auto">
+					<h1 className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-orange-500 to-emerald-600 bg-clip-text text-transparent drop-shadow-sm">
+						Gonza
+					</h1>
+					<p className="mt-6 text-xl md:text-2xl font-light text-slate-600 leading-relaxed">
+						La mejor opción para realizar tus compras con rapidez, variedad y
+						confianza.
+					</p>
+					<p className="mt-4 text-sm md:text-base text-slate-500">
+						Explora productos frescos, ofertas y más — todo en un solo lugar.
+					</p>
+				</div>
 
-				<p className="mt-5 font-light text-2xl text-gray-600">
-					La mejor opcion para realizar tus compras
-				</p>
+				<a
+					href="#productos"
+					className="group mt-auto flex flex-col items-center gap-2 text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl px-3 pb-5"
+					aria-label="Ir a la lista de productos"
+				>
+					<span className="text-xs font-medium tracking-wide uppercase">
+						Productos abajo
+					</span>
+					<ArrowDownwardRoundedIcon className="animate-bounce mt-1" />
+				</a>
 			</div>
 
-			<div className="content mx-5 sm:mx-0 w-full">
+			<div id="productos" className="content mx-5 sm:mx-0 w-full scroll-mt-10">
 				<InputProductSearch className="mx-auto bg-white" />
 				<Suspense>
 					<InfiniteScroll<Item, "products">
