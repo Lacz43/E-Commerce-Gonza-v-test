@@ -1,7 +1,9 @@
+import { Add, Delete, Remove } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import { type HTMLAttributes, useMemo, useState } from "react";
 import shoppingCart from "@/shoppingCart";
 import { imageUrl } from "@/utils";
-import { Remove, Add, Delete } from "@mui/icons-material";
-import { useState, type HTMLAttributes } from "react";
 
 type Props = HTMLAttributes<HTMLDivElement> & { item: Item };
 
@@ -19,69 +21,95 @@ export default function ProductsInCar({ item }: Props) {
 		else setLine(idx);
 	}
 
+	const totalFormatted = useMemo(
+		() => ((item.quantity ?? 1) * item.price).toFixed(2),
+		[item.quantity, item.price],
+	);
+
+	const qty = item.quantity ?? 1;
+	const canDecrease = qty > 1;
+
 	return (
-		<div className="flex w-full">
-			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-			<div
+		<div className="w-full flex items-center gap-4 py-3 px-2 rounded-xl bg-white/70 backdrop-blur-sm border border-orange-100 hover:shadow-md transition-shadow">
+			<button
+				type="button"
 				onClick={() => showCart(item.id)}
-				className="flex w-full items-center"
+				className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer select-none text-left bg-transparent border-0 p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded-lg"
 			>
-				<div className="size-20 flex mr-2 p-1">
+				<div className="w-16 h-16 flex items-center justify-center rounded-lg overflow-hidden ring-1 ring-orange-100 bg-orange-50">
 					<img
 						src={imageUrl(item.default_image?.image ?? "")}
-						alt=""
-						className="object-cover mx-auto"
+						alt={item.name}
+						className="object-cover w-full h-full"
+						loading="lazy"
 					/>
 				</div>
-				<div className={line === item.id ? "max-md:hidden" : "flex w-full"}>
-					<div className="grow">
-						<p className="font-bold">{item.name}</p>
-						<p className="font-light">
-							{item.price} $ <b className="md:hidden">x{item.quantity}</b>
-						</p>
-					</div>
-					<div className="">
-						{((item.quantity ?? 1) * item.price).toFixed(2)} $
-					</div>
-				</div>
-			</div>
-			<div className="flex flex-col">
 				<div
-					className={`ml-2 flex items-center bg-white right-0 \
-					${line !== item.id ? "max-md:hidden" : ""}
-                    `}
+					className={`${line === item.id ? "max-md:hidden" : "flex"} flex-col flex-1 min-w-0`}
 				>
-					<button
-						type="button"
-						className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
-						onClick={() =>
-							cart.update(Number(item.id), (item.quantity ?? 1) - 1)
-						}
+					<p className="font-semibold text-slate-800 truncate">{item.name}</p>
+					<p className="text-sm text-slate-500">
+						{item.price} ${" "}
+						<b className="md:hidden font-medium text-slate-600">x{qty}</b>
+					</p>
+				</div>
+				<div
+					className={`${line === item.id ? "max-md:hidden" : "block"} text-right text-sm font-medium text-slate-700 w-20`}
+				>
+					{totalFormatted} $
+				</div>
+			</button>
+
+			<div
+				className={`flex items-center gap-1 ${line !== item.id ? "max-md:hidden" : ""}`}
+			>
+				<Tooltip
+					title={canDecrease ? "Disminuir" : "Mínimo 1"}
+					arrow
+					disableInteractive
+				>
+					<span>
+						<IconButton
+							size="small"
+							color={canDecrease ? "primary" : "default"}
+							disabled={!canDecrease}
+							onClick={() => cart.update(Number(item.id), qty - 1)}
+							className="!w-9 !h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 disabled:opacity-40"
+						>
+							<Remove fontSize="small" />
+						</IconButton>
+					</span>
+				</Tooltip>
+				<div className="px-2 text-sm font-semibold tabular-nums text-slate-700 min-w-[2ch] text-center">
+					{qty}
+				</div>
+				<Tooltip title="Aumentar" arrow disableInteractive>
+					<IconButton
+						size="small"
+						color="primary"
+						onClick={() => cart.update(Number(item.id), qty + 1)}
+						className="!w-9 !h-9 bg-orange-50 hover:bg-orange-100 text-orange-600"
 					>
-						<Remove />
-					</button>
-					<p className="font-bold mx-3">{item.quantity}</p>
-					<button
-						type="button"
-						className="bg-blue-800 text-white m-1 px-2 py-1 text-xl rounded-sm"
-						onClick={() =>
-							cart.update(Number(item.id), (item.quantity ?? 1) + 1)
-						}
-					>
-						<Add />
-					</button>
-					<button
-						type="button"
-						className="bg-red-600 px-2 py-1 ml-2 text-xl rounded-sm text-white"
+						<Add fontSize="small" />
+					</IconButton>
+				</Tooltip>
+				<Tooltip title="Eliminar" arrow disableInteractive>
+					<IconButton
+						size="small"
 						onClick={() => cart.remove(Number(item.id))}
+						className="!w-9 !h-9 bg-red-50 hover:bg-red-100 text-red-600"
 					>
-						<Delete />
-					</button>
-				</div>
-				<div className={line === item.id ? "text-center" : "hidden"}>
-					{((item.quantity ?? 1) * item.price).toFixed(2)} $
-				</div>
+						<Delete fontSize="small" />
+					</IconButton>
+				</Tooltip>
 			</div>
+
+			{/* Mobile expanded total */}
+			{line === item.id && (
+				<div className="md:hidden text-right text-sm font-medium text-slate-700 ml-2 w-16">
+					{totalFormatted} $
+				</div>
+			)}
 		</div>
 	);
 }
