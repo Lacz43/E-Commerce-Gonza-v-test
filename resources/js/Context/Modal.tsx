@@ -27,7 +27,7 @@ const style: SxProps = {
 	left: "50%",
 	transform: "translate(-50%, -50%)",
 	bgcolor: "background.paper",
-	borderRadius: 4,
+	borderRadius: 6,
 	boxShadow: 24,
 	overflow: "hidden",
 };
