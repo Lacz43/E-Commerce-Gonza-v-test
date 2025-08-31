@@ -21,7 +21,7 @@ const AvatarIcon = styled(IconButton)<IconButtonProps>(() => ({
 	padding: "0",
 }));
 
-export default function Navbar() {
+export default function Navbar({ ref }: { ref?: React.Ref<HTMLDivElement> }) {
 	const { openModal } = useModal();
 	const user = (usePage().props as unknown as Auth).auth.user;
 	const [total, setTotal] = useState(0);
@@ -41,7 +41,10 @@ export default function Navbar() {
 	}, []);
 
 	return (
-		<div className="bg-white w-full px-5 py-2 max-md:py-1 sm:px-20 sticky top-0 z-50 mb-4 flex justify-end items-center shadow-xl">
+		<div
+			ref={ref}
+			className="bg-white w-full px-5 py-2 max-md:py-1 sm:px-20 sticky top-0 z-50 mb-4 flex justify-end items-center shadow-xl"
+		>
 			<div className="mr-auto">
 				<IconButton
 					id="shopping-cart"
