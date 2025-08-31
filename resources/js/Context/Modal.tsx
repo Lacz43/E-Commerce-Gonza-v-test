@@ -1,4 +1,4 @@
-import { Box, Modal, SxProps } from "@mui/material";
+import { Box, Modal, type SxProps } from "@mui/material";
 import { createContext, type ReactNode, useContext, useState } from "react";
 
 type Props = {
@@ -27,7 +27,7 @@ const style: SxProps = {
 	left: "50%",
 	transform: "translate(-50%, -50%)",
 	bgcolor: "background.paper",
-	borderRadius: 6,
+	borderRadius: 2,
 	boxShadow: 24,
 	overflow: "hidden",
 };
