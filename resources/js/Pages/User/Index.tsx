@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import { lazy, Suspense, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
+import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import ModalDelete from "@/Components/Modals/ModalDelete";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -114,7 +115,15 @@ export default function Products({ users }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<Suspense>
+							<Suspense
+								fallback={
+									<DataTableSkeleton
+										columns={columns.length + 1}
+										rows={10}
+										showToolbar={false}
+									/>
+								}
+							>
 								<DataTable
 									columns={columns}
 									response={users}
