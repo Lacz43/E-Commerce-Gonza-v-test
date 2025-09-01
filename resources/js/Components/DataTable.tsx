@@ -2,18 +2,18 @@ import { router } from "@inertiajs/react";
 import Paper from "@mui/material/Paper";
 import {
 	DataGrid,
-	type GridFilterItem,
 	type GridColDef,
+	type GridFilterItem,
 	type GridFilterModel,
 	type GridPaginationModel,
 	type GridSortModel,
 } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
+import qs from "qs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import usePermissions from "@/Hook/usePermissions";
 import { removeParamsFromUrl } from "@/utils";
 import CrudButton from "./CrudButton";
-import qs from "qs";
 
 type ActionHandler = {
 	permissions?: string[];
@@ -78,16 +78,18 @@ export default function DataTable<T>({
 		// borrar filtros viejos
 		Array.from(url.searchParams.keys())
 			.filter((key) => key.startsWith("filters["))
-			.forEach((key) => url.searchParams.delete(key));
+			.forEach((key) => {
+				url.searchParams.delete(key);
+			});
 
 		if (filterModel.items.length === 0) return url;
 		// 1. Filtros dinámicos
 		filterModel.items.forEach((item, index) => {
 			if (!item.value) return;
-
+			const value = String(item.value);
 			url.searchParams.append(`filters[${index}][field]`, item.field);
 			url.searchParams.append(`filters[${index}][operator]`, item.operator);
-			url.searchParams.append(`filters[${index}][value]`, item.value!);
+			url.searchParams.append(`filters[${index}][value]`, value);
 		});
 
 		return url;
@@ -136,24 +138,27 @@ export default function DataTable<T>({
 	const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined); // Para almacenar el timeout
 
 	// Filtro dinámico
-	const handleFilterChange = useCallback((newModel: GridFilterModel) => {
-		setLoading(true);
-		setFilterModel(newModel);
+	const handleFilterChange = useCallback(
+		(newModel: GridFilterModel) => {
+			setLoading(true);
+			setFilterModel(newModel);
 
-		if (debounceRef.current) {
-			clearTimeout(debounceRef.current);
-		}
+			if (debounceRef.current) {
+				clearTimeout(debounceRef.current);
+			}
 
-		// Establecer un nuevo timeout
-		debounceRef.current = setTimeout(() => {
-			// Aquí iría la lógica para llamar al backend
-			router.visit(buildApiFilterUrl(newModel), {
-				preserveState: true,
-				preserveScroll: true,
-				onFinish: () => setLoading(false),
-			});
-		}, 500);
-	}, []);
+			// Establecer un nuevo timeout
+			debounceRef.current = setTimeout(() => {
+				// Aquí iría la lógica para llamar al backend
+				router.visit(buildApiFilterUrl(newModel), {
+					preserveState: true,
+					preserveScroll: true,
+					onFinish: () => setLoading(false),
+				});
+			}, 500);
+		},
+		[buildApiFilterUrl],
+	);
 
 	// Ordenamiento
 	const handleSortChange = (newModel: GridSortModel) => {
