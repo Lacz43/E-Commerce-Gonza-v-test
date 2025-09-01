@@ -244,13 +244,20 @@ export default function DataTable<T>({
 				0,
 			);
 			const needsFlex = cols.filter(
-				(c) => c.field !== "actions" && (c.flex === undefined || c.flex === 0),
+				(c) =>
+					c.field !== "actions" &&
+					c.width === undefined && // si ya tiene width lo dejamos intacto
+					(c.flex === undefined || c.flex === 0),
 			);
-			// Si no hay flex definido, asignar flex=1 a las restantes (excepto acciones)
+			// Si no hay flex definido en ninguna columna, asignar flex=1 solo a las que no tienen width
 			if (needsFlex.length && totalExplicitFlex === 0) {
 				cols = cols.map((c) => {
-					if (c.field === "actions") return c; // mantener ancho fijo
-					return { ...c, flex: c.flex ?? 1, minWidth: c.minWidth ?? 110 };
+					if (c.field === "actions" || c.field === "id") return c; // mantener ancho fijo
+					if (c.width !== undefined) return c; // respetar ancho fijo explícito
+					if (c.flex === undefined || c.flex === 0) {
+						return { ...c, flex: 1, minWidth: c.minWidth ?? 110 };
+					}
+					return c;
 				});
 			}
 		}
