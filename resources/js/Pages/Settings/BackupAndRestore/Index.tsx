@@ -14,6 +14,7 @@ import axios, { AxiosError, toFormData } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import AutoBackup from "./Partials/AutoBackup";
@@ -84,18 +85,18 @@ export default function BackupAndRestore({ backups }: Props) {
 	 */
 	const Columns = useMemo<GridColDef[]>(
 		() => [
-			{ field: "name", headerName: "Nombre", width: 200 },
+			{ field: "name", headerName: "Nombre"},
 			{
 				field: "size",
 				headerName: "Tamaño",
 				type: "number",
+				width: 100,
 				valueGetter: (value) => `${(Number(value) / 1024).toFixed(2)} KB`, // convertimos el tamaño en KB
 			},
 			{
 				field: "lastModified",
 				headerName: "Modificado",
 				type: "dateTime",
-				width: 200,
 				valueGetter: (value) => new Date(value * 1000), // convertimos el timestamp en fecha
 			},
 			{
@@ -321,12 +322,21 @@ export default function BackupAndRestore({ backups }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<Suspense>
+							<Suspense
+								fallback={
+									<DataTableSkeleton
+										columns={Columns.length}
+										rows={10}
+										showToolbar={false}
+									/>
+								}
+							>
 								<DataTable
 									columns={Columns}
 									response={backups}
 									filtersAvailable={false}
 									sortAvailable={false}
+									fill
 								/>
 							</Suspense>
 						</div>

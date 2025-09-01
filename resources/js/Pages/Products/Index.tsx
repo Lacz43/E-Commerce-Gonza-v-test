@@ -13,6 +13,7 @@ import {
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import type { tableProps } from "@/Components/DataTable";
+import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
@@ -38,20 +39,28 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 			{
 				field: "price",
 				type: "number",
+				width: 100,
 				headerName: "Precio",
 				valueGetter: (_value, row) => `${row.price} $`,
 			},
 			{
 				field: "description",
 				headerName: "Descripción",
-				width: 300,
 			},
 		],
 		[],
 	);
 	return (
-		<Suspense fallback={<div>Esperando...</div>}>
-			<DataTable {...props} columns={columns} />
+		<Suspense
+			fallback={
+				<DataTableSkeleton
+					columns={columns.length + 1}
+					rows={10}
+					showToolbar={false}
+				/>
+			}
+		>
+			<DataTable {...props} columns={columns} fill/>
 		</Suspense>
 	);
 });

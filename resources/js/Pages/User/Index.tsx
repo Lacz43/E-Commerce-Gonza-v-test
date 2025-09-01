@@ -132,6 +132,7 @@ export default function Products({ users }: Props) {
 										permissions: ["delete users"],
 										hook: handleDelete,
 									}}
+									fill
 								/>
 							</Suspense>
 						</div>

@@ -26,7 +26,13 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 	);
 	return (
 		<Suspense
-			fallback={<DataTableSkeleton columns={columns.length + 1} rows={10} showToolbar={false} />}
+			fallback={
+				<DataTableSkeleton
+					columns={columns.length + 1}
+					rows={10}
+					showToolbar={false}
+				/>
+			}
 		>
 			<DataTable {...props} columns={columns} />
 		</Suspense>
