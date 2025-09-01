@@ -28,6 +28,7 @@ export type tableProps<T> = {
 	onEdit?: ActionHandler;
 	onDelete?: ActionHandler;
 	onShow?: ActionHandler;
+	fill?: boolean; // si true, distribuir columnas para ocupar todo el ancho
 };
 
 export default function DataTable<T>({
@@ -38,6 +39,7 @@ export default function DataTable<T>({
 	onEdit,
 	onShow,
 	onDelete,
+	fill = false,
 }: tableProps<T>) {
 	const [loading, setLoading] = useState(false);
 	const [paginationModel, setPaginationModel] = useState({
@@ -235,6 +237,24 @@ export default function DataTable<T>({
 			cols.push(actionColumn);
 		}
 
+		// Ajustar columnas para llenar el espacio horizontal si fill está activo
+		if (fill) {
+			const totalExplicitFlex = cols.reduce(
+				(acc, c) => acc + (typeof c.flex === "number" ? c.flex : 0),
+				0,
+			);
+			const needsFlex = cols.filter(
+				(c) => c.field !== "actions" && (c.flex === undefined || c.flex === 0),
+			);
+			// Si no hay flex definido, asignar flex=1 a las restantes (excepto acciones)
+			if (needsFlex.length && totalExplicitFlex === 0) {
+				cols = cols.map((c) => {
+					if (c.field === "actions") return c; // mantener ancho fijo
+					return { ...c, flex: c.flex ?? 1, minWidth: c.minWidth ?? 110 };
+				});
+			}
+		}
+
 		return cols;
 	}, [
 		columns,
@@ -244,6 +264,7 @@ export default function DataTable<T>({
 		onDelete,
 		onShow,
 		hasPermission,
+		fill,
 	]);
 
 	return (
