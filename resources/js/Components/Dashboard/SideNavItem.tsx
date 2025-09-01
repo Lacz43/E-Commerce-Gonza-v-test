@@ -1,33 +1,47 @@
 import { Link, usePage } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { paths } from "@/paths";
-
-import { styled } from "@mui/material/styles";
-import Button, { type ButtonProps } from "@mui/material/Button";
-import { blue } from "@mui/material/colors";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Stack } from "@mui/material";
+import Button, { type ButtonProps } from "@mui/material/Button";
+import { green } from "@mui/material/colors";
+import { styled } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import { paths } from "@/paths";
 import PermissionGate from "../PermissionGate";
 
 interface ColorButtonProps extends ButtonProps {
 	selected: boolean;
 }
 
-const ColorButton = styled(Button)<ColorButtonProps>(({ theme, selected }) => ({
-	color: theme.palette.getContrastText(blue[500]),
-	backgroundColor: selected ? blue[900] : "#00000000",
-	width: "100%",
-	justifyContent: "start",
-	padding: "0.5rem 1.5rem",
-	boxShadow: "none",
-	textTransform: "none",
-	"&:hover": {
-		backgroundColor: blue[900],
-	},
-	"& .MuiButton-endIcon": {
-		marginLeft: "auto",
-	},
-}));
+const ColorButton = styled(Button)<ColorButtonProps>(({ theme, selected }) => {
+	const activeBg = green[900];
+	const hoverBg = green[800];
+	return {
+		color: selected ? theme.palette.getContrastText(activeBg) : green[900],
+		backgroundColor: selected ? activeBg : "transparent",
+		width: "100%",
+		justifyContent: "start",
+		padding: "0.55rem 1.25rem",
+		boxShadow: "none",
+		textTransform: "none",
+		fontWeight: selected ? 600 : 500,
+		fontSize: ".92rem",
+		letterSpacing: ".25px",
+		borderRadius: 7,
+		transition: "background-color .25s, color .25s, box-shadow .25s",
+		"&:hover": {
+			backgroundColor: selected ? activeBg : `${hoverBg}22`, // subtle tint when not selected
+			color: selected ? theme.palette.getContrastText(activeBg) : green[900],
+		},
+		"& .MuiButton-startIcon": {
+			color: selected ? theme.palette.getContrastText(activeBg) : green[700],
+		},
+		"& .MuiButton-endIcon": {
+			marginLeft: "auto",
+			color: selected ? theme.palette.getContrastText(activeBg) : green[600],
+			transition: "transform .3s",
+		},
+	};
+});
 
 function subPath(url: string) {
 	if (!url) return [];
@@ -49,13 +63,12 @@ export default function SideNavItem() {
 
 	const list = Object.entries(paths).map(([clave, valor]) => {
 		const [display, setDisplay] = useState(false);
-		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		useEffect(() => {
 			// revisa que la ruta q se abra este activa si es selecionada esto solo cuando cambien "active"
 			setDisplay(active === subPath(valor.path)[0]);
 		}, [active]);
 
-		if (valor.hide === true) return;
+		if (valor.hide === true) return null;
 		return (
 			<div key={clave}>
 				<PermissionGate roles={valor?.roles} permission={valor?.permissions}>
@@ -90,7 +103,7 @@ export default function SideNavItem() {
 								direction="column"
 								spacing={0.5}
 								display={"none"}
-								className={`ml-5 mt-1 border border-blue-900 p-1 rounded-md menu-item ${display ? "visible" : ""}`}
+								className={`ml-5 mt-1 border border-green-800/60 p-1 rounded-lg menu-item bg-green-50/40 ${display ? "visible" : ""}`}
 							>
 								{Object.entries(valor.children).map(([key, value]) => (
 									<PermissionGate
