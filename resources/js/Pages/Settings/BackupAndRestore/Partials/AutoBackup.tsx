@@ -1,4 +1,5 @@
 import {
+	Chip,
 	FormControl,
 	FormControlLabel,
 	FormHelperText,
@@ -10,7 +11,7 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios, { AxiosError } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -52,7 +53,7 @@ export default function AutoBackup() {
 			// limpiamos el timeout al desmontar el componente
 			debounceRef.current && clearTimeout(debounceRef.current);
 		};
-	}, []);
+	}, [setValue]);
 
 	//  onSubmit envia los datos de configuracion del backup a la api
 	const onSubmit = useCallback((data: FormStruture) => {
@@ -82,74 +83,113 @@ export default function AutoBackup() {
 		if (!isValid) {
 			setValue("active", false);
 		}
-	}, [isValid]);
+	}, [isValid, setValue]);
+
+	const active = watch("active") ?? false;
+	const scheduleId = useId();
+	const scheduleLabelId = useId();
+	const timeId = useId();
 
 	return (
-		<div>
-			<div className="flex">
-				<Controller
-					name="active"
-					control={control}
-					render={({ field: { onChange, value } }) => (
-						<FormControlLabel
-							control={
-								<Switch
-									disabled={isSubmitting}
-									checked={watch("active") ?? false} // valor del switch
-									value={value} // valor del switch
-									onChange={(_e, checked) => {
-										onChange(checked); // cambia el valor del switch
-										handleSubmit(onSubmit)(); // envia los datos al backend
-									}}
-								/>
-							}
-							label="Backups automaticos"
-							labelPlacement="start"
-						/>
-					)}
-				/>
+		<div className="rounded-xl border border-emerald-200 bg-gradient-to-r from-orange-50 to-emerald-50 p-4 shadow-inner">
+			<div className="flex items-start justify-between mb-3">
+				<div className="flex items-center gap-3">
+					<Controller
+						name="active"
+						control={control}
+						render={({ field: { onChange, value } }) => (
+							<FormControlLabel
+								control={
+									<Switch
+										color={active ? "success" : "default"}
+										disabled={isSubmitting}
+										checked={active}
+										value={value}
+										onChange={(_e, checked) => {
+											onChange(checked);
+											handleSubmit(onSubmit)();
+										}}
+										inputProps={{ "aria-label": "activar backups automaticos" }}
+									/>
+								}
+								label={
+									<span className="font-medium text-emerald-900">
+										Backups automáticos
+									</span>
+								}
+								labelPlacement="end"
+							/>
+						)}
+					/>
+					<Chip
+						label={active ? "Activo" : "Inactivo"}
+						color={active ? "success" : "default"}
+						variant={active ? "filled" : "outlined"}
+						size="small"
+					/>
+				</div>
 				<CircularProgress
-					size={25}
-					className="my-auto ml-4"
+					size={20}
+					className="mt-1 ml-2"
 					color="inherit"
 					hidden={!loading}
 				/>
 			</div>
-			<div className="flex gap-3">
-				<FormControl variant="filled" className="w-full" required>
-					<InputLabel id="demo-simple-select-filled-label">
-						Frecuencia
-					</InputLabel>
+			<div
+				className="grid grid-cols-2 gap-4 max-sm:grid-cols-1 transition-opacity"
+				style={{ opacity: active ? 1 : 0.5 }}
+			>
+				<FormControl
+					variant="outlined"
+					className="w-full"
+					required
+					disabled={!active || isSubmitting}
+					size="small"
+				>
+					<InputLabel id={scheduleLabelId}>Frecuencia</InputLabel>
 					<Select
-						labelId="demo-simple-select-filled-label"
-						id="demo-simple-select-filled"
-						defaultValue={""} // valor por defecto
-						value={watch("schedule") ?? ""} // valor del select cuando se carga el componente
-						disabled={isSubmitting}
+						labelId={scheduleLabelId}
+						id={scheduleId}
+						label="Frecuencia"
+						value={watch("schedule") ?? ""}
 						{...register("schedule", { required: "Es requerido un valor." })}
 						onChange={() => handleSubmit(onSubmit)()}
+						MenuProps={{
+							PaperProps: {
+								className: "rounded-lg shadow-lg",
+							},
+						}}
 					>
 						<MenuItem value="">
-							<em>None</em>
+							<em>Ninguna</em>
 						</MenuItem>
 						<MenuItem value={"daily"}>Diariamente</MenuItem>
 						<MenuItem value={"weekly"}>Semanalmente</MenuItem>
 						<MenuItem value={"monthly"}>Mensualmente</MenuItem>
 						<MenuItem value={"yearly"}>Anualmente</MenuItem>
 					</Select>
-					<FormHelperText>{errors?.schedule?.message}</FormHelperText>
+					<FormHelperText className="text-red-600">
+						{errors?.schedule?.message}
+					</FormHelperText>
 				</FormControl>
 				<TextField
 					className="w-full"
 					type="time"
-					id="time"
+					id={timeId}
 					label="Hora"
 					value={watch("time") ?? ""}
-					variant="filled"
+					variant="outlined"
+					size="small"
 					{...register("time")}
+					disabled={!active || isSubmitting}
 					onChangeCapture={handleSubmit(onSubmit)}
 				/>
 			</div>
+			{!active && (
+				<p className="mt-2 text-xs text-emerald-700">
+					Activa el interruptor para programar respaldos automáticos.
+				</p>
+			)}
 		</div>
 	);
 }
