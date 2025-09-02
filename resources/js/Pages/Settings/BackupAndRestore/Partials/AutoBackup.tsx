@@ -55,26 +55,22 @@ export default function AutoBackup() {
 		};
 	}, [setValue]);
 
-	//  onSubmit envia los datos de configuracion del backup a la api
+	//  onSubmit envia los datos (llamado desde efecto debounce)
 	const onSubmit = useCallback((data: FormStruture) => {
-		if (debounceRef.current) {
-			clearTimeout(debounceRef.current);
-		}
 		setLoading(true);
-
-		debounceRef.current = setTimeout(async () => {
-			// setea el timeout y ejecuta la funcion
-			try {
-				const response = await axios.post(route("backup.toggle"), data);
-				setLoading(false);
+		// única capa de debounce manejada por efecto externo
+		axios
+			.post(route("backup.toggle"), data)
+			.then((response) => {
 				toast.success(response.data.message);
-			} catch (error) {
+			})
+			.catch((error) => {
 				console.log(error);
 				toast.error(
 					`Error al cambiar la configuracion de respaldo: ${error instanceof AxiosError ? error.response?.data.message : ""}`,
 				);
-			}
-		}, 1500);
+			})
+			.finally(() => setLoading(false));
 	}, []);
 
 	//  esto cambia el valor del switch al validar el formulario
@@ -89,6 +85,23 @@ export default function AutoBackup() {
 	const scheduleId = useId();
 	const scheduleLabelId = useId();
 	const timeId = useId();
+
+	// Efecto debounce para enviar cambios evitando conflicto de focus con el menú
+	const scheduleVal = watch("schedule");
+	const timeVal = watch("time");
+	useEffect(() => {
+		if (!active) return;
+		const data: FormStruture = {
+			schedule: scheduleVal as FormStruture["schedule"],
+			time: timeVal,
+			active,
+		};
+		if (debounceRef.current) clearTimeout(debounceRef.current);
+		debounceRef.current = setTimeout(() => onSubmit(data), 800);
+		return () => {
+			debounceRef.current && clearTimeout(debounceRef.current);
+		};
+	}, [scheduleVal, timeVal, active, onSubmit]);
 
 	return (
 		<div className="rounded-xl border border-emerald-200 bg-gradient-to-r from-orange-50 to-emerald-50 p-4 shadow-inner">
@@ -109,7 +122,6 @@ export default function AutoBackup() {
 											onChange(checked);
 											handleSubmit(onSubmit)();
 										}}
-										inputProps={{ "aria-label": "activar backups automaticos" }}
 									/>
 								}
 								label={
@@ -153,7 +165,6 @@ export default function AutoBackup() {
 						label="Frecuencia"
 						value={watch("schedule") ?? ""}
 						{...register("schedule", { required: "Es requerido un valor." })}
-						onChange={() => handleSubmit(onSubmit)()}
 						MenuProps={{
 							PaperProps: {
 								className: "rounded-lg shadow-lg",
@@ -182,7 +193,7 @@ export default function AutoBackup() {
 					size="small"
 					{...register("time")}
 					disabled={!active || isSubmitting}
-					onChangeCapture={handleSubmit(onSubmit)}
+					// se dispara por efecto debounce
 				/>
 			</div>
 			{!active && (
