@@ -292,7 +292,26 @@ export default function DataTable<T>({
 				paginationMode="server"
 				filterMode="server"
 				sortingMode="server"
-				sx={{ border: 0 }}
+				sx={{
+					border: 0,
+					"& .MuiDataGrid-topContainer": {
+						background: "#cbffc4",
+					},
+					"& .MuiDataGrid-columnHeaders": {
+						background: "#cbffc4",
+						color: "#0F5132",
+					},
+					"& .MuiDataGrid-columnHeader": {
+						background: "inherit",
+					},
+					"& .MuiDataGrid-columnSeparator": {
+						color: "#0F5132",
+					},
+					"& .MuiToolbar-root": {
+						background: "#cbffc4",
+						color: "#0F5132",
+					},
+				}}
 			/>
 		</Paper>
 	);
