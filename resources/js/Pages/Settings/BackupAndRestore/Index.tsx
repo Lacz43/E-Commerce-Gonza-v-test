@@ -2,13 +2,7 @@ import { Head, router } from "@inertiajs/react";
 import BackupIcon from "@mui/icons-material/Backup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import {
-	Button,
-	FormControl,
-	FormHelperText,
-	IconButton,
-	OutlinedInput,
-} from "@mui/material";
+import { Button, FormControl, FormHelperText, IconButton } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { AxiosError, toFormData } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useState } from "react";
@@ -47,7 +41,7 @@ type BackupAndRestore = {
  * file: archivo que se quiere enviar al backend
  */
 type FormStruture = {
-	file: File;
+	file: File | null;
 };
 
 // INFO: Props: propiedades que reciben el componente
@@ -58,26 +52,86 @@ type Props = {
 export default function BackupAndRestore({ backups }: Props) {
 	const { openModal, closeModal } = useModal();
 	const [loading, setLoading] = useState(false);
+	const [selectedFileName, setSelectedFileName] = useState<string>("");
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
-	} = useForm<FormStruture>();
+	} = useForm<FormStruture>({ defaultValues: { file: null } });
 
-	const onSubmit = async (data: FormStruture) => {
-		try {
-			const formData = toFormData(data, new FormData()); // convertimos el formulario a un objeto FormData para poder enviar el archivo
-			const response = await axios.post(route("backup.restore"), formData);
-			closeModal();
-			toast.success(response.data.message);
-		} catch (e) {
-			console.log(e);
-			toast.error(
-				`Error al restaurar: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
-			);
-		}
-	};
+	const onSubmit = useCallback(
+		async (data: FormStruture) => {
+			try {
+				const formData = toFormData(data, new FormData());
+				const response = await axios.post(route("backup.restore"), formData);
+				closeModal();
+				toast.success(response.data.message);
+			} catch (e) {
+				console.log(e);
+				toast.error(
+					`Error al restaurar: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+				);
+			}
+		},
+		[closeModal],
+	);
+
+	// Declaramos handleDelete y deleteModal antes del useMemo Columns para evitar uso previo
+	const handleDelete = useCallback(
+		async (name: string) => {
+			if (!name) return;
+			setLoading(true);
+			try {
+				const { data } = await axios.delete(
+					route("backup.delete", { file: name }),
+				);
+				setLoading(false);
+				closeModal();
+				router.reload();
+				toast.success(data.message);
+			} catch (e) {
+				console.log(e);
+				toast.error(
+					`Error al eliminar respaldo: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
+				);
+			}
+		},
+		[closeModal],
+	);
+
+	const deleteModal = useCallback(
+		(name: string) =>
+			openModal(({ closeModal }) => (
+				<ModalStyled
+					header={<b>Borrar</b>}
+					body={
+						<div className="text-center overflow-hidden">
+							<p>
+								¿Desea <b>borrar</b> este respaldo?
+							</p>
+						</div>
+					}
+					footer={
+						<div className="flex gap-2">
+							<Button onClick={() => closeModal()} variant="contained">
+								<b>Cancelar</b>
+							</Button>
+							<Button
+								onClick={() => handleDelete(name)}
+								variant="contained"
+								color="error"
+								loading={loading}
+							>
+								<b>Borrar</b>
+							</Button>
+						</div>
+					}
+					onClose={() => closeModal()}
+				/>
+			)),
+		[openModal, handleDelete, loading],
+	);
 
 	/*
 	 * INFO: Columns: columnas que se mostraran en la tabla
@@ -85,7 +139,7 @@ export default function BackupAndRestore({ backups }: Props) {
 	 */
 	const Columns = useMemo<GridColDef[]>(
 		() => [
-			{ field: "name", headerName: "Nombre"},
+			{ field: "name", headerName: "Nombre" },
 			{
 				field: "size",
 				headerName: "Tamaño",
@@ -125,7 +179,7 @@ export default function BackupAndRestore({ backups }: Props) {
 				),
 			},
 		],
-		[],
+		[deleteModal],
 	);
 
 	/* INFO: handleBackup: funcion que se ejecuta cuando se hace click en el boton de respaldo
@@ -145,27 +199,7 @@ export default function BackupAndRestore({ backups }: Props) {
 				`Error al ejecutar el backup: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
 			);
 		}
-	}, []);
-
-	/* INFO: handleDelete: funcion que se ejecuta cuando se hace click en el boton de borrado */
-	const handleDelete = useCallback(async (name: string) => {
-		if (!name) return;
-		setLoading(true);
-		try {
-			const { data } = await axios.delete(
-				route("backup.delete", { file: name }),
-			);
-			setLoading(false);
-			closeModal();
-			router.reload();
-			toast.success(data.message);
-		} catch (e) {
-			console.log(e);
-			toast.error(
-				`Error al eliminar respaldo: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
-			);
-		}
-	}, []);
+	}, [closeModal]);
 
 	const backupModal = useCallback(
 		() =>
@@ -195,7 +229,7 @@ export default function BackupAndRestore({ backups }: Props) {
 					onClose={closeModal}
 				/>
 			)),
-		[],
+		[openModal, handleBackup, loading],
 	);
 
 	const restoreModal = useCallback(
@@ -230,40 +264,7 @@ export default function BackupAndRestore({ backups }: Props) {
 					onClose={closeModal}
 				/>
 			)),
-		[],
-	);
-
-	const deleteModal = useCallback(
-		(name: string) =>
-			openModal(({ closeModal }) => (
-				<ModalStyled
-					header={<b>Borrar</b>}
-					body={
-						<div className="text-center overflow-hidden">
-							<p>
-								¿Desea <b>borrar</b> este respaldo?
-							</p>
-						</div>
-					}
-					footer={
-						<div className="flex gap-2">
-							<Button onClick={() => closeModal()} variant="contained">
-								<b>Cancelar</b>
-							</Button>
-							<Button
-								onClick={() => handleDelete(name)}
-								variant="contained"
-								color="error"
-								loading={loading}
-							>
-								<b>Borrar</b>
-							</Button>
-						</div>
-					}
-					onClose={() => closeModal()}
-				/>
-			)),
-		[],
+		[openModal, handleSubmit, onSubmit, isSubmitting],
 	);
 
 	return (
@@ -278,43 +279,56 @@ export default function BackupAndRestore({ backups }: Props) {
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
 					<div className="flex justify-end mb-3 mx-3"></div>
-					<div className="bg-white shadow-lg sm:rounded-lg grid grid-cols-2 gap-4 mb-3 p-2 max-md:grid-cols-1">
-						<div className="text-gray-900">
-							<Button
-								variant="contained"
-								size="medium"
-								endIcon={<BackupIcon />}
-								onClick={() => backupModal()}
-							>
-								<b>Respaldar</b>
-							</Button>
-							<div className="flex mt-3">
-								<FormControl>
-									<div className="flex">
-										<OutlinedInput
-											type="file"
-											size="small"
-											inputProps={{
-												accept: ".zip,.sql", // tipos de archivos que se pueden enviar
-											}}
+					<div className="bg-white shadow-lg sm:rounded-lg grid grid-cols-2 gap-4 mb-3 p-4 max-md:grid-cols-1">
+						<div className="text-gray-900 space-y-4">
+							<div className="flex gap-2">
+								<Button
+									variant="contained"
+									size="medium"
+									endIcon={<BackupIcon />}
+									onClick={() => backupModal()}
+								>
+									<b>Respaldar</b>
+								</Button>
+								<Button
+									variant="outlined"
+									size="medium"
+									endIcon={<BackupIcon />}
+									onClick={() => restoreModal()}
+								>
+									<b>Restaurar</b>
+								</Button>
+							</div>
+							<FormControl className="w-full" variant="outlined">
+								<div className="flex items-stretch gap-2">
+									<label className="flex flex-1 cursor-pointer rounded-lg border border-emerald-200 bg-gradient-to-r from-emerald-50 to-orange-50 px-3 py-2 text-sm text-emerald-900 shadow-sm hover:from-emerald-100 hover:to-orange-100 focus-within:ring-2 focus-within:ring-emerald-400 transition">
+										<span className="my-auto font-medium">
+											Seleccionar archivo
+										</span>
+										<input
 											{...register("file", {
 												required: "Es requirido un archivo",
+												onChange: (e) => {
+													const file = (e.target as HTMLInputElement)
+														.files?.[0];
+													setSelectedFileName(file?.name || "");
+												},
 											})}
+											accept=".zip,.sql"
+											type="file"
+											className="hidden"
 										/>
-										<Button
-											variant="contained"
-											size="medium"
-											endIcon={<BackupIcon />}
-											onClick={() => restoreModal()}
-										>
-											<b>Restaurar</b>
-										</Button>
+									</label>
+									<div className="flex-1 flex items-center rounded-lg border border-dashed border-emerald-200 px-3 text-xs text-emerald-700 bg-emerald-50/40">
+										<span className="truncate">
+											{selectedFileName || "Ningún archivo seleccionado"}
+										</span>
 									</div>
-									<FormHelperText className="red text-center">
-										{errors.file?.message}
-									</FormHelperText>
-								</FormControl>
-							</div>
+								</div>
+								<FormHelperText className="text-center text-red-600">
+									{errors.file?.message}
+								</FormHelperText>
+							</FormControl>
 						</div>
 						<div className="text-gray-900">
 							<AutoBackup />
