@@ -1,5 +1,5 @@
 import { Button, FormHelperText, TextField } from "@mui/material";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ImageUpload from "@/Components/ImageUpload";
 import ImageUrlInput from "@/Components/Products/ImageUrlInput";
@@ -29,6 +29,11 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 		defaultValues: InitialValues ?? {},
 	});
 
+	const productName = useId();
+	const productBarcode = useId();
+	const productPrice = useId();
+	const productDescription = useId();
+
 	const validateBarcode = (value: string | undefined) => {
 		const code = String(value || "").trim();
 		if (!/^\d+$/.test(code)) {
@@ -57,7 +62,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 							className="w-full"
 							error={errors.name !== undefined}
 							helperText={errors.name?.message}
-							id="product_name"
+							id={productName}
 							label="Nombre del producto"
 							variant="filled"
 							required
@@ -71,7 +76,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 								error={errors.barcode !== undefined}
 								helperText={errors.barcode?.message}
 								type="number"
-								id="product_barcode"
+								id={productBarcode}
 								label="Codigo de barras"
 								variant="filled"
 								required
@@ -84,7 +89,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 								className="w-full"
 								error={errors.price !== undefined}
 								helperText={errors.price?.message}
-								id="product_price"
+								id={productPrice}
 								label="Precio"
 								type="number"
 								variant="filled"
@@ -118,7 +123,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 							<TextField
 								className="w-full"
 								error={false}
-								id="product_description"
+								id={productDescription}
 								label="Descripcion"
 								variant="filled"
 								multiline
