@@ -1,13 +1,15 @@
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
-import { useState, type FormEvent } from "react";
+import { type FormEvent, useId, useState } from "react";
 
 type Props = {
 	imageResponse: (image: File) => void;
 };
 
 export default function ImageUrlInput({ imageResponse }: Props) {
-    const [error, setError] = useState(false);
+	const [error, setError] = useState(false);
+
+	const inputId = useId();
 
 	const getImage = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -15,7 +17,7 @@ export default function ImageUrlInput({ imageResponse }: Props) {
 		const formData = new FormData(event.currentTarget);
 		const url = formData.get("url") as string;
 		const elementTarget = event.currentTarget;
-        setError(false);
+		setError(false);
 
 		try {
 			const response = await axios.get(url, {
@@ -30,7 +32,7 @@ export default function ImageUrlInput({ imageResponse }: Props) {
 			imageResponse(file);
 		} catch (e) {
 			console.log(e);
-            setError(true);
+			setError(true);
 		}
 	};
 
@@ -40,12 +42,12 @@ export default function ImageUrlInput({ imageResponse }: Props) {
 				className="w-full"
 				error={error}
 				name="url"
-				id="product_image_url"
+				id={inputId}
 				label="URL de la imagen"
 				variant="filled"
 				size="small"
-				sx={{ borderEndEndRadius: 0, borderTopRightRadius: 0 }}
-                helperText={error ? "Error al intentar cargar la imagen" : ""}
+				sx={{ "& .MuiFilledInput-root": { borderTopRightRadius: 0 } }}
+				helperText={error ? "Error al intentar cargar la imagen" : ""}
 			/>
 			<Button
 				variant="contained"
