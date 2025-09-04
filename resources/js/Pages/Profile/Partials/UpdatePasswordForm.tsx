@@ -48,7 +48,7 @@ export default function UpdatePasswordForm({
 					Asegúrate de usar una contraseña larga y segura.
 				</p>
 			</header>
-			<form onSubmit={updatePassword} className="mt-6 space-y-6">
+			<form onSubmit={updatePassword} className="mt-6">
 				<Box>
 					<TextField
 						id={currentId}
