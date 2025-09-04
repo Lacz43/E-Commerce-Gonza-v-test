@@ -1,4 +1,10 @@
-import { Category, Home, Person, Settings, ShoppingCart } from "@mui/icons-material";
+import {
+	Category,
+	Home,
+	Person,
+	Settings,
+	ShoppingCart,
+} from "@mui/icons-material";
 import type { JSX } from "react";
 
 interface Route {
@@ -54,6 +60,10 @@ export const paths: Record<string, Route> = {
 				path: "products.categories.index",
 				name: "Categorias",
 			},
+			inventory: {
+				path: "products.inventory",
+				name: "Inventario",
+			},
 		},
 	},
 	users: {
@@ -62,16 +72,16 @@ export const paths: Record<string, Route> = {
 		icon: <Person />,
 		roles: ["admin"],
 	},
-    settings: {
-        path: "backup.index",
-        name: "Configuracion",
-        icon: <Settings />,
-        roles: ["admin"],
-        children: {
-            backup: {
-                path: "backup.index",
-                name: "Respaldo y Restauracion",
-            },
-        },
-    },
+	settings: {
+		path: "backup.index",
+		name: "Configuracion",
+		icon: <Settings />,
+		roles: ["admin"],
+		children: {
+			backup: {
+				path: "backup.index",
+				name: "Respaldo y Restauracion",
+			},
+		},
+	},
 };
