@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductInventoryController;
 use App\Http\Controllers\ProductsController;
+use App\Models\ProductInventory;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Contracts\Role;
 
 Route::middleware('auth', 'permission:show products')->get('/products/index', [ProductsController::class, 'index'])->name('products.index');
 Route::middleware('auth', 'permission:delete products')->delete('/products/delete/{product}', [ProductsController::class, 'destroy'])->name('products.delete');
@@ -33,6 +36,10 @@ Route::middleware('auth', 'permission:create product_categories')
 Route::middleware('auth', 'permission:edit product_categories')
     ->patch('/products/categories/update/{category}', [ProductCategoryController::class, 'update'])
     ->name('products.categories.update');
+
+Route::middleware('auth', 'permission:show product_inventory')
+    ->get('/products/inventory', [ProductInventoryController::class, 'index'])
+    ->name('products.inventory');
 
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
 Route::get('/products/categories', [ProductCategoryController::class, 'categories'])->name('products.categories');

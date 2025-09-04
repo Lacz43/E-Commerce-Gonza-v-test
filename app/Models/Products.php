@@ -54,6 +54,11 @@ class Products extends Model
         return $this->hasOne(ProductCategory::class, 'id', 'category_id');
     }
 
+    public function productInventory(): HasOne
+    {
+        return $this->hasOne(ProductInventory::class, 'product_id', 'id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnlyDirty();
