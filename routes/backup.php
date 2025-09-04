@@ -2,6 +2,12 @@
 
 use App\Settings\BackupSettings;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Schema;
+
+// Si la tabla todavía no existe, no programamos nada.
+if (!Schema::hasTable('settings')) {
+    return;
+}
 
 /*
  * INFO:
