@@ -2,8 +2,10 @@ import "../css/app.css";
 import "./bootstrap";
 
 import { createInertiaApp } from "@inertiajs/react";
+import { ThemeProvider } from "@mui/material/styles";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createRoot } from "react-dom/client";
+import { theme } from "./theme";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
@@ -21,12 +23,12 @@ createInertiaApp({
 		const root = createRoot(el);
 
 		root.render(
-			<>
-				<Toaster position="top-right"/>
+			<ThemeProvider theme={theme}>
+				<Toaster position="top-right" />
 				<ModalProvider>
 					<App {...props} />
 				</ModalProvider>
-			</>,
+			</ThemeProvider>,
 		);
 	},
 	progress: {
