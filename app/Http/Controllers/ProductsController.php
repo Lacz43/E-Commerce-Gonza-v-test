@@ -28,7 +28,7 @@ class ProductsController extends Controller
 
     public function products(Request $request)
     {
-        $query = Products::with(['defaultImage:product_id,image']);
+        $query = Products::with(['defaultImage:product_id,image', 'productInventory:id,product_id,stock']);
 
         // Parámetros opcionales de búsqueda:
         // 1) ?id=XXXXXXXX (coincidencia exacta)
