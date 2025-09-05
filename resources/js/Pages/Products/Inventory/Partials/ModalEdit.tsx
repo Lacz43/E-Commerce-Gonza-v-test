@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import AutocompleteInput from "@/Components/AutocompleteInput";
 import ModalStyled from "@/Components/Modals/ModalStyled";
@@ -12,22 +12,27 @@ type Props = {
 };
 
 type FormData = {
-	product: number;
+	product: number | null;
 	stock: number;
 };
 
-type Options = {
-	label: string;
-	value: number;
-};
+type Options =
+	| {
+			label: string;
+			value: number;
+	  }
+	| undefined;
 
 export default function ModalEdit({ onClose, id }: Props) {
 	const {
 		register,
 		handleSubmit,
+		control,
 		formState: { errors },
 		setError,
-	} = useForm<FormData>();
+	} = useForm<FormData>({
+		defaultValues: { product: null, stock: 0 },
+	});
 
 	const [options, setOptions] = useState<Options[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -100,16 +105,27 @@ export default function ModalEdit({ onClose, id }: Props) {
 			header={<h2>Inventario {id}</h2>}
 			body={
 				<form className="gap-4 flex flex-col">
-					<AutocompleteInput<Options>
-						{...register("product", {
-							required: "Este campo es obligatorio",
-						})}
-						title="Producto"
-						onInput={handleSearch}
-						options={options}
-						loading={loading}
-						error={!!errors.product}
-						helperText={errors.product?.message as string}
+					<Controller
+						name="product"
+						control={control}
+						rules={{ required: "Este campo es obligatorio" }}
+						render={({ field: { value, onChange } }) => (
+							<AutocompleteInput<Options>
+								value={options.find((o) => o?.value === value) ?? null}
+								onChange={(_e, val) => {
+									if (val === null) loadData();
+									onChange(val ? (val as Options)?.value : "");
+								}}
+								title="Producto"
+								onInput={handleSearch}
+								options={options}
+								loading={loading}
+								error={!!errors.product}
+								helperText={errors.product?.message as string}
+								isOptionEqualToValue={(opt, val) => opt?.value === val?.value}
+								getOptionLabel={(opt) => opt?.label ?? ""}
+							/>
+						)}
 					/>
 
 					<TextField
