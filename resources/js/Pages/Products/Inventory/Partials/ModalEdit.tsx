@@ -17,15 +17,6 @@ type FormData = {
 	stock: number;
 };
 
-type Options =
-	| {
-			label: string;
-			value: number;
-			barcode: string;
-			image: string;
-	  }
-	| undefined;
-
 export default function ModalEdit({ onClose, id }: Props) {
 	const {
 		register,
@@ -37,7 +28,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 		defaultValues: { product: null, stock: 0 },
 	});
 
-	const [options, setOptions] = useState<Options[]>([]);
+	const [options, setOptions] = useState<Item[]>([]);
 	const [loading, setLoading] = useState(false);
 
 	const onSubmit = (data: FormData) => {
@@ -60,14 +51,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 					params: { perPage: 5, id, search, barcode },
 				});
 				console.log("Productos cargados:", data.products.data);
-				setOptions(
-					data.products.data.map((item) => ({
-						label: item.name,
-						value: item.id,
-						barcode: item.barcode,
-						image: item.default_image?.image,
-					})) as Options[],
-				);
+				setOptions(data.products.data);
 			} catch (e) {
 				console.error("Error cargando productos", e);
 				toast.error(
@@ -116,11 +100,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 						control={control}
 						rules={{ required: "Este campo es obligatorio" }}
 						render={({ field: { value, onChange } }) => (
-							<AutocompleteInput<Options>
-								value={options.find((o) => o?.value === value) ?? null}
+							<AutocompleteInput<Item>
+								value={options.find((o) => o?.id === value) ?? null}
 								onChange={(_e, val) => {
 									if (val === null) loadData();
-									onChange(val ? (val as Options)?.value : "");
+									onChange(val ? val.id : "");
 								}}
 								title="Producto"
 								onInput={handleSearch}
@@ -128,8 +112,8 @@ export default function ModalEdit({ onClose, id }: Props) {
 								loading={loading}
 								error={!!errors.product}
 								helperText={errors.product?.message as string}
-								isOptionEqualToValue={(opt, val) => opt?.value === val?.value}
-								getOptionLabel={(opt) => opt?.label ?? ""}
+								isOptionEqualToValue={(opt, val) => opt?.id === val?.id}
+								getOptionLabel={(opt) => opt?.name ?? ""}
 								renderOption={(props, option) => {
 									const { key, ...optionProps } = props;
 									return (
@@ -142,10 +126,10 @@ export default function ModalEdit({ onClose, id }: Props) {
 											<img
 												loading="lazy"
 												width="50"
-												src={imageUrl(option?.image ?? "")}
+												src={imageUrl(option?.default_image?.image ?? "")}
 												alt=""
 											/>
-											{option?.label}{" "}
+											{option?.name}{" "}
 											<span className="text-sm text-gray-500">
 												{" "}
 												{option?.barcode}
