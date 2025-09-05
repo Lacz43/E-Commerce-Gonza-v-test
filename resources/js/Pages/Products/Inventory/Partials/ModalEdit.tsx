@@ -1,10 +1,11 @@
-import { Button, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import AutocompleteInput from "@/Components/AutocompleteInput";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import { imageUrl } from "@/utils";
 
 type Props = {
 	id?: number;
@@ -20,6 +21,8 @@ type Options =
 	| {
 			label: string;
 			value: number;
+			barcode: string;
+			image: string;
 	  }
 	| undefined;
 
@@ -56,10 +59,13 @@ export default function ModalEdit({ onClose, id }: Props) {
 				const { data } = await axios.get<ProductsResponse>(route("products"), {
 					params: { perPage: 5, id, search, barcode },
 				});
+				console.log("Productos cargados:", data.products.data);
 				setOptions(
 					data.products.data.map((item) => ({
 						label: item.name,
 						value: item.id,
+						barcode: item.barcode,
+						image: item.default_image?.image,
 					})) as Options[],
 				);
 			} catch (e) {
@@ -124,6 +130,29 @@ export default function ModalEdit({ onClose, id }: Props) {
 								helperText={errors.product?.message as string}
 								isOptionEqualToValue={(opt, val) => opt?.value === val?.value}
 								getOptionLabel={(opt) => opt?.label ?? ""}
+								renderOption={(props, option) => {
+									const { key, ...optionProps } = props;
+									return (
+										<Box
+											key={key}
+											component="li"
+											sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+											{...optionProps}
+										>
+											<img
+												loading="lazy"
+												width="50"
+												src={imageUrl(option?.image ?? "")}
+												alt=""
+											/>
+											{option?.label}{" "}
+											<span className="text-sm text-gray-500">
+												{" "}
+												{option?.barcode}
+											</span>
+										</Box>
+									);
+								}}
 							/>
 						)}
 					/>
