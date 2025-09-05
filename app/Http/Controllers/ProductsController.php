@@ -28,7 +28,33 @@ class ProductsController extends Controller
 
     public function products(Request $request)
     {
-        $products = Products::with(['defaultImage:product_id,image'])->paginate(20);
+        $query = Products::with(['defaultImage:product_id,image']);
+
+        // Parámetros opcionales de búsqueda:
+        // 1) ?id=XXXXXXXX (coincidencia exacta)
+        // 2) ?barcode=XXXXXXXX (coincidencia exacta)
+        // 3) ?name=texto (LIKE %texto%)
+        // 4) ?search=valor (busca por barcode exacto O nombre LIKE)
+        $id = trim((string)$request->query('id', ''));
+        $barcode = trim((string)$request->query('barcode', ''));
+        $name = trim((string)$request->query('name', ''));
+        $search = trim((string)$request->query('search', ''));
+
+        if ($id !== '') {
+            $query->where('id', $id);
+        } elseif ($barcode !== '') {
+            $query->where('barcode', $barcode);
+        } elseif ($name !== '') {
+            $query->where('name', 'like', "%$name%");
+        } elseif ($search !== '') {
+            $query->where(function($q) use ($search) {
+                $q->where('barcode', $search)
+                  ->orWhere('name', 'like', "%$search%");
+            });
+        }
+
+        $perPage = (int)$request->query('perPage', 20);
+        $products = $query->paginate($perPage);
 
         Debugbar::info($products);
 
