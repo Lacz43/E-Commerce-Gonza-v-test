@@ -24,7 +24,7 @@ type Props = { products: paginateResponse<InventoryItem> };
 export default function InventoryIndex({ products }: Props) {
 	const { openModal, closeModal } = useModal();
 	const [inventory, setInventory] = useState(products);
-	const [loading, setLoading] = useState(false);
+	console.log("Inventory:", inventory);
 
 	useEffect(() => {
 		setInventory(products);
@@ -37,11 +37,11 @@ export default function InventoryIndex({ products }: Props) {
 			{ field: "name", headerName: "Producto" },
 			{ field: "barcode", headerName: "Código de Barras" },
 			{
-				field: "stock",
+				field: "product_inventory",
 				headerName: "Cantidad",
 				type: "number",
 				width: 120,
-				valueGetter: (_v, r) => r.stock ?? 0,
+				valueGetter: (_v, r) => r.product_inventory?.stock ?? 0,
 			},
 		],
 		[],
