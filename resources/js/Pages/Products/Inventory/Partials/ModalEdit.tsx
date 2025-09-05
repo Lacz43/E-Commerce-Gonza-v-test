@@ -1,5 +1,6 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, Skeleton, TextField, Typography } from "@mui/material";
 import axios, { AxiosError } from "axios";
+import type { HTMLAttributes } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -16,6 +17,70 @@ type FormData = {
 	product: number | null;
 	stock: number;
 };
+
+// Componente para cada opción del Autocomplete con Skeleton para la imagen
+function OptionItem(
+	props: HTMLAttributes<HTMLLIElement> & {
+		option: Item;
+	},
+) {
+	const { option, ...liProps } = props;
+	const [loaded, setLoaded] = useState(false);
+	return (
+		<Box
+			component="li"
+			{...liProps}
+			sx={{
+				display: "flex",
+				alignItems: "center",
+				gap: 2,
+				py: 1,
+				px: 1.5,
+				borderRadius: 1,
+				width: "100%",
+				"&:hover": { backgroundColor: "action.hover" },
+			}}
+		>
+			<Box
+				position="relative"
+				width={50}
+				height={50}
+				flexShrink={0}
+				borderRadius={1}
+				overflow="hidden"
+			>
+				{!loaded && (
+					<Skeleton
+						variant="rectangular"
+						width={50}
+						height={50}
+						animation="wave"
+					/>
+				)}
+				<Box
+					component="img"
+					alt={option?.name ?? ""}
+					src={imageUrl(option?.default_image?.image ?? "")}
+					onLoad={() => setLoaded(true)}
+					sx={{
+						width: "100%",
+						height: "100%",
+						objectFit: "cover",
+						display: loaded ? "block" : "none",
+					}}
+				/>
+			</Box>
+			<Box sx={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+				<Typography variant="body2" fontWeight={500} noWrap>
+					{option?.name}
+				</Typography>
+				<Typography variant="caption" color="text.secondary" noWrap>
+					{option?.barcode}
+				</Typography>
+			</Box>
+		</Box>
+	);
+}
 
 export default function ModalEdit({ onClose, id }: Props) {
 	const {
@@ -114,29 +179,9 @@ export default function ModalEdit({ onClose, id }: Props) {
 								helperText={errors.product?.message as string}
 								isOptionEqualToValue={(opt, val) => opt?.id === val?.id}
 								getOptionLabel={(opt) => opt?.name ?? ""}
-								renderOption={(props, option) => {
-									const { key, ...optionProps } = props;
-									return (
-										<Box
-											key={key}
-											component="li"
-											sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-											{...optionProps}
-										>
-											<img
-												loading="lazy"
-												width="50"
-												src={imageUrl(option?.default_image?.image ?? "")}
-												alt=""
-											/>
-											{option?.name}{" "}
-											<span className="text-sm text-gray-500">
-												{" "}
-												{option?.barcode}
-											</span>
-										</Box>
-									);
-								}}
+								renderOption={(props, option) => (
+									<OptionItem {...props} option={option} />
+								)}
 							/>
 						)}
 					/>
