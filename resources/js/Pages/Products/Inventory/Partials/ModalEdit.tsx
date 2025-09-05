@@ -89,8 +89,9 @@ export default function ModalEdit({ onClose, id }: Props) {
 		control,
 		formState: { errors },
 		setError,
+		setValue,
 	} = useForm<FormData>({
-		defaultValues: { product: null, stock: 0 },
+		defaultValues: { product: id || null, stock: 0 },
 	});
 
 	const [options, setOptions] = useState<Item[]>([]);
@@ -117,6 +118,13 @@ export default function ModalEdit({ onClose, id }: Props) {
 				});
 				console.log("Productos cargados:", data.products.data);
 				setOptions(data.products.data);
+				if (id) {
+					const product = data.products.data.find((p) => p.id === id);
+					console.log("Producto cargado:", product);
+					if (product) {
+						setValue("stock", product.product_inventory?.stock ?? 0);
+					}
+				}
 			} catch (e) {
 				console.error("Error cargando productos", e);
 				toast.error(
@@ -130,19 +138,19 @@ export default function ModalEdit({ onClose, id }: Props) {
 				setLoading(false);
 			}
 		},
-		[setError],
+		[setError, setValue],
 	);
 
 	const timeout = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
-		loadData();
+		loadData({ id });
 		return () => {
 			if (timeout.current) {
 				clearTimeout(timeout.current);
 			}
 		};
-	}, [loadData]);
+	}, [id]);
 
 	const handleSearch = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,6 +190,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 								renderOption={(props, option) => (
 									<OptionItem {...props} option={option} />
 								)}
+								disabled={id !== undefined}
 							/>
 						)}
 					/>
