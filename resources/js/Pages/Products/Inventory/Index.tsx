@@ -1,6 +1,5 @@
-import { Head, router } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
-import axios from "axios";
 import {
 	lazy,
 	Suspense,
