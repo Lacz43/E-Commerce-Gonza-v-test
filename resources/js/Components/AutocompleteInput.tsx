@@ -1,17 +1,32 @@
 import { CircularProgress } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, {
+	type AutocompleteProps,
+} from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
 
-type AutocompleteInputProps<T> = {
+export type AutocompleteInputProps<T> = Omit<
+	AutocompleteProps<T, false, false, false>,
+	"renderInput" | "options"
+> & {
 	title: string;
 	options: T[];
+	helperText?: string | React.ReactNode;
+	error?: boolean;
 	loading?: boolean;
 	onInput?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function AutocompleteInput<T>(props: AutocompleteInputProps<T>) {
-	const { options, title, loading = false, onInput, ...otherProps } = props;
+	const {
+		options,
+		title,
+		loading = false,
+		onInput,
+		helperText,
+		error,
+		...otherProps
+	} = props;
 
 	const autoComplete = React.useId();
 
@@ -28,6 +43,8 @@ export default function AutocompleteInput<T>(props: AutocompleteInputProps<T>) {
 					<TextField
 						{...params}
 						label={title}
+						helperText={helperText}
+						error={error}
 						slotProps={{
 							input: {
 								...params.InputProps,
