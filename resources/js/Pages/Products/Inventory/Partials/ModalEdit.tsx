@@ -178,6 +178,9 @@ export default function ModalEdit({ onClose, id }: Props) {
 								onChange={(_e, val) => {
 									if (val === null) loadData();
 									onChange(val ? val.id : "");
+									if (val) {
+										setValue("stock", val.product_inventory?.stock ?? 0);
+									}
 								}}
 								title="Producto"
 								onInput={handleSearch}
