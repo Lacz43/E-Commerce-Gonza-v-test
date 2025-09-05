@@ -1,9 +1,10 @@
 import { Button, TextField } from "@mui/material";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import AutocompleteInput from "@/Components/AutocompleteInput";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import toast from "react-hot-toast";
 
 type Props = {
 	id?: number;
@@ -25,9 +26,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 		register,
 		handleSubmit,
 		formState: { errors },
+		setError,
 	} = useForm<FormData>();
 
 	const [options, setOptions] = useState<Options[]>([]);
+	const [loading, setLoading] = useState(false);
 
 	const onSubmit = useCallback((data: FormData) => {
 		console.log("Submitted data:", data);
@@ -41,19 +44,27 @@ export default function ModalEdit({ onClose, id }: Props) {
 
 	const loadData = useCallback(
 		async ({ id, search, barcode }: loadDataParams = {}) => {
-			type ProductsResponse = { products: paginateResponse<Item> };
-			const { data } = await axios.get<ProductsResponse>(route("products"), {
-				params: { perPage: 10, id, search, barcode },
-			});
-
-			setOptions(
-				data.products.data.map((item) => ({
-					label: item.name,
-					value: item.id,
-				})) as Options[],
-			);
+			setLoading(true);
+			try {
+				type ProductsResponse = { products: paginateResponse<Item> };
+				const { data } = await axios.get<ProductsResponse>(route("products"), {
+					params: { perPage: 10, id, search, barcode },
+				});
+				setOptions(
+					data.products.data.map((item) => ({
+						label: item.name,
+						value: item.id,
+					})) as Options[],
+				);
+			} catch (e) {
+				console.error("Error cargando productos", e);
+				toast.error(`Error cargando productos: ${e instanceof AxiosError ? e.message : "Error desconocido"}`);
+				setError("product", { type: "manual", message: "Error cargando productos" });
+			} finally {
+				setLoading(false);
+			}
 		},
-		[],
+		[setError],
 	);
 
 	useEffect(() => {
@@ -70,6 +81,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 						{...register("product", { required: "Este campo es obligatorio" })}
 						title="Producto"
 						options={options}
+						loading={loading}
 					/>
 					<TextField
 						{...register("stock", { required: "Este campo es obligatorio" })}
