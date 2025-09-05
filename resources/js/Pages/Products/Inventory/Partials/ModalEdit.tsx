@@ -1,10 +1,10 @@
 import { Button, TextField } from "@mui/material";
 import axios, { AxiosError } from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import AutocompleteInput from "@/Components/AutocompleteInput";
 import ModalStyled from "@/Components/Modals/ModalStyled";
-import toast from "react-hot-toast";
 
 type Props = {
 	id?: number;
@@ -32,9 +32,10 @@ export default function ModalEdit({ onClose, id }: Props) {
 	const [options, setOptions] = useState<Options[]>([]);
 	const [loading, setLoading] = useState(false);
 
-	const onSubmit = useCallback((data: FormData) => {
+	const onSubmit = (data: FormData) => {
 		console.log("Submitted data:", data);
-	}, []);
+		toast.success("Inventario actualizado correctamente");
+	};
 
 	interface loadDataParams {
 		id?: number;
@@ -48,7 +49,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 			try {
 				type ProductsResponse = { products: paginateResponse<Item> };
 				const { data } = await axios.get<ProductsResponse>(route("products"), {
-					params: { perPage: 10, id, search, barcode },
+					params: { perPage: 5, id, search, barcode },
 				});
 				setOptions(
 					data.products.data.map((item) => ({
@@ -58,8 +59,13 @@ export default function ModalEdit({ onClose, id }: Props) {
 				);
 			} catch (e) {
 				console.error("Error cargando productos", e);
-				toast.error(`Error cargando productos: ${e instanceof AxiosError ? e.message : "Error desconocido"}`);
-				setError("product", { type: "manual", message: "Error cargando productos" });
+				toast.error(
+					`Error cargando productos: ${e instanceof AxiosError ? e.message : "Error desconocido"}`,
+				);
+				setError("product", {
+					type: "manual",
+					message: "Error cargando productos",
+				});
 			} finally {
 				setLoading(false);
 			}
@@ -67,9 +73,26 @@ export default function ModalEdit({ onClose, id }: Props) {
 		[setError],
 	);
 
+	const timeout = useRef<NodeJS.Timeout | null>(null);
+
 	useEffect(() => {
 		loadData();
+		return () => {
+			if (timeout.current) {
+				clearTimeout(timeout.current);
+			}
+		};
 	}, []);
+
+	const handleSearch = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			if (timeout.current) clearTimeout(timeout.current);
+			timeout.current = setTimeout(() => {
+				loadData({ search: event.target.value });
+			}, 300);
+		},
+		[loadData],
+	);
 
 	return (
 		<ModalStyled
@@ -78,11 +101,17 @@ export default function ModalEdit({ onClose, id }: Props) {
 			body={
 				<form className="gap-4 flex flex-col">
 					<AutocompleteInput<Options>
-						{...register("product", { required: "Este campo es obligatorio" })}
+						{...register("product", {
+							required: "Este campo es obligatorio",
+						})}
 						title="Producto"
+						onInput={handleSearch}
 						options={options}
 						loading={loading}
+						error={!!errors.product}
+						helperText={errors.product?.message as string}
 					/>
+
 					<TextField
 						{...register("stock", { required: "Este campo es obligatorio" })}
 						label="Cantidad"
