@@ -9,14 +9,13 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Modal from "./Partials/ModalEdit";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
-const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
 
 type InventoryItem = Item & { stock?: number };
 
@@ -31,33 +30,12 @@ export default function InventoryIndex({ products }: Props) {
 		setInventory(products);
 	}, [products]);
 
-	const handleDelete = useCallback(
-		async (id: number) => {
-			setLoading(true);
-			try {
-				await axios.delete(route("inventory.delete", id));
-				setInventory((prev) => ({
-					...prev,
-					data: prev.data.filter((p) => p.id !== id),
-				}));
-				toast.success("Producto removido del inventario");
-				closeModal();
-			} catch (e) {
-				console.error(e);
-				toast.error("Error al eliminar del inventario");
-			} finally {
-				setLoading(false);
-			}
-		},
-		[closeModal],
-	);
-
 	// Columnas de la tabla (useMemo interno en lugar de wrapper externo)
 	const columns = useMemo<GridColDef[]>(
 		() => [
-			{ field: "id", headerName: "ID", type: "number"},
+			{ field: "id", headerName: "ID", type: "number" },
 			{ field: "name", headerName: "Producto" },
-            { field: "barcode", headerName: "Código de Barras"},
+			{ field: "barcode", headerName: "Código de Barras" },
 			{
 				field: "stock",
 				headerName: "Cantidad",
@@ -69,29 +47,19 @@ export default function InventoryIndex({ products }: Props) {
 		[],
 	);
 
-	const onDeleteConfig = useMemo(
-		() => ({
-			permissions: ["delete products"],
-			hook: (id: number) =>
-				openModal(({ closeModal }) => (
-					<ModalDelete
-						id={id}
-						title={inventory.data.find((f) => f.id === id)?.name || ""}
-						loading={loading}
-						onDeleteConfirm={handleDelete}
-						onClose={closeModal}
-					/>
-				)),
-		}),
-		[inventory, loading, openModal, handleDelete],
+	const openModalEdit = useCallback(
+		(id?: number) => {
+			openModal(({ closeModal }) => <Modal onClose={closeModal} id={id} />);
+		},
+		[openModal],
 	);
 
 	const onEditConfig = useMemo(
 		() => ({
 			permissions: ["edit products"],
-			hook: (id: number) => router.visit(route("inventory.edit", id)),
+			hook: (id: number) => openModalEdit(id),
 		}),
-		[],
+		[openModalEdit],
 	);
 
 	const onShowConfig = useMemo(
@@ -116,7 +84,7 @@ export default function InventoryIndex({ products }: Props) {
 					<div className="flex justify-end mb-3 mx-3">
 						<CreateButton
 							permissions={["create products"]}
-							onAction={() => router.visit(route("products.create"))}
+							onAction={() => openModalEdit()}
 						/>
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
@@ -137,7 +105,6 @@ export default function InventoryIndex({ products }: Props) {
 									filtersAvailable={["name"]}
 									sortAvailable={["id", "name", "stock"]}
 									onEdit={onEditConfig}
-									onDelete={onDeleteConfig}
 									onShow={onShowConfig}
 								/>
 							</Suspense>
