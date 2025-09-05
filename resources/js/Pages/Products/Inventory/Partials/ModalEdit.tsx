@@ -142,7 +142,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 				clearTimeout(timeout.current);
 			}
 		};
-	}, []);
+	}, [loadData]);
 
 	const handleSearch = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,9 +187,23 @@ export default function ModalEdit({ onClose, id }: Props) {
 					/>
 
 					<TextField
-						{...register("stock", { required: "Este campo es obligatorio" })}
+						{...register("stock", {
+							required: "Este campo es obligatorio",
+							valueAsNumber: true,
+							validate: {
+								noCero: (v) =>
+									(typeof v === "number" && !Number.isNaN(v) && v !== 0) ||
+									"No puede ser 0",
+								entero: (v) => Number.isInteger(v) || "Solo números enteros",
+							},
+						})}
 						label="Cantidad"
 						type="number"
+						onKeyDown={(e) => {
+							if ([".", ",", "+", "e", "E"].includes(e.key)) {
+								e.preventDefault();
+							}
+						}}
 						fullWidth
 						error={!!errors.stock}
 						helperText={errors.stock?.message}
