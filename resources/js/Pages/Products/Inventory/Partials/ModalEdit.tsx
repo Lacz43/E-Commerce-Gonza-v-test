@@ -167,7 +167,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 			onClose={onClose}
 			header={<h2>Inventario {id}</h2>}
 			body={
-				<form className="gap-4 flex flex-col">
+				<form className="gap-4 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
 					<Controller
 						name="product"
 						control={control}
