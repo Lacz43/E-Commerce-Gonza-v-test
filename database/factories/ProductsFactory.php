@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
+use App\Models\ProductInventory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -36,5 +37,10 @@ class ProductsFactory extends Factory
     public function withBrands()
     {
         return $this->has(ProductBrand::factory(), 'productBrand');
+    }
+
+    public function withInventory()
+    {
+        return $this->has(ProductInventory::factory(), 'productInventory');
     }
 }

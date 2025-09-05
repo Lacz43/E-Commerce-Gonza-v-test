@@ -20,6 +20,6 @@ class FakeDataSeeder extends Seeder
 
         ProductCategory::factory()->count(5)->create();
         Brand::factory()->count(10)->create();
-        Products::factory()->count(20)->withImages(3)->withBrands()->create();
+        Products::factory()->count(20)->withImages(3)->withBrands()->withInventory()->create();
     }
 }
