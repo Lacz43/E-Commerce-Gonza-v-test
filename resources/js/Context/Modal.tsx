@@ -17,8 +17,12 @@ type Utils = (utils: { closeModal: () => void }) => ReactNode;
  * closeModal: Función para cerrar el modal
  */
 interface ModalContextType {
-	openModal: (getContentFn: Utils) => void;
-	closeModal: () => void;
+	// Abre un modal y devuelve su id
+	openModal: (getContentFn: Utils) => string;
+	// Cierra un modal por id; si no se pasa id, cierra el último (backward compatible)
+	closeModal: (id?: string) => void;
+	// Cierra todos los modales abiertos
+	closeAll: () => void;
 }
 
 const style: SxProps = {
@@ -42,32 +46,44 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
  * Componente ModalProvider
  * Usado para proveer el contexto ModalContext
  */
+type ModalEntry = { id: string; getContent: Utils };
+
 export function ModalProvider({ children }: Props) {
-	const [isOpen, setIsOpen] = useState(false);
-	const [getContent, setGetContent] = useState<
-		(utils: { closeModal: () => void }) => ReactNode
-	>(() => () => null);
+	const [modals, setModals] = useState<ModalEntry[]>([]);
 
-	const openModal = (
-		getContentFn: (utils: { closeModal: () => void }) => ReactNode,
-	) => {
-		setGetContent(() => getContentFn);
-		setIsOpen(true);
+	const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+	const openModal = (getContentFn: Utils) => {
+		const id = genId();
+		setModals((prev) => [...prev, { id, getContent: getContentFn }]);
+		return id;
 	};
 
-	const closeModal = () => {
-		setIsOpen(false);
-		setTimeout(() => setGetContent(() => () => null), 300); // resetear el contenido después de cerrar (para limpiar estado)
+	const closeModal = (id?: string) => {
+		setModals((prev) => {
+			if (!prev.length) return prev;
+			if (!id) return prev.slice(0, -1);
+			return prev.filter((m) => m.id !== id);
+		});
 	};
+
+	const closeAll = () => setModals([]);
 
 	return (
-		<ModalContext.Provider value={{ openModal, closeModal }}>
+		<ModalContext.Provider value={{ openModal, closeModal, closeAll }}>
 			{children}
-			{isOpen && (
-				<Modal open={isOpen} onClose={closeModal} className="rounded-2xl">
-					<Box sx={style}>{getContent({ closeModal })}</Box>
+			{modals.map((m, idx) => (
+				<Modal
+					key={m.id}
+					open
+					onClose={() => closeModal(m.id)}
+					className="rounded-2xl"
+				>
+					<Box sx={{ ...style, zIndex: 1300 + idx }}>
+						{m.getContent({ closeModal: () => closeModal(m.id) })}
+					</Box>
 				</Modal>
-			)}
+			))}
 		</ModalContext.Provider>
 	);
 }
