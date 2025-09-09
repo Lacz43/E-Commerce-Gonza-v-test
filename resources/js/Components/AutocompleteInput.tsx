@@ -38,7 +38,6 @@ export default function AutocompleteInput<T>(props: AutocompleteInputProps<T>) {
 				onInput={onInput}
 				options={options}
 				loading={loading}
-				sx={{ width: 300 }}
 				renderInput={(params) => (
 					<TextField
 						{...params}
