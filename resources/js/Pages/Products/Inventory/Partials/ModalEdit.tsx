@@ -1,11 +1,11 @@
-import { Box, Button, Skeleton, TextField, Typography } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import axios, { AxiosError } from "axios";
-import type { HTMLAttributes } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import AutocompleteInput from "@/Components/AutocompleteInput";
+import Image from "@/Components/Image";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import SelectProduct from "@/Components/Products/SelectProduct";
 import { imageUrl } from "@/utils";
 
 type Props = {
@@ -18,68 +18,8 @@ type FormData = {
 	stock: number;
 };
 
-// Componente para cada opción del Autocomplete con Skeleton para la imagen
-function OptionItem(
-	props: HTMLAttributes<HTMLLIElement> & {
-		option: Item;
-	},
-) {
-	const { option, ...liProps } = props;
-	const [loaded, setLoaded] = useState(false);
-	return (
-		<Box
-			component="li"
-			{...liProps}
-			sx={{
-				display: "flex",
-				alignItems: "center",
-				gap: 2,
-				py: 1,
-				px: 1.5,
-				borderRadius: 1,
-				width: "100%",
-				"&:hover": { backgroundColor: "action.hover" },
-			}}
-		>
-			<Box
-				position="relative"
-				width={50}
-				height={50}
-				flexShrink={0}
-				borderRadius={1}
-				overflow="hidden"
-			>
-				{!loaded && (
-					<Skeleton
-						variant="rectangular"
-						width={50}
-						height={50}
-						animation="wave"
-					/>
-				)}
-				<Box
-					component="img"
-					alt={option?.name ?? ""}
-					src={imageUrl(option?.default_image?.image ?? "")}
-					onLoad={() => setLoaded(true)}
-					sx={{
-						width: "100%",
-						height: "100%",
-						objectFit: "cover",
-						display: loaded ? "block" : "none",
-					}}
-				/>
-			</Box>
-			<Box sx={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-				<Typography variant="body2" fontWeight={500} noWrap>
-					{option?.name}
-				</Typography>
-				<Typography variant="caption" color="text.secondary" noWrap>
-					{option?.barcode}
-				</Typography>
-			</Box>
-		</Box>
-	);
+function isProductInfo(p: Item | null): p is Item {
+	return !!p; // campos son opcionales, con que exista el objeto basta
 }
 
 export default function ModalEdit({ onClose, id }: Props) {
@@ -88,79 +28,47 @@ export default function ModalEdit({ onClose, id }: Props) {
 		handleSubmit,
 		control,
 		formState: { errors },
-		setError,
-		setValue,
+		watch,
 	} = useForm<FormData>({
 		defaultValues: { product: id || null, stock: 0 },
 	});
 
-	const [options, setOptions] = useState<Item[]>([]);
-	const [loading, setLoading] = useState(false);
+	const selectedProductId = watch("product");
+
+	const [productInfo, setProductInfo] = useState<Item | null>(null);
+	const [loadingProduct, setLoadingProduct] = useState(false);
+
+	useEffect(() => {
+		async function fetchProduct(prodId: number) {
+			setLoadingProduct(true);
+			try {
+				type ProductsResponse = { products: paginateResponse<Item> };
+				const { data } = await axios.get<ProductsResponse>(route("products"), {
+					params: { id: prodId, perPage: 1 },
+				});
+				setProductInfo(data.products.data[0] ?? null);
+			} catch (e) {
+				console.error("Error obteniendo producto", e);
+				toast.error(
+					`Error al obtener producto: ${e instanceof AxiosError ? e.message : "Error desconocido"}`,
+				);
+				setProductInfo(null);
+			} finally {
+				setLoadingProduct(false);
+			}
+		}
+
+		if (selectedProductId) {
+			fetchProduct(selectedProductId);
+		} else {
+			setProductInfo(null);
+		}
+	}, [selectedProductId]);
 
 	const onSubmit = (data: FormData) => {
 		console.log("Submitted data:", data);
 		toast.success("Inventario actualizado correctamente");
 	};
-
-	interface loadDataParams {
-		id?: number;
-		search?: string;
-		barcode?: string;
-	}
-
-	const loadData = useCallback(
-		async ({ id, search, barcode }: loadDataParams = {}) => {
-			setLoading(true);
-			try {
-				type ProductsResponse = { products: paginateResponse<Item> };
-				const { data } = await axios.get<ProductsResponse>(route("products"), {
-					params: { perPage: 5, id, search, barcode },
-				});
-				console.log("Productos cargados:", data.products.data);
-				setOptions(data.products.data);
-				if (id) {
-					const product = data.products.data.find((p) => p.id === id);
-					console.log("Producto cargado:", product);
-					if (product) {
-						setValue("stock", product.product_inventory?.stock ?? 0);
-					}
-				}
-			} catch (e) {
-				console.error("Error cargando productos", e);
-				toast.error(
-					`Error cargando productos: ${e instanceof AxiosError ? e.message : "Error desconocido"}`,
-				);
-				setError("product", {
-					type: "manual",
-					message: "Error cargando productos",
-				});
-			} finally {
-				setLoading(false);
-			}
-		},
-		[setError, setValue],
-	);
-
-	const timeout = useRef<NodeJS.Timeout | null>(null);
-
-	useEffect(() => {
-		loadData({ id });
-		return () => {
-			if (timeout.current) {
-				clearTimeout(timeout.current);
-			}
-		};
-	}, [id]);
-
-	const handleSearch = useCallback(
-		(event: React.ChangeEvent<HTMLInputElement>) => {
-			if (timeout.current) clearTimeout(timeout.current);
-			timeout.current = setTimeout(() => {
-				loadData({ search: event.target.value });
-			}, 300);
-		},
-		[loadData],
-	);
 
 	return (
 		<ModalStyled
@@ -168,35 +76,56 @@ export default function ModalEdit({ onClose, id }: Props) {
 			header={<h2>Inventario {id}</h2>}
 			body={
 				<form className="gap-4 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-					<Controller
-						name="product"
-						control={control}
-						rules={{ required: "Este campo es obligatorio" }}
-						render={({ field: { value, onChange } }) => (
-							<AutocompleteInput<Item>
-								value={options.find((o) => o?.id === value) ?? null}
-								onChange={(_e, val) => {
-									if (val === null) loadData();
-									onChange(val ? val.id : "");
-									if (val) {
-										setValue("stock", val.product_inventory?.stock ?? 0);
-									}
-								}}
-								title="Producto"
-								onInput={handleSearch}
-								options={options}
-								loading={loading}
-								error={!!errors.product}
-								helperText={errors.product?.message as string}
-								isOptionEqualToValue={(opt, val) => opt?.id === val?.id}
-								getOptionLabel={(opt) => opt?.name ?? ""}
-								renderOption={(props, option) => (
-									<OptionItem {...props} option={option} />
-								)}
-								disabled={id !== undefined}
-							/>
+					<SelectProduct<FormData> control={control} name="product" id={id} />
+
+					<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px]">
+						{loadingProduct ? (
+							<div className="flex gap-3 w-full">
+								<div className="w-20 h-20 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
+								<div className="flex-1 flex flex-col gap-2">
+									<div className="h-4 w-1/2 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
+									<div className="h-3 w-1/3 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
+									<div className="h-3 w-2/5 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
+								</div>
+							</div>
+						) : productInfo ? (
+							<>
+								<Image
+									src={imageUrl(productInfo?.default_image?.image ?? "")}
+									alt={productInfo?.name ?? ""}
+									style={{ borderRadius: "0.375rem" }}
+									width={100}
+									height={100}
+									className="object-cover rounded border border-gray-200 dark:border-neutral-600"
+								/>
+								<div className="flex flex-col gap-1 leading-tight">
+									<span className="font-semibold text-gray-800text-sm line-clamp-2">
+										{productInfo?.name}
+									</span>
+									{productInfo?.barcode && (
+										<span className="text-xs">
+											Código: {productInfo.barcode}
+										</span>
+									)}
+									{isProductInfo(productInfo) &&
+										productInfo.product_inventory?.stock !== undefined && (
+											<span className="text-xs text-gray-600">
+												Stock actual: {productInfo.product_inventory?.stock}
+											</span>
+										)}
+									{isProductInfo(productInfo) && productInfo.brand?.name && (
+										<span className="text-xs text-gray-600">
+											Marca: {productInfo.brand.name}
+										</span>
+									)}
+								</div>
+							</>
+						) : (
+							<span className="text-xs text-gray-500 italic">
+								Selecciona un producto para ver detalles
+							</span>
 						)}
-					/>
+					</div>
 
 					<TextField
 						{...register("stock", {
