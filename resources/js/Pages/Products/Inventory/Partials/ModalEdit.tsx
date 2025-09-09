@@ -17,6 +17,7 @@ type Props = {
 type FormData = {
 	product: number | null;
 	stock: number;
+	reason?: string;
 	files?: File[];
 };
 
@@ -156,6 +157,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 									e.preventDefault();
 								}
 							}}
+							required
 							error={!!errors.stock}
 							helperText={errors.stock?.message}
 							fullWidth
@@ -180,6 +182,16 @@ export default function ModalEdit({ onClose, id }: Props) {
 							</div>
 						</div>
 					</div>
+
+					<TextField
+						{...register("reason")}
+						label="Razón de ajuste (opcional)"
+						type="text"
+						multiline
+						error={!!errors.reason}
+						helperText={errors.reason?.message}
+						fullWidth
+					/>
 					{productInfo && <FileUpload name="files" control={control} />}
 				</form>
 			}
