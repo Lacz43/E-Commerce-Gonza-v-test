@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import FileUpload from "@/Components/FileUpload";
 import Image from "@/Components/Image";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import SelectProduct from "@/Components/Products/SelectProduct";
@@ -16,6 +17,7 @@ type Props = {
 type FormData = {
 	product: number | null;
 	stock: number;
+	files: File[];
 };
 
 function isProductInfo(p: Item | null): p is Item {
@@ -118,6 +120,9 @@ export default function ModalEdit({ onClose, id }: Props) {
 											Marca: {productInfo.brand.name}
 										</span>
 									)}
+									<span className="text-xs text-gray-600">
+										<b>Descripción:</b> {productInfo?.description}
+									</span>
 								</div>
 							</>
 						) : (
@@ -149,6 +154,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 						error={!!errors.stock}
 						helperText={errors.stock?.message}
 					/>
+					<FileUpload name="files" control={control} />
 				</form>
 			}
 			footer={<Button onClick={handleSubmit(onSubmit)}>Guardar</Button>}
