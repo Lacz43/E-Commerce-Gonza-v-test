@@ -70,7 +70,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 
 	useEffect(() => {
 		if (!productInfo) reset();
-	}, [productInfo, reset]);
+	}, [productInfo]);
 
 	const onSubmit = (data: FormData) => {
 		console.log("Submitted data:", data);
