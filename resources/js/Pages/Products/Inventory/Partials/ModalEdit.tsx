@@ -17,7 +17,7 @@ type Props = {
 type FormData = {
 	product: number | null;
 	stock: number;
-	files: File[];
+	files?: File[];
 };
 
 function isProductInfo(p: Item | null): p is Item {
