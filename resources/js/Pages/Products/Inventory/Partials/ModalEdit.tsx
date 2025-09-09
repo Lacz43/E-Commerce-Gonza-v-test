@@ -31,6 +31,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 		control,
 		formState: { errors },
 		watch,
+		reset,
 	} = useForm<FormData>({
 		defaultValues: { product: id || null, stock: 0 },
 	});
@@ -66,6 +67,10 @@ export default function ModalEdit({ onClose, id }: Props) {
 			setProductInfo(null);
 		}
 	}, [selectedProductId]);
+
+	useEffect(() => {
+		if (!productInfo) reset();
+	}, [productInfo, reset]);
 
 	const onSubmit = (data: FormData) => {
 		console.log("Submitted data:", data);
@@ -154,7 +159,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 						error={!!errors.stock}
 						helperText={errors.stock?.message}
 					/>
-					<FileUpload name="files" control={control} />
+					{productInfo && <FileUpload name="files" control={control} />}
 				</form>
 			}
 			footer={<Button onClick={handleSubmit(onSubmit)}>Guardar</Button>}
