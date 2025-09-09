@@ -85,7 +85,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 				<form className="gap-4 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
 					<SelectProduct<FormData> control={control} name="product" id={id} />
 
-					<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px]">
+					<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center">
 						{loadingProduct ? (
 							<div className="flex gap-3 w-full">
 								<div className="w-20 h-20 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
@@ -114,12 +114,6 @@ export default function ModalEdit({ onClose, id }: Props) {
 											Código: {productInfo.barcode}
 										</span>
 									)}
-									{isProductInfo(productInfo) &&
-										productInfo.product_inventory?.stock !== undefined && (
-											<span className="text-xs text-gray-600">
-												Stock actual: {productInfo.product_inventory?.stock}
-											</span>
-										)}
 									{isProductInfo(productInfo) && productInfo.brand?.name && (
 										<span className="text-xs text-gray-600">
 											Marca: {productInfo.brand.name}
@@ -137,28 +131,55 @@ export default function ModalEdit({ onClose, id }: Props) {
 						)}
 					</div>
 
-					<TextField
-						{...register("stock", {
-							required: "Este campo es obligatorio",
-							valueAsNumber: true,
-							validate: {
-								noCero: (v) =>
-									(typeof v === "number" && !Number.isNaN(v) && v !== 0) ||
-									"No puede ser 0",
-								entero: (v) => Number.isInteger(v) || "Solo números enteros",
-							},
-						})}
-						label="Cantidad"
-						type="number"
-						onKeyDown={(e) => {
-							if ([".", ",", "+", "e", "E"].includes(e.key)) {
-								e.preventDefault();
-							}
-						}}
-						fullWidth
-						error={!!errors.stock}
-						helperText={errors.stock?.message}
-					/>
+					<div className="flex items-start gap-3 max-md:flex-col max-md:items-center">
+						<TextField
+							{...register("stock", {
+								required: "Este campo es obligatorio",
+								valueAsNumber: true,
+								validate: {
+									noCero: (v) =>
+										(typeof v === "number" && !Number.isNaN(v) && v !== 0) ||
+										"No puede ser 0",
+									entero: (v) => Number.isInteger(v) || "Solo números enteros",
+									noNegativo: (v) =>
+										(typeof v === "number" &&
+											(productInfo?.product_inventory?.stock ?? 0) +
+												Number(v) >=
+												0) ||
+										"No puede quedar stock negativo",
+								},
+							})}
+							label="Cantidad"
+							type="number"
+							onKeyDown={(e) => {
+								if ([".", ",", "+", "e", "E"].includes(e.key)) {
+									e.preventDefault();
+								}
+							}}
+							error={!!errors.stock}
+							helperText={errors.stock?.message}
+							fullWidth
+						/>
+						<div className="flex gap-3">
+							<div className="flex flex-col items-center min-w-[100px] px-2 py-1 rounded border border-blue-200 bg-blue-50">
+								<span className="text-xs text-blue-700 mb-1 font-medium">
+									Actual
+								</span>
+								<span className="text-base font-semibold text-blue-700">
+									{productInfo?.product_inventory?.stock ?? 0}
+								</span>
+							</div>
+							<div className="flex flex-col items-center min-w-[100px] px-2 py-1 rounded border border-green-200 bg-green-50">
+								<span className="text-xs text-green-700 mb-1 font-medium">
+									Después
+								</span>
+								<span className="text-base font-semibold text-green-700">
+									{(productInfo?.product_inventory?.stock ?? 0) +
+										(Number(watch("stock")) || 0)}
+								</span>
+							</div>
+						</div>
+					</div>
 					{productInfo && <FileUpload name="files" control={control} />}
 				</form>
 			}
