@@ -6,7 +6,8 @@ import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import SelectionTextInput from "@/Components/Products/SelectionTextInput";
 import { isValidEAN8, isValidEAN13, isValidGTIN14, isValidUPC } from "@/utils";
 
-export interface FormStruture extends Item {
+export interface FormStruture
+	extends Omit<Item, "images" | "category" | "brand"> {
 	images: File[];
 	image_used: number | null;
 	category: number | string | null;
