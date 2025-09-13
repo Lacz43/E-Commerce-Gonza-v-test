@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-class Products extends Model
+class Product extends Model
 {
     use HasFactory;
     use LogsActivity;
