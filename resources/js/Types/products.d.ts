@@ -1,8 +1,8 @@
 declare interface Item<T = unknown> {
 	id: number | string;
 	name: string;
-	images: Image[];
-	default_image?: Image;
+	images: ProductImage[];
+	default_image?: ProductImage;
 	product_inventory?: ProductInventory;
 	brand?: Brand;
 	category?: Category;
@@ -25,8 +25,9 @@ declare interface ProductInventory {
 	stock: number;
 }
 
-declare interface Image {
+declare interface ProductImage {
 	id: number;
+	default: boolean;
 	image: string;
 }
 
