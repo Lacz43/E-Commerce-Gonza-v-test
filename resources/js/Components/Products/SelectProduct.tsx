@@ -135,7 +135,7 @@ export default function SelectProduct<T extends FieldValues>({
 				clearTimeout(timeout.current);
 			}
 		};
-	}, [id]);
+	}, [id, loadData]);
 
 	const handleSearch = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +168,7 @@ export default function SelectProduct<T extends FieldValues>({
 					isOptionEqualToValue={(opt, val) => opt?.id === val?.id}
 					getOptionLabel={(opt) => opt?.name ?? ""}
 					renderOption={(props, option) => (
-						<OptionItem {...props} option={option} />
+						<OptionItem {...props} option={option} key={option.id} />
 					)}
 					disabled={id !== undefined}
 				/>
