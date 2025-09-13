@@ -7,7 +7,7 @@ use App\Models\Brand;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
-use App\Models\Products;
+use App\Models\Product;
 use App\Services\QueryFilters;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
@@ -20,15 +20,15 @@ class ProductsController extends Controller
 {
     public function index(Request $request)
     {
-        $products = (new QueryFilters($request))->apply(Products::query());
-        $filtersFields = Products::getFilterableFields();
-        $sortFields = Products::getSortableFields();
+        $products = (new QueryFilters($request))->apply(Product::query());
+        $filtersFields = Product::getFilterableFields();
+        $sortFields = Product::getSortableFields();
         return Inertia::render('Products/Index', ['products' => $products, 'filtersFields' => $filtersFields, 'sortFields' => $sortFields]);
     }
 
     public function products(Request $request)
     {
-        $query = Products::with(['defaultImage:product_id,image', 'productInventory:id,product_id,stock', 'brand:id,name']);
+        $query = Product::with(['defaultImage:product_id,image', 'productInventory:id,product_id,stock', 'brand:id,name']);
 
         // Parámetros opcionales de búsqueda:
         // 1) ?id=XXXXXXXX (coincidencia exacta)
@@ -82,7 +82,7 @@ class ProductsController extends Controller
             return response()->json(['message' => 'No tienes permiso para crear marcas.'], 403);
         }
 
-        $product = Products::create([
+        $product = Product::create([
             'name' => $request['name'],
             'barcode' => $request['barcode'],
             'price' => $request['price'],
@@ -102,14 +102,14 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function edit(Products $product)
+    public function edit(Product $product)
     {
         $product = $product->load(['images', 'brand', 'category']);
         Debugbar::info($product);
         return Inertia::render('Products/Edit', ['product' => $product]);
     }
 
-    public function update(Products $product, ProductRequest $request)
+    public function update(Product $product, ProductRequest $request)
     {
         Debugbar::info($request, $product);
 
@@ -142,7 +142,7 @@ class ProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $product)
+    public function destroy(Product $product)
     {
         Debugbar::info($product);
         $product->delete();

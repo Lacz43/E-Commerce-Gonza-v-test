@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Products;
+use App\Models\Product;
 use App\Services\QueryFilters;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,10 +17,10 @@ class ProductInventoryController extends Controller
     {
         // TODO: aplicar filtros específicos de inventario (stock, low_stock, etc.)
         $products = (new QueryFilters($request))->apply(
-            Products::query()->with(['productInventory'])->whereHas('productInventory')
+            Product::query()->with(['productInventory'])->whereHas('productInventory')
         );
-        $filtersFields = Products::getFilterableFields();
-        $sortFields = Products::getSortableFields();
+        $filtersFields = Product::getFilterableFields();
+        $sortFields = Product::getSortableFields();
 
         return Inertia::render('Products/Inventory/Index', [
             'products' => $products,
@@ -32,10 +32,10 @@ class ProductInventoryController extends Controller
     /**
      * Muestra formulario de ajuste de stock (placeholder).
      */
-    public function edit(Products $product)
+    public function edit(Product $product)
     {
         $product = $product->only(['id', 'name', 'price']);
-        return Inertia::render('Products/Inventory/Edit', [
+        return Inertia::render('Product/Inventory/Edit', [
             'product' => $product,
         ]);
     }
@@ -43,7 +43,7 @@ class ProductInventoryController extends Controller
     /**
      * Actualiza campos de inventario (placeholder, pendiente de validación y lógica de stock).
      */
-    public function update(Request $request, Products $product)
+    public function update(Request $request, Product $product)
     {
         // TODO: Validar y aplicar cambios (ej: stock actual, stock mínimo, alertas)
         // $product->update([...]);
@@ -55,7 +55,7 @@ class ProductInventoryController extends Controller
     /**
      * Elimina (si aplica) un registro de inventario (placeholder).
      */
-    public function destroy(Products $product)
+    public function destroy(Product $product)
     {
         // TODO: decidir política de borrado (soft delete, restricciones, etc.)
         // $product->delete();
