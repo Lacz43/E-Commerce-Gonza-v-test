@@ -37,6 +37,7 @@ function ImageUpload<T extends FieldValues>({ name }: ImageUploadProps<T>) {
 						return isValidType && isValidSize;
 					});
 					onChange([...value, ...validFiles]);
+					if(!value.length) setMainImageIndex(0);
 				};
 				const { getRootProps, getInputProps, isDragActive } = useDropzone({
 					onDrop: handleDrop,
