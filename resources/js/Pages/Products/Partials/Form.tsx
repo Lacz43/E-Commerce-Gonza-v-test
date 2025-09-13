@@ -1,6 +1,6 @@
 import { Button, FormHelperText, TextField } from "@mui/material";
 import { useEffect, useId } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import ImageUpload from "@/Components/ImageUpload";
 import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import SelectionTextInput from "@/Components/Products/SelectionTextInput";
@@ -161,22 +161,13 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 						</div>
 					</div>
 					<div className="">
-						<Controller
-							name="images"
-							control={control}
-							rules={{ required: true }}
-							render={({ fieldState: { error } }) => (
-								<>
-									{error && (
-										<FormHelperText className="red text-center">
-											Es necesario una imagen
-										</FormHelperText>
-									)}
-									<ImageUrlInput />
-									<ImageUpload name="images" />
-								</>
-							)}
-						/>
+						{errors.images !== undefined && (
+							<FormHelperText className="red text-center">
+								Es necesario una imagen
+							</FormHelperText>
+						)}
+						<ImageUrlInput />
+						<ImageUpload name="images" />
 					</div>
 				</div>
 			</div>
