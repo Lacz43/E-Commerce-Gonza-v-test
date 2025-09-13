@@ -1,35 +1,30 @@
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import { type FormEvent, useId, useState } from "react";
+import { useFormContext } from "react-hook-form";
 
-type Props = {
-	imageResponse: (image: File) => void;
-};
-
-export default function ImageUrlInput({ imageResponse }: Props) {
+export default function ImageUrlInput() {
 	const [error, setError] = useState(false);
-
 	const inputId = useId();
+	const { setValue, getValues } = useFormContext();
 
 	const getImage = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-
 		const formData = new FormData(event.currentTarget);
 		const url = formData.get("url") as string;
 		const elementTarget = event.currentTarget;
 		setError(false);
-
 		try {
 			const response = await axios.get(url, {
-				responseType: "blob", // Especifica que la respuesta será un Blob
+				responseType: "blob",
 			});
-
-			const file = new File([response.data], "test", {
+			const file = new File([response.data], "image-url", {
 				type: response.headers["content-type"] || "image/jpeg",
 			});
 			elementTarget.reset();
-
-			imageResponse(file);
+			// Agrega la imagen al array 'images' del formulario
+			const currentImages = getValues("images") || [];
+			setValue("images", [...currentImages, file]);
 		} catch (e) {
 			console.log(e);
 			setError(true);
@@ -37,7 +32,7 @@ export default function ImageUrlInput({ imageResponse }: Props) {
 	};
 
 	return (
-		<form onSubmit={(e) => getImage(e)} className="mb-3 flex">
+		<form onSubmit={getImage} className="mb-3 flex">
 			<TextField
 				className="w-full"
 				error={error}
