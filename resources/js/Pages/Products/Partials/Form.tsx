@@ -14,27 +14,29 @@ import {
 
 export interface FormStruture
 	extends Omit<Item, "images" | "category" | "brand"> {
-	images: File[];
+	images: File[] | ProductImage[];
 	image_used: number | null;
-	category: number | string | null;
-	brand: number | string | null;
+	category: number | string | null | ProductCategory;
+	brand: number | string | null | ProductBrand;
 }
 
 type Props = {
-	InitialValues?: FormStruture;
+	InitialValues?: Item;
 	onSubmit: (data: FormStruture) => void;
 };
 
 export default function Products({ InitialValues, onSubmit }: Props) {
 	const methods = useForm<FormStruture>({
-		defaultValues: () => {
+		defaultValues: (): Promise<FormStruture> => {
 			return new Promise<FormStruture>((resolve) => {
 				if (InitialValues) {
-					prepareFiles(InitialValues.images.map((img) => img.image)).then(
-						(files) => {
-							resolve({ ...InitialValues, images: files });
-						},
-					);
+					prepareFiles(
+						(InitialValues.images as Array<{ image: string }>).map(
+							(img) => img.image,
+						),
+					).then((files: File[]) => {
+						resolve({ ...(InitialValues as FormStruture), images: files });
+					});
 				}
 			});
 		},
@@ -42,10 +44,9 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 
 	useEffect(() => {
 		if (InitialValues) {
-			console.log(InitialValues);
 			methods.reset({
-				...InitialValues,
-				image_used: InitialValues.images.findIndex((i) => i.default === 1),
+				...(InitialValues as FormStruture),
+				image_used: InitialValues.images.findIndex((i) => i.default == true),
 				images: [],
 			});
 		}
