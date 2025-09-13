@@ -8,10 +8,10 @@ import {
 	useState,
 } from "react";
 import {
-	type Control,
 	Controller,
 	type FieldValues,
 	type Path,
+	useFormContext,
 } from "react-hook-form";
 import toast from "react-hot-toast";
 import AutocompleteInput from "@/Components/AutocompleteInput";
@@ -83,14 +83,13 @@ export function OptionItem(
 type Props<T extends FieldValues> = {
 	id?: number;
 	name: Path<T>;
-	control: Control<T>;
 };
 
 export default function SelectProduct<T extends FieldValues>({
-	control,
 	id,
 	name,
 }: Props<T>) {
+	const { control, setError } = useFormContext<T>();
 	const [options, setOptions] = useState<Item[]>([]);
 	const [loading, setLoading] = useState(false);
 
@@ -119,11 +118,12 @@ export default function SelectProduct<T extends FieldValues>({
 				toast.error(
 					`Error cargando productos: ${e instanceof AxiosError ? e.message : "Error desconocido"}`,
 				);
+				setError(name, { message: "Error cargando productos" });
 			} finally {
 				setLoading(false);
 			}
 		},
-		[],
+		[name],
 	);
 
 	const timeout = useRef<NodeJS.Timeout | null>(null);

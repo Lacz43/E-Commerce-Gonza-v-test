@@ -5,12 +5,11 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { IconButton } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import type { Control, FieldValues, Path } from "react-hook-form";
-import { Controller } from "react-hook-form";
+import type { FieldValues, Path } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface FileUploadProps<T extends FieldValues> {
 	name: Path<T>;
-	control: Control<T>;
 }
 
 const getFileIcon = (file: File) => {
@@ -23,10 +22,9 @@ const getFileIcon = (file: File) => {
 	return <InsertDriveFileIcon className="text-gray-400" fontSize="large" />;
 };
 
-function FileUpload<T extends FieldValues>({
-	name,
-	control,
-}: FileUploadProps<T>) {
+function FileUpload<T extends FieldValues>({ name }: FileUploadProps<T>) {
+	const { control } = useFormContext<T>();
+
 	return (
 		<Controller
 			name={name}
