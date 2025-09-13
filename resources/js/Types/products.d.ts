@@ -5,6 +5,7 @@ declare interface Item<T = unknown> {
 	default_image?: Image;
 	product_inventory?: ProductInventory;
 	brand?: Brand;
+	category?: Category;
 	barcode: string;
 	description: string;
 	price: number;
@@ -27,4 +28,10 @@ declare interface ProductInventory {
 declare interface Image {
 	id: number;
 	image: string;
+}
+
+declare interface Category {
+	id: number;
+	name: string;
+	created_by: User;
 }
