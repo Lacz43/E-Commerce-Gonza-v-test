@@ -41,7 +41,7 @@ FROM node:22 AS node-builder
 WORKDIR /var/www/html
 COPY . .
 RUN corepack enable pnpm \
-    && corepack use pnpm@10.9 \
+    && corepack use pnpm@10.15 \
     && pnpm install \
     && pnpm build
 
@@ -89,7 +89,7 @@ RUN apt-get install -y nodejs
 
 # Instalar pnpm
 RUN corepack enable pnpm
-RUN corepack use pnpm@10.15 --yes
+RUN corepack use pnpm@10.15
 RUN pnpm install --frozen-lockfile
 
 # Inicia todos los procesos
