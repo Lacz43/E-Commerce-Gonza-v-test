@@ -1,10 +1,16 @@
 import { Button, FormHelperText, TextField } from "@mui/material";
-import { useId, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useId } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import ImageUpload from "@/Components/ImageUpload";
 import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import SelectionTextInput from "@/Components/Products/SelectionTextInput";
-import { isValidEAN8, isValidEAN13, isValidGTIN14, isValidUPC } from "@/utils";
+import {
+	isValidEAN8,
+	isValidEAN13,
+	isValidGTIN14,
+	isValidUPC,
+	prepareFiles,
+} from "@/utils";
 
 export interface FormStruture
 	extends Omit<Item, "images" | "category" | "brand"> {
@@ -20,15 +26,37 @@ type Props = {
 };
 
 export default function Products({ InitialValues, onSubmit }: Props) {
+	const methods = useForm<FormStruture>({
+		defaultValues: () => {
+			return new Promise<FormStruture>((resolve) => {
+				if (InitialValues) {
+					prepareFiles(InitialValues.images.map((img) => img.image)).then(
+						(files) => {
+							resolve({ ...InitialValues, images: files });
+						},
+					);
+				}
+			});
+		},
+	});
+
+	useEffect(() => {
+		if (InitialValues) {
+			console.log(InitialValues);
+			methods.reset({
+				...InitialValues,
+				image_used: InitialValues.images.findIndex((i) => i.default === 1),
+				images: [],
+			});
+		}
+	}, []);
+
 	const {
 		register,
 		handleSubmit,
-		setValue,
 		control,
 		formState: { errors, isSubmitting },
-	} = useForm<FormStruture>({
-		defaultValues: InitialValues ?? {},
-	});
+	} = methods;
 
 	const productName = useId();
 	const productBarcode = useId();
@@ -55,7 +83,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 	};
 
 	return (
-		<>
+		<FormProvider {...methods}>
 			<div className="p-6 text-gray-900">
 				<div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
 					<div className="">
@@ -137,36 +165,17 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 							name="images"
 							control={control}
 							rules={{ required: true }}
-							render={({ field: { onChange }, fieldState: { error } }) => {
-								const [newImage, addNewImage] = useState<File[]>([]);
-								return (
-									<>
-										{error && (
-											<FormHelperText className="red text-center">
-												Es necesario una imagen
-											</FormHelperText>
-										)}
-										<ImageUrlInput
-											imageResponse={(image) => addNewImage([image])}
-										/>
-										<ImageUpload
-											setImagesInit={
-												InitialValues?.images.map(
-													(image) => image.image,
-												) as string[]
-											}
-											defaultImage={InitialValues?.images.findIndex(
-												(image) => image.default === 1,
-											)}
-											appendImages={newImage}
-											onImagesSelected={(data) => onChange(data)}
-											onMainImageSelected={(index) =>
-												setValue("image_used", index)
-											}
-										/>
-									</>
-								);
-							}}
+							render={({ fieldState: { error } }) => (
+								<>
+									{error && (
+										<FormHelperText className="red text-center">
+											Es necesario una imagen
+										</FormHelperText>
+									)}
+									<ImageUrlInput />
+									<ImageUpload name="images" />
+								</>
+							)}
 						/>
 					</div>
 				</div>
@@ -178,6 +187,6 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 			>
 				<b>{InitialValues ? "Editar" : "Crear"}</b>
 			</Button>
-		</>
+		</FormProvider>
 	);
 }
