@@ -4,8 +4,8 @@ declare interface Item<T = unknown> {
 	images: ProductImage[];
 	default_image?: ProductImage;
 	product_inventory?: ProductInventory;
-	brand?: Brand;
-	category?: Category;
+	brand?: ProductBrand;
+	category?: ProductCategory;
 	barcode: string;
 	description: string;
 	price: number;
@@ -13,7 +13,7 @@ declare interface Item<T = unknown> {
 	data?: T;
 }
 
-declare interface Brand {
+declare interface ProductBrand {
 	id: number;
 	name: string;
 	created_by: User;
@@ -31,7 +31,7 @@ declare interface ProductImage {
 	image: string;
 }
 
-declare interface Category {
+declare interface ProductCategory {
 	id: number;
 	name: string;
 	created_by: User;
