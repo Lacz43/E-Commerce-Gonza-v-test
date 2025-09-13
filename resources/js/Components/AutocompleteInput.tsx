@@ -31,35 +31,34 @@ export default function AutocompleteInput<T>(props: AutocompleteInputProps<T>) {
 	const autoComplete = React.useId();
 
 	return (
-		<div>
-			<Autocomplete
-				{...otherProps}
-				id={autoComplete}
-				onInput={onInput}
-				options={options}
-				loading={loading}
-				renderInput={(params) => (
-					<TextField
-						{...params}
-						label={title}
-						helperText={helperText}
-						error={error}
-						slotProps={{
-							input: {
-								...params.InputProps,
-								endAdornment: (
-									<React.Fragment>
-										{loading ? (
-											<CircularProgress color="inherit" size={20} />
-										) : null}
-										{params.InputProps.endAdornment}
-									</React.Fragment>
-								),
-							},
-						}}
-					/>
-				)}
-			/>
-		</div>
+		<Autocomplete
+			{...otherProps}
+			id={autoComplete}
+			onInput={onInput}
+			options={options}
+			loading={loading}
+			fullWidth
+			renderInput={(params) => (
+				<TextField
+					{...params}
+					label={title}
+					helperText={helperText}
+					error={error}
+					slotProps={{
+						input: {
+							...params.InputProps,
+							endAdornment: (
+								<React.Fragment>
+									{loading ? (
+										<CircularProgress color="inherit" size={20} />
+									) : null}
+									{params.InputProps.endAdornment}
+								</React.Fragment>
+							),
+						},
+					}}
+				/>
+			)}
+		/>
 	);
 }
