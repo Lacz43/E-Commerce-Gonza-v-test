@@ -23,8 +23,7 @@ RUN apt-get update \
 RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
 
 # Instalamos Composer
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
 # Opcional: establece el directorio de trabajo
 WORKDIR /var/www
@@ -56,7 +55,7 @@ RUN apt-get update \
 
 # Copiamos vendor desde base (podrías hacerlo en otro stage "composer",
 # pero para brevedad usamos base + composer install)
-COPY --from=base /usr/local/bin/composer /usr/local/bin/composer
+COPY --from=base /usr/bin/composer /usr/local/bin/composer
 COPY . .
 
 # Instalamos sólo dependencias de producción
