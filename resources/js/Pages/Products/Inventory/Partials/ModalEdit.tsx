@@ -1,4 +1,6 @@
+import AddIcon from "@mui/icons-material/Add";
 import { Button, TextField } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -7,6 +9,8 @@ import FileUpload from "@/Components/FileUpload";
 import Image from "@/Components/Image";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import SelectProduct from "@/Components/Products/SelectProduct";
+import { useModal } from "@/Context/Modal";
+import CreateForm from "@/Pages/Products/Partials/Form";
 import { imageUrl } from "@/utils";
 
 type Props = {
@@ -36,6 +40,8 @@ export default function ModalEdit({ onClose, id }: Props) {
 		watch,
 		reset,
 	} = methods;
+
+	const { openModal } = useModal();
 
 	const selectedProductId = watch("product");
 
@@ -78,6 +84,10 @@ export default function ModalEdit({ onClose, id }: Props) {
 		toast.success("Inventario actualizado correctamente");
 	};
 
+	const createProduct = () => {
+		openModal(() => <CreateForm onSubmit={() => {}} />);
+	};
+
 	return (
 		<ModalStyled
 			onClose={onClose}
@@ -88,7 +98,19 @@ export default function ModalEdit({ onClose, id }: Props) {
 						className="gap-4 flex flex-col"
 						onSubmit={handleSubmit(onSubmit)}
 					>
-						<SelectProduct<FormData> name="product" id={id} />
+						<div className="flex gap-4 w-full">
+							<SelectProduct<FormData> name="product" id={id} />
+							<Tooltip title="Crear nuevo producto">
+								<Button
+									variant="contained"
+									color="primary"
+									startIcon={<AddIcon />}
+									onClick={createProduct}
+								>
+									Crear
+								</Button>
+							</Tooltip>
+						</div>
 
 						<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center">
 							{loadingProduct ? (

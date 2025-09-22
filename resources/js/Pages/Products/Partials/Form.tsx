@@ -134,7 +134,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 							<SelectionTextInput
 								className="w-full"
 								control={control}
-								permissions={["create product_categories"]}
+								//permissions={["create product_categories"]}
 								url={route("products.categories")}
 								label="Categoria"
 								name="category"
