@@ -1,6 +1,7 @@
-import { Button, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Button, TextField } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -8,10 +9,10 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import FileUpload from "@/Components/FileUpload";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import { useModal } from "@/Context/Modal";
 import CreateForm from "@/Pages/Products/Partials/Form";
 import ProductSelector from "./ProductSelector";
 import QuantityInput from "./QuantityInput";
-import { useModal } from "@/Context/Modal";
 
 type Props = {
 	onClose: () => void;
@@ -120,30 +121,34 @@ export default function ModalCreate({ onClose }: Props) {
 						onSubmit={handleSubmit(onSubmit)}
 					>
 						{fields.map((field, index) => (
-							<div key={field.id} className="border p-4 rounded">
+							<div
+								key={field.id}
+								className="py-2 px-4 border-b border-gray-100 last:border-b-0"
+							>
 								<div className="flex gap-4 items-end">
 									<div className="flex-1">
 										<ProductSelector<FormData>
 											name={`items.${index}.product`}
 										/>
 									</div>
-									<div className="flex-1">
+									<div className="flex-[2]">
 										<QuantityInput
 											productInfo={productInfos[index]}
 											name={`items.${index}.stock`}
 										/>
 									</div>
 									{fields.length > 1 && (
-										<Tooltip title="Eliminar producto">
-											<Button
-												variant="outlined"
-												color="error"
-												size="small"
-												onClick={() => remove(index)}
-											>
-												<DeleteIcon />
-											</Button>
-										</Tooltip>
+										<div className="self-center">
+											<Tooltip title="Eliminar producto">
+												<IconButton
+													color="error"
+													size="small"
+													onClick={() => remove(index)}
+												>
+													<DeleteIcon />
+												</IconButton>
+											</Tooltip>
+										</div>
 									)}
 								</div>
 							</div>
