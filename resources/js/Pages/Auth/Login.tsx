@@ -3,6 +3,7 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Link, useForm } from "@inertiajs/react";
 import type { FormEventHandler } from "react";
 import { TextField, Checkbox, FormControlLabel, Button } from "@mui/material";
+import usePermissions from "@/Hook/usePermissions";
 
 export default function Login({
 	status,
@@ -17,11 +18,14 @@ export default function Login({
 		remember: false as boolean,
 	});
 
+	const { fetchPermissions } = usePermissions();
+
 	const submit: FormEventHandler = (e) => {
 		e.preventDefault();
 
 		post(route("login"), {
 			onFinish: () => reset("password"),
+			onSuccess: () => fetchPermissions(),
 		});
 	};
 
