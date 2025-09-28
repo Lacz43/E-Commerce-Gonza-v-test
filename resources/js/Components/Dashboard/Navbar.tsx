@@ -1,11 +1,13 @@
-import Dropdown from "@/Components/Dropdown";
 import { usePage } from "@inertiajs/react";
 import { Menu } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import Avatar from "@/Components/Avatar";
+import Dropdown from "@/Components/Dropdown";
+import usePermissions from "@/Hook/usePermissions";
 
 export default function Navbar() {
 	const user = (usePage().props as unknown as Auth).auth.user;
+	const { clearPermissions } = usePermissions();
 
 	function openSideNav() {
 		const sideNav = document.getElementById("side-nav");
@@ -38,6 +40,7 @@ export default function Navbar() {
 										href={route("logout")}
 										method="post"
 										as="button"
+										onClick={() => clearPermissions()}
 									>
 										Log Out
 									</Dropdown.Link>
