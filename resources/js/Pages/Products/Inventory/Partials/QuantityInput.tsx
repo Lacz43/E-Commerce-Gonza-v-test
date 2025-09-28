@@ -9,9 +9,10 @@ type Item = {
 
 type Props = {
 	productInfo: Item | null;
+	name?: string;
 };
 
-export default function QuantityInput({ productInfo }: Props) {
+export default function QuantityInput({ productInfo, name = "stock" }: Props) {
 	const {
 		register,
 		formState: { errors },
@@ -21,7 +22,7 @@ export default function QuantityInput({ productInfo }: Props) {
 	return (
 		<div className="flex items-start gap-3 max-md:flex-col max-md:items-center">
 			<TextField
-				{...register("stock", {
+				{...register(name, {
 					required: "Este campo es obligatorio",
 					valueAsNumber: true,
 					validate: {
@@ -61,7 +62,7 @@ export default function QuantityInput({ productInfo }: Props) {
 					</span>
 					<span className="text-base font-semibold text-green-700">
 						{(productInfo?.product_inventory?.stock ?? 0) +
-							(Number(watch("stock")) || 0)}
+							(Number(watch(name)) || 0)}
 					</span>
 				</div>
 			</div>
