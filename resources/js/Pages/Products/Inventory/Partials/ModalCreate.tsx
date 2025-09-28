@@ -1,14 +1,17 @@
 import { Button, TextField } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Tooltip from "@mui/material/Tooltip";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import FileUpload from "@/Components/FileUpload";
-import Image from "@/Components/Image";
 import ModalStyled from "@/Components/Modals/ModalStyled";
-import { imageUrl } from "@/utils";
+import CreateForm from "@/Pages/Products/Partials/Form";
 import ProductSelector from "./ProductSelector";
 import QuantityInput from "./QuantityInput";
+import { useModal } from "@/Context/Modal";
 
 type Props = {
 	onClose: () => void;
@@ -25,10 +28,6 @@ type FormData = {
 	files?: File[];
 };
 
-function isProductInfo(p: Item | null): p is Item {
-	return !!p; // campos son opcionales, con que exista el objeto basta
-}
-
 export default function ModalCreate({ onClose }: Props) {
 	const methods = useForm<FormData>({
 		defaultValues: { items: [{ product: null, stock: 0 }] },
@@ -41,6 +40,8 @@ export default function ModalCreate({ onClose }: Props) {
 		watch,
 		reset,
 	} = methods;
+
+	const { openModal } = useModal();
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -133,68 +134,36 @@ export default function ModalCreate({ onClose }: Props) {
 										/>
 									</div>
 									{fields.length > 1 && (
-										<Button
-											variant="outlined"
-											color="error"
-											onClick={() => remove(index)}
-										>
-											Eliminar
-										</Button>
-									)}
-								</div>
-								<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center mt-2">
-									{loadingProducts[index] ? (
-										<div className="flex gap-3 w-full">
-											<div className="w-20 h-20 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-											<div className="flex-1 flex flex-col gap-2">
-												<div className="h-4 w-1/2 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-												<div className="h-3 w-1/3 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-												<div className="h-3 w-2/5 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-											</div>
-										</div>
-									) : productInfos[index] ? (
-										<>
-											<Image
-												src={imageUrl(
-													productInfos[index]?.default_image?.image ?? "",
-												)}
-												alt={productInfos[index]?.name ?? ""}
-												style={{ borderRadius: "0.375rem" }}
-												width={100}
-												height={100}
-												className="object-cover rounded border border-gray-200 dark:border-neutral-600"
-											/>
-											<div className="flex flex-col gap-1 leading-tight">
-												<span className="font-semibold text-gray-800 text-sm line-clamp-2">
-													{productInfos[index]?.name}
-												</span>
-												{productInfos[index]?.barcode && (
-													<span className="text-xs">
-														Código: {productInfos[index].barcode}
-													</span>
-												)}
-												{isProductInfo(productInfos[index]) &&
-													productInfos[index].brand?.name && (
-														<span className="text-xs text-gray-600">
-															Marca: {productInfos[index].brand.name}
-														</span>
-													)}
-												<span className="text-xs text-gray-600">
-													<b>Descripción:</b> {productInfos[index]?.description}
-												</span>
-											</div>
-										</>
-									) : (
-										<span className="text-xs text-gray-500 italic">
-											Selecciona un producto para ver detalles
-										</span>
+										<Tooltip title="Eliminar producto">
+											<Button
+												variant="outlined"
+												color="error"
+												size="small"
+												onClick={() => remove(index)}
+											>
+												<DeleteIcon />
+											</Button>
+										</Tooltip>
 									)}
 								</div>
 							</div>
 						))}
-						<Button variant="contained" onClick={addItem}>
-							Añadir Producto
-						</Button>
+						<div className="flex gap-2">
+							<Button variant="contained" onClick={addItem}>
+								Añadir Producto
+							</Button>
+							<Tooltip title="Crear nuevo producto">
+								<Button
+									variant="outlined"
+									color="primary"
+									onClick={() =>
+										openModal(() => <CreateForm onSubmit={() => {}} />)
+									}
+								>
+									<AddIcon />
+								</Button>
+							</Tooltip>
+						</div>
 
 						<TextField
 							{...register("reason")}
