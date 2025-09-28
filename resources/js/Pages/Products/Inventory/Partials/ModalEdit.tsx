@@ -1,6 +1,4 @@
-import AddIcon from "@mui/icons-material/Add";
 import { Button, TextField } from "@mui/material";
-import Tooltip from "@mui/material/Tooltip";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -8,10 +6,9 @@ import toast from "react-hot-toast";
 import FileUpload from "@/Components/FileUpload";
 import Image from "@/Components/Image";
 import ModalStyled from "@/Components/Modals/ModalStyled";
-import SelectProduct from "@/Components/Products/SelectProduct";
-import { useModal } from "@/Context/Modal";
-import CreateForm from "@/Pages/Products/Partials/Form";
 import { imageUrl } from "@/utils";
+import ProductSelector from "./ProductSelector";
+import QuantityInput from "./QuantityInput";
 
 type Props = {
 	id?: number;
@@ -40,8 +37,6 @@ export default function ModalEdit({ onClose, id }: Props) {
 		watch,
 		reset,
 	} = methods;
-
-	const { openModal } = useModal();
 
 	const selectedProductId = watch("product");
 
@@ -84,10 +79,6 @@ export default function ModalEdit({ onClose, id }: Props) {
 		toast.success("Inventario actualizado correctamente");
 	};
 
-	const createProduct = () => {
-		openModal(() => <CreateForm onSubmit={() => {}} />);
-	};
-
 	return (
 		<ModalStyled
 			onClose={onClose}
@@ -98,19 +89,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 						className="gap-4 flex flex-col"
 						onSubmit={handleSubmit(onSubmit)}
 					>
-						<div className="flex gap-4 w-full">
-							<SelectProduct<FormData> name="product" id={id} />
-							<Tooltip title="Crear nuevo producto">
-								<Button
-									variant="contained"
-									color="primary"
-									startIcon={<AddIcon />}
-									onClick={createProduct}
-								>
-									Crear
-								</Button>
-							</Tooltip>
-						</div>
+						<ProductSelector<FormData> name="product" id={id} />
 
 						<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center">
 							{loadingProduct ? (
@@ -158,57 +137,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 							)}
 						</div>
 
-						<div className="flex items-start gap-3 max-md:flex-col max-md:items-center">
-							<TextField
-								{...register("stock", {
-									required: "Este campo es obligatorio",
-									valueAsNumber: true,
-									validate: {
-										noCero: (v) =>
-											(typeof v === "number" && !Number.isNaN(v) && v !== 0) ||
-											"No puede ser 0",
-										entero: (v) =>
-											Number.isInteger(v) || "Solo números enteros",
-										noNegativo: (v) =>
-											(typeof v === "number" &&
-												(productInfo?.product_inventory?.stock ?? 0) +
-													Number(v) >=
-													0) ||
-											"No puede quedar stock negativo",
-									},
-								})}
-								label="Cantidad"
-								type="number"
-								onKeyDown={(e) => {
-									if ([".", ",", "+", "e", "E"].includes(e.key)) {
-										e.preventDefault();
-									}
-								}}
-								required
-								error={!!errors.stock}
-								helperText={errors.stock?.message}
-								fullWidth
-							/>
-							<div className="flex gap-3">
-								<div className="flex flex-col items-center min-w-[100px] px-2 py-1 rounded border border-blue-200 bg-blue-50">
-									<span className="text-xs text-blue-700 mb-1 font-medium">
-										Actual
-									</span>
-									<span className="text-base font-semibold text-blue-700">
-										{productInfo?.product_inventory?.stock ?? 0}
-									</span>
-								</div>
-								<div className="flex flex-col items-center min-w-[100px] px-2 py-1 rounded border border-green-200 bg-green-50">
-									<span className="text-xs text-green-700 mb-1 font-medium">
-										Después
-									</span>
-									<span className="text-base font-semibold text-green-700">
-										{(productInfo?.product_inventory?.stock ?? 0) +
-											(Number(watch("stock")) || 0)}
-									</span>
-								</div>
-							</div>
-						</div>
+						<QuantityInput productInfo={productInfo} />
 
 						<TextField
 							{...register("reason")}
