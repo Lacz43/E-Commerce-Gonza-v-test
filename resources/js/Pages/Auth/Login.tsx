@@ -18,14 +18,17 @@ export default function Login({
 		remember: false as boolean,
 	});
 
-	const { fetchPermissions } = usePermissions();
+	const { fetchPermissions, clearPermissions } = usePermissions();
 
 	const submit: FormEventHandler = (e) => {
 		e.preventDefault();
 
 		post(route("login"), {
 			onFinish: () => reset("password"),
-			onSuccess: () => fetchPermissions(),
+			onSuccess: () => {
+				clearPermissions();
+				fetchPermissions();
+			},
 		});
 	};
 
