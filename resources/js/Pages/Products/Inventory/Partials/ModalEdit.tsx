@@ -7,16 +7,14 @@ import FileUpload from "@/Components/FileUpload";
 import Image from "@/Components/Image";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import { imageUrl } from "@/utils";
-import ProductSelector from "./ProductSelector";
 import QuantityInput from "./QuantityInput";
 
 type Props = {
-	id?: number;
+	id: number;
 	onClose: () => void;
 };
 
 type FormData = {
-	product: number | null;
 	stock: number;
 	reason?: string;
 	files?: File[];
@@ -28,17 +26,14 @@ function isProductInfo(p: Item | null): p is Item {
 
 export default function ModalEdit({ onClose, id }: Props) {
 	const methods = useForm<FormData>({
-		defaultValues: { product: id || null, stock: 0 },
+		defaultValues: { stock: 0 },
 	});
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-		watch,
 		reset,
 	} = methods;
-
-	const selectedProductId = watch("product");
 
 	const [productInfo, setProductInfo] = useState<Item | null>(null);
 	const [loadingProduct, setLoadingProduct] = useState(false);
@@ -63,12 +58,8 @@ export default function ModalEdit({ onClose, id }: Props) {
 			}
 		}
 
-		if (selectedProductId) {
-			fetchProduct(selectedProductId);
-		} else {
-			setProductInfo(null);
-		}
-	}, [selectedProductId]);
+		fetchProduct(id);
+	}, [id]);
 
 	useEffect(() => {
 		if (!productInfo) reset();
@@ -89,7 +80,6 @@ export default function ModalEdit({ onClose, id }: Props) {
 						className="gap-4 flex flex-col"
 						onSubmit={handleSubmit(onSubmit)}
 					>
-						<ProductSelector<FormData> name="product" id={id} />
 
 						<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center">
 							{loadingProduct ? (
