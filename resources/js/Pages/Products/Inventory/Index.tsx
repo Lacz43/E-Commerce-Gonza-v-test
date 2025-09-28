@@ -12,7 +12,8 @@ import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import Modal from "./Partials/ModalEdit";
+import ModalCreate from "./Partials/ModalCreate";
+import ModalEdit from "./Partials/ModalEdit";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
@@ -48,7 +49,7 @@ export default function InventoryIndex({ products }: Props) {
 
 	const openModalEdit = useCallback(
 		(id?: number) => {
-			openModal(({ closeModal }) => <Modal onClose={closeModal} id={id} />);
+			openModal(({ closeModal }) => id ? <ModalEdit onClose={closeModal} id={id} /> : <ModalCreate onClose={closeModal} />);
 		},
 		[openModal],
 	);
