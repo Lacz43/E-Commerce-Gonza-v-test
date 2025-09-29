@@ -17,7 +17,6 @@ class InventoryMovementController extends Controller
         $movements = (new QueryFilters($request))->apply(
             InventoryMovement::query()
                 ->with(['productInventory.product', 'user'])
-                ->orderBy('created_at', 'desc')
         );
 
         return Inertia::render('Products/Inventory/MovementsIndex', [
