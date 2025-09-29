@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 import FileUpload from "@/Components/FileUpload";
 import ModalStyled from "@/Components/Modals/ModalStyled";
@@ -38,7 +38,6 @@ export default function ModalCreate({ onClose }: Props) {
 		register,
 		handleSubmit,
 		formState: { errors },
-		watch,
 		reset,
 	} = methods;
 
@@ -47,6 +46,11 @@ export default function ModalCreate({ onClose }: Props) {
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "items",
+	});
+
+	const watchedProducts = useWatch({
+		name: fields.map((_, i) => `items.${i}.product`),
+		control,
 	});
 
 	const [productInfos, setProductInfos] = useState<(Item | null)[]>([]);
@@ -88,8 +92,8 @@ export default function ModalCreate({ onClose }: Props) {
 	}, []);
 
 	useEffect(() => {
-		fields.forEach((field, index) => {
-			const productId = watch(`items.${index}.product`);
+		fields.forEach((_field, index) => {
+			const productId = watchedProducts[index];
 			if (
 				productId &&
 				(!productInfos[index] || productInfos[index]?.id !== productId)
@@ -97,7 +101,7 @@ export default function ModalCreate({ onClose }: Props) {
 				fetchProduct(productId, index);
 			}
 		});
-	}, [fields, watch, productInfos, fetchProduct]);
+	}, [watchedProducts, fields, productInfos, fetchProduct]);
 
 	const onSubmit = (data: FormData) => {
 		console.log("Submitted data:", data);
