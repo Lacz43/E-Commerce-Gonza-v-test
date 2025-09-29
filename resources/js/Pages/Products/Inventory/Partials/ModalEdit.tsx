@@ -68,7 +68,15 @@ export default function ModalEdit({ onClose, id }: Props) {
 
 	const onSubmit = async (data: FormData) => {
 		try {
-			await axios.put(route("inventory.update", id), data);
+			const formData = new FormData();
+			formData.append("stock", data.stock.toString());
+			if (data.reason) formData.append("reason", data.reason);
+			data.files?.map((file, index) =>
+				formData.append(`files[${index}]`, file),
+			);
+			formData.append("_method", "PUT");
+
+			await axios.post(route("inventory.update", id), formData);
 			toast.success("Inventario actualizado correctamente");
 			onClose();
 			router.visit(route("inventory.index"), {
@@ -93,7 +101,6 @@ export default function ModalEdit({ onClose, id }: Props) {
 						className="gap-4 flex flex-col"
 						onSubmit={handleSubmit(onSubmit)}
 					>
-
 						<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center">
 							{loadingProduct ? (
 								<div className="flex gap-3 w-full">
@@ -155,7 +162,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 					</form>
 				</FormProvider>
 			}
-			footer={<Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>Guardar</Button>}
+			footer={
+				<Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+					Guardar
+				</Button>
+			}
 		/>
 	);
 }
