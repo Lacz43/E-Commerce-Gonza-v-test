@@ -8,5 +8,5 @@ Route::middleware('auth', 'permission:show product_inventory')
     ->name('products.inventory');
 
 Route::middleware('auth', 'permission:edit product_inventory')
-    ->patch('/inventory/update/{product}', [ProductInventoryController::class, 'update'])
+    ->put('/inventory/update/{product}', [ProductInventoryController::class, 'update'])
     ->name('inventory.update');
