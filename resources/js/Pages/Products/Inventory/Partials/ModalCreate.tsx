@@ -100,8 +100,15 @@ export default function ModalCreate({ onClose }: Props) {
 			) {
 				fetchProduct(productId, index);
 			}
+			else {
+				setProductInfos((prev) => {
+					const newInfos = [...prev];
+					newInfos[index] = null;
+					return newInfos;
+				});
+			}
 		});
-	}, [watchedProducts, fields, productInfos, fetchProduct]);
+	}, [watchedProducts, fields, fetchProduct]);
 
 	const onSubmit = (data: FormData) => {
 		console.log("Submitted data:", data);
