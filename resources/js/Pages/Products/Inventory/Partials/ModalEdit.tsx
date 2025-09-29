@@ -65,9 +65,16 @@ export default function ModalEdit({ onClose, id }: Props) {
 		if (!productInfo) reset();
 	}, [productInfo]);
 
-	const onSubmit = (data: FormData) => {
-		console.log("Submitted data:", data);
-		toast.success("Inventario actualizado correctamente");
+	const onSubmit = async (data: FormData) => {
+		try {
+			await axios.put(route("inventory.update", id), data);
+			toast.success("Inventario actualizado correctamente");
+		} catch (e) {
+			console.error("Error actualizando inventario", e);
+			toast.error(
+				`Error al actualizar inventario: ${e instanceof AxiosError ? e.message : "Error desconocido"}`,
+			);
+		}
 	};
 
 	return (
