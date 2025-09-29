@@ -15,13 +15,14 @@ class InventoryMovementService
      * @param string $modelType Tipo del modelo donde se ejecutó el movimiento
      * @param int|null $modelId ID del modelo donde se ejecutó el movimiento
      * @param int $userId ID del usuario que realizó el movimiento
-     * @param string $controllerName Nombre del controlador desde donde se llamó
      * @return array
      */
-    public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId, string $controllerName)
+    public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId)
     {
         $productInventory = ProductInventory::where('product_id', $productId)->first();
         $productInventory->stock += $quantity;
+
+        $controllerName = request()->route()->getAction()['controller'];
 
         $inventoryMovement = InventoryMovement::create([
             'product_inventory_id' => $productInventory->id,
