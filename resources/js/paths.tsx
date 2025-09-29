@@ -1,9 +1,10 @@
 import {
 	Category,
 	Home,
+	Inventory,
+	ShoppingCart,
 	Person,
 	Settings,
-	ShoppingCart,
 } from "@mui/icons-material";
 import type { JSX } from "react";
 
@@ -60,11 +61,13 @@ export const paths: Record<string, Route> = {
 				path: "products.categories.index",
 				name: "Categorias",
 			},
-			inventory: {
-				path: "products.inventory",
-				name: "Inventario",
-			},
 		},
+	},
+	inventory: {
+		path: "products.inventory",
+		name: "Inventario",
+		icon: <Inventory />,
+		roles: ["admin"],
 	},
 	users: {
 		path: "users.index",

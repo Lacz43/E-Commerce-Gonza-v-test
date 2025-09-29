@@ -38,7 +38,7 @@ Route::middleware('auth', 'permission:edit product_categories')
     ->name('products.categories.update');
 
 Route::middleware('auth', 'permission:show product_inventory')
-    ->get('/products/inventory', [ProductInventoryController::class, 'index'])
+    ->get('/inventory', [ProductInventoryController::class, 'index'])
     ->name('products.inventory');
 
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
