@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductInventory;
+use App\Services\InventoryMovementService;
 use App\Services\QueryFilters;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Illuminate\Support\Facades\Auth;
 
 class ProductInventoryController extends Controller
 {
@@ -43,15 +46,24 @@ class ProductInventoryController extends Controller
     /**
      * Actualiza campos de inventario (placeholder, pendiente de validación y lógica de stock).
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, ProductInventory $product)
     {
-        // TODO: Validar y aplicar cambios (ej: stock actual, stock mínimo, alertas)
-        // $product->update([...]);
+        $request->validate([
+            'stock' => 'required|numeric',
+        ]);
+
+        InventoryMovementService::inventoryMovement(
+            $product->id,
+            $request->stock,
+            get_class($product),
+            $product->id,
+            Auth::user()->id,
+            'ProductInventoryController@update'
+        );
         return response()->json([
             'message' => 'Inventario actualizado (placeholder)',
         ]);
     }
-
     /**
      * Elimina (si aplica) un registro de inventario (placeholder).
      */
