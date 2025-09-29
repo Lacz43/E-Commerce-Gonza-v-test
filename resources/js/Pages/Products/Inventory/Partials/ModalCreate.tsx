@@ -114,7 +114,15 @@ export default function ModalCreate({ onClose }: Props) {
 	const onSubmit = async (data: FormData) => {
 		console.log("Submitted data:", data);
 		try {
-			await axios.post(route("inventory.store"), data);
+			const formData = new FormData();
+			data.items.forEach((item, index) => {
+				formData.append(`items[${index}][product]`, item.product?.toString() || "");
+				formData.append(`items[${index}][stock]`, item.stock.toString());
+			});
+			if (data.reason) formData.append("reason", data.reason);
+			data.files?.map((file, index) => formData.append(`files[${index}]`, file));
+
+			await axios.post(route("inventory.store"), formData);
 			toast.success("Inventario creado correctamente");
 			reset();
 			onClose();
