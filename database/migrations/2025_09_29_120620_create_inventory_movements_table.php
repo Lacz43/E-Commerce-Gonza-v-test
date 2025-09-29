@@ -16,10 +16,13 @@ return new class extends Migration
             $table->foreignId('product_inventory_id')->constrained('product_inventories')->cascadeOnDelete()->cascadeOnUpdate();
             $table->integer('quantity');
             $table->enum('type', ['ingress', 'egress']);
-            $table->morphs('model');
+            $table->string('model_type')->nullable();
+            $table->unsignedBigInteger('model_id')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('controller_name');
             $table->timestamps();
+
+            $table->index(['model_type', 'model_id']);
         });
     }
 
