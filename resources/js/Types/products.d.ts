@@ -36,3 +36,23 @@ declare interface ProductCategory {
 	name: string;
 	created_by: User;
 }
+
+declare interface MovementItem {
+	id: number;
+	quantity: number;
+	type: 'ingress' | 'egress';
+	model_type: string;
+	model_id: number;
+	user_id: number;
+	controller_name: string;
+	created_at: string;
+	product_inventory: {
+		product: {
+			name: string;
+			barcode?: string;
+		};
+	};
+	user: {
+		name: string;
+	};
+}

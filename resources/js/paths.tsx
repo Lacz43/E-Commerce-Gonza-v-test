@@ -68,6 +68,16 @@ export const paths: Record<string, Route> = {
 		name: "Inventario",
 		icon: <Inventory />,
 		roles: ["admin"],
+		children: {
+			index: {
+				path: "inventory.index",
+				name: "Gestión",
+			},
+			history: {
+				path: "inventory.movements.index",
+				name: "Historial de Movimientos",
+			},
+		},
 	},
 	users: {
 		path: "users.index",
