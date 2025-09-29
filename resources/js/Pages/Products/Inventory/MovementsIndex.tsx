@@ -26,7 +26,7 @@ export default function MovementsIndex({ movements }: Props) {
 		() => [
 			{ field: "id", headerName: "ID", type: "number", width: 80 },
 			{
-				field: "product_name",
+				field: "product_inventory.product.name",
 				headerName: "Producto",
 				width: 200,
 				valueGetter: (_v, r) => r.product_inventory?.product?.name ?? "",
@@ -47,10 +47,14 @@ export default function MovementsIndex({ movements }: Props) {
 				field: "type",
 				headerName: "Tipo",
 				width: 100,
-				valueGetter: (_v, r) => r.type === 'ingress' ? 'Entrada' : 'Salida',
+                type: "singleSelect",
+                valueOptions: [
+                    { label: "Entrada", value: "ingress" },
+                    { label: "Salida", value: "egress" },
+                ],
 			},
 			{
-				field: "user_name",
+				field: "user.name",
 				headerName: "Usuario",
 				width: 150,
 				valueGetter: (_v, r) => r.user?.name ?? "",
@@ -96,7 +100,7 @@ export default function MovementsIndex({ movements }: Props) {
 									response={movementsData}
 									columns={columns}
 									fill
-									filtersAvailable={["product_name", "user_name", "type"]}
+									filtersAvailable={["product_inventory.product.name", "user.name", "type"]}
 									sortAvailable={["id", "created_at", "quantity", "type"]}
 								/>
 							</Suspense>
