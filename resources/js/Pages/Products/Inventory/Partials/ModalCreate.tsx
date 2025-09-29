@@ -100,7 +100,7 @@ export default function ModalCreate({ onClose }: Props) {
 			) {
 				fetchProduct(productId, index);
 			}
-			else {
+			else if (!productId && productInfos[index] !== null) {
 				setProductInfos((prev) => {
 					const newInfos = [...prev];
 					newInfos[index] = null;
