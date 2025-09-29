@@ -10,3 +10,7 @@ Route::middleware('auth', 'permission:show product_inventory')
 Route::middleware('auth', 'permission:edit product_inventory')
     ->put('/inventory/update/{product}', [ProductInventoryController::class, 'update'])
     ->name('inventory.update');
+
+Route::middleware('auth', 'permission:edit product_inventory')
+    ->post('/inventory/store', [ProductInventoryController::class, 'store'])
+    ->name('inventory.store');
