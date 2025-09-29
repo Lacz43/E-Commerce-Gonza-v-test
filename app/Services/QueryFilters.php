@@ -55,6 +55,15 @@ class QueryFilters
      */
     protected function isFieldAllowed($model, $field): bool
     {
+        // Si es una relación, verificar el campo base
+        if (strpos($field, '.') !== false) {
+            $baseField = explode('.', $field)[0];
+            $allowedFields = method_exists($model, 'getFilterableFields')
+                ? $model::getFilterableFields()
+                : [];
+            return in_array($baseField, $allowedFields);
+        }
+
         $allowedFields = method_exists($model, 'getFilterableFields')
             ? $model::getFilterableFields()
             : [];
@@ -64,6 +73,12 @@ class QueryFilters
 
     protected function applyFilter($field, $operator, $value)
     {
+        // Verificar si el campo contiene una relación (tiene punto)
+        if (strpos($field, '.') !== false) {
+            return $this->applyRelationFilter($field, $operator, $value);
+        }
+
+        // Lógica original para campos normales
         switch ($operator) {
             case '=':
             case 'is':
@@ -91,20 +106,124 @@ class QueryFilters
                 return $this->builder->whereIn($field, $arr);
             case '>':
             case 'after':
-            case 'gt': // Greater than
+            case 'gt':
                 return $this->builder->where($field, '>', $value);
             case '>=':
             case 'onOrAfer':
                 return $this->builder->where($field, '>=', $value);
             case '<':
             case 'before':
-            case 'lt': // Less than
+            case 'lt':
                 return $this->builder->where($field, '<', $value);
             case '<=':
             case 'onOrBefore':
                 return $this->builder->where($field, '<=', $value);
             default:
                 return $this->builder;
+        }
+    }
+
+    protected function applyRelationFilter($field, $operator, $value)
+    {
+        // Separar la relación del campo
+        $parts = explode('.', $field);
+        $relation = $parts[0];
+        $relationField = implode('.', array_slice($parts, 1)); // Para soportar relaciones anidadas
+        
+        // Verificar si la relación está permitida
+        if (!$this->isRelationAllowed($this->builder->getModel(), $relation)) {
+            return $this->builder;
+        }
+        
+        // Verificar si la relación existe en el modelo
+        if (!method_exists($this->builder->getModel(), $relation)) {
+            return $this->builder; // Si no existe la relación, retornar sin filtro
+        }
+
+        return $this->builder->whereHas($relation, function ($query) use ($relationField, $operator, $value) {
+            $this->applyNestedFilter($query, $relationField, $operator, $value);
+        });
+    }
+
+    /**
+     * Verifica si una relación es permitida para filtrar.
+     */
+    protected function isRelationAllowed($model, $relation): bool
+    {
+        $allowedRelations = method_exists($model, 'getFilterableRelations')
+            ? $model::getFilterableRelations()
+            : [];
+
+        return empty($allowedRelations) || in_array($relation, $allowedRelations);
+    }
+
+    protected function applyNestedFilter($query, $field, $operator, $value)
+    {
+        // Si el campo tiene más puntos, seguir anidando relaciones
+        if (strpos($field, '.') !== false) {
+            $parts = explode('.', $field);
+            $relation = $parts[0];
+            $nestedField = implode('.', array_slice($parts, 1));
+            
+            $query->whereHas($relation, function ($subQuery) use ($nestedField, $operator, $value) {
+                $this->applyNestedFilter($subQuery, $nestedField, $operator, $value);
+            });
+        } else {
+            // Aplicar el filtro al campo de la relación
+            switch ($operator) {
+                case '=':
+                case 'is':
+                case 'equals':
+                    $query->where($field, $value);
+                    break;
+                case '!=':
+                case 'not':
+                case 'doesNotEqual':
+                    $query->where($field, '!=', $value);
+                    break;
+                case 'contains':
+                    $query->where($field, 'LIKE', "%$value%");
+                    break;
+                case 'doesNotContain':
+                    $query->where($field, 'NOT LIKE', "%$value%");
+                    break;
+                case 'startsWith':
+                    $query->where($field, 'LIKE', "$value%");
+                    break;
+                case 'endsWith':
+                    $query->where($field, 'LIKE', "%$value");
+                    break;
+                case 'isEmpty':
+                    $query->where($field, '=', '');
+                    break;
+                case 'isNotEmpty':
+                    $query->where($field, '!=', '');
+                    break;
+                case 'isAnyOf':
+                    $arr = explode(',', $value);
+                    if (is_array($arr)) {
+                        $query->whereIn($field, $arr);
+                    }
+                    break;
+                case '>':
+                case 'after':
+                case 'gt':
+                    $query->where($field, '>', $value);
+                    break;
+                case '>=':
+                case 'onOrAfer':
+                    $query->where($field, '>=', $value);
+                    break;
+                case '<':
+                case 'before':
+                case 'lt':
+                    $query->where($field, '<', $value);
+                    break;
+                case '<=':
+                case 'onOrBefore':
+                    $query->where($field, '<=', $value);
+                    break;
+            }
         }
     }
 
