@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductInventory;
 use App\Services\InventoryMovementService;
+use App\Services\AttachmentService;
 use App\Services\QueryFilters;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,14 +55,26 @@ class ProductInventoryController extends Controller
             'files.*' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,xls,csv|max:2048',
         ]);
 
+        $movements = [];
+
         foreach ($request->items as $item) {
-            InventoryMovementService::inventoryMovement(
+            [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
                 $item['product'],
                 $item['stock'],
                 ProductInventory::class,
                 null,
                 Auth::user()->id,
             );
+            $movements[] = $inventoryMovement;
+        }
+
+        // Adjuntar archivos a cada movimiento si existen
+        if ($request->hasFile('files')) {
+            foreach ($movements as $movement) {
+                foreach ($request->file('files') as $file) {
+                    AttachmentService::attachFile($file, $movement);
+                }
+            }
         }
 
         return response()->json([
@@ -81,13 +94,20 @@ class ProductInventoryController extends Controller
             'files.*' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,xls,csv|max:2048',
         ]);
 
-        InventoryMovementService::inventoryMovement(
+        [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
             $product->id,
             $request->stock,
             get_class($product),
             $product->id,
             Auth::user()->id
         );
+
+        // Adjuntar archivos al movimiento si existen
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                AttachmentService::attachFile($file, $inventoryMovement);
+            }
+        }
         return response()->json([
             'message' => 'Inventario actualizado (placeholder)',
         ]);
