@@ -73,7 +73,7 @@ class ProductInventoryController extends Controller
             if ($request->hasFile('files')) {
                 foreach ($movements as $movement) {
                     foreach ($request->file('files') as $file) {
-                        AttachmentService::attachFile($file, $movement);
+                        AttachmentService::attachFile($file, $movement, disk: 'local');
                     }
                 }
             }
@@ -113,7 +113,7 @@ class ProductInventoryController extends Controller
             // Adjuntar archivos al movimiento si existen
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
-                    AttachmentService::attachFile($file, $inventoryMovement);
+                    AttachmentService::attachFile($file, $inventoryMovement, disk: 'local');
                 }
             }
 
