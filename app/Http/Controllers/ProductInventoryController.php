@@ -76,6 +76,9 @@ class ProductInventoryController extends Controller
     {
         $request->validate([
             'stock' => 'required|numeric',
+            'reason' => 'nullable|string',
+            'files' => 'nullable|array',
+            'files.*' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,xls,csv|max:2048',
         ]);
 
         InventoryMovementService::inventoryMovement(
