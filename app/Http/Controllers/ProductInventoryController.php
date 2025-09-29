@@ -43,6 +43,32 @@ class ProductInventoryController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.product' => 'required|exists:products,id',
+            'items.*.stock' => 'required|numeric',
+            'reason' => 'nullable|string',
+            'files' => 'nullable|array',
+            'files.*' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,xls,csv|max:2048',
+        ]);
+
+        foreach ($request->items as $item) {
+            InventoryMovementService::inventoryMovement(
+                $item['product'],
+                $item['stock'],
+                ProductInventory::class,
+                null,
+                Auth::user()->id,
+            );
+        }
+
+        return response()->json([
+            'message' => 'Inventario actualizado (placeholder)',
+        ]);
+    }
+
     /**
      * Actualiza campos de inventario (placeholder, pendiente de validación y lógica de stock).
      */
