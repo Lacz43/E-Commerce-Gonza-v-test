@@ -40,7 +40,6 @@ class AttachmentService
                     'mp3',
                     'wav'
                 ])
-                    ->min(1024)
                     ->max(12 * 1024),
             ],
         ]);
