@@ -49,7 +49,7 @@ export default function ModalCreate({ onClose }: Props) {
 	});
 
 	const watchedProducts = useWatch({
-		name: fields.map((_, i) => `items.${i}.product`),
+		name: fields.map((_, i) => `items.${i}.product`) as readonly `items.${number}.product`[],
 		control,
 	});
 
