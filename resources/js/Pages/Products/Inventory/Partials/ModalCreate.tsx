@@ -13,6 +13,7 @@ import { useModal } from "@/Context/Modal";
 import CreateForm from "@/Pages/Products/Partials/Form";
 import ProductSelector from "./ProductSelector";
 import QuantityInput from "./QuantityInput";
+import { router } from "@inertiajs/react";
 
 type Props = {
 	onClose: () => void;
@@ -115,6 +116,9 @@ export default function ModalCreate({ onClose }: Props) {
 		try {
 			await axios.post(route("inventory.store"), data);
 			toast.success("Inventario creado correctamente");
+			reset();
+			onClose();
+			router.reload();
 		} catch (e) {
 			console.error("Error creando inventario", e);
 			toast.error(
