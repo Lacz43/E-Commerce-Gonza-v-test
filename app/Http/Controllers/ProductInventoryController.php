@@ -57,8 +57,7 @@ class ProductInventoryController extends Controller
             $request->stock,
             get_class($product),
             $product->id,
-            Auth::user()->id,
-            'ProductInventoryController@update'
+            Auth::user()->id
         );
         return response()->json([
             'message' => 'Inventario actualizado (placeholder)',
