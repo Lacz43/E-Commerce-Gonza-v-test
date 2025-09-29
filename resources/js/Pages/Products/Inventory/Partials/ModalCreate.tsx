@@ -38,7 +38,7 @@ export default function ModalCreate({ onClose }: Props) {
 		control,
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		reset,
 	} = methods;
 
@@ -206,7 +206,7 @@ export default function ModalCreate({ onClose }: Props) {
 					</form>
 				</FormProvider>
 			}
-			footer={<Button onClick={handleSubmit(onSubmit)}>Crear</Button>}
+			footer={<Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>Crear</Button>}
 		/>
 	);
 }
