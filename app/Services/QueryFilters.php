@@ -55,13 +55,17 @@ class QueryFilters
      */
     protected function isFieldAllowed($model, $field): bool
     {
-        // Si es una relación, verificar el campo base
+        // Si es una relación, verificar el prefijo de la relación
         if (strpos($field, '.') !== false) {
-            $baseField = explode('.', $field)[0];
+            $baseRelation = explode('.', $field)[0];
             $allowedFields = method_exists($model, 'getFilterableFields')
                 ? $model::getFilterableFields()
                 : [];
-            return in_array($baseField, $allowedFields);
+
+            // Verificar tanto snake_case como camelCase del prefijo
+            return in_array($baseRelation, $allowedFields) ||
+                   in_array($this->snakeToCamel($baseRelation), $allowedFields) ||
+                   in_array($this->camelToSnake($baseRelation), $allowedFields);
         }
 
         $allowedFields = method_exists($model, 'getFilterableFields')
@@ -69,6 +73,14 @@ class QueryFilters
             : [];
 
         return in_array($field, $allowedFields);
+    }
+
+    /**
+     * Convierte camelCase a snake_case
+     */
+    protected function camelToSnake($string): string
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
     }
 
     protected function applyFilter($field, $operator, $value)
@@ -130,19 +142,30 @@ class QueryFilters
         $relation = $parts[0];
         $relationField = implode('.', array_slice($parts, 1)); // Para soportar relaciones anidadas
         
+        // Convertir snake_case a camelCase para el nombre del método de relación
+        $relationMethod = $this->snakeToCamel($relation);
+        
         // Verificar si la relación está permitida
         if (!$this->isRelationAllowed($this->builder->getModel(), $relation)) {
             return $this->builder;
         }
         
-        // Verificar si la relación existe en el modelo
-        if (!method_exists($this->builder->getModel(), $relation)) {
+        // Verificar si la relación existe en el modelo (usando camelCase)
+        if (!method_exists($this->builder->getModel(), $relationMethod)) {
             return $this->builder; // Si no existe la relación, retornar sin filtro
         }
 
-        return $this->builder->whereHas($relation, function ($query) use ($relationField, $operator, $value) {
+        return $this->builder->whereHas($relationMethod, function ($query) use ($relationField, $operator, $value) {
             $this->applyNestedFilter($query, $relationField, $operator, $value);
         });
+    }
+
+    /**
+     * Convierte snake_case a camelCase
+     */
+    protected function snakeToCamel($string): string
+    {
+        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $string))));
     }
 
     /**
@@ -154,7 +177,14 @@ class QueryFilters
             ? $model::getFilterableRelations()
             : [];
 
-        return empty($allowedRelations) || in_array($relation, $allowedRelations);
+        // Si no hay restricciones, permitir todas las relaciones
+        if (empty($allowedRelations)) {
+            return true;
+        }
+
+        // Verificar tanto snake_case como camelCase
+        return in_array($relation, $allowedRelations) || 
+               in_array($this->snakeToCamel($relation), $allowedRelations);
     }
 
     protected function applyNestedFilter($query, $field, $operator, $value)
@@ -165,7 +195,10 @@ class QueryFilters
             $relation = $parts[0];
             $nestedField = implode('.', array_slice($parts, 1));
             
-            $query->whereHas($relation, function ($subQuery) use ($nestedField, $operator, $value) {
+            // Convertir snake_case a camelCase para relaciones anidadas
+            $relationMethod = $this->snakeToCamel($relation);
+            
+            $query->whereHas($relationMethod, function ($subQuery) use ($nestedField, $operator, $value) {
                 $this->applyNestedFilter($subQuery, $nestedField, $operator, $value);
             });
         } else {
