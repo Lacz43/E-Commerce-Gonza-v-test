@@ -64,7 +64,7 @@ export const paths: Record<string, Route> = {
 		},
 	},
 	inventory: {
-		path: "products.inventory",
+		path: "inventory.index",
 		name: "Inventario",
 		icon: <Inventory />,
 		roles: ["admin"],
