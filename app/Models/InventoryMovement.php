@@ -40,4 +40,46 @@ class InventoryMovement extends Model
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
+
+    /**
+     * Campos permitidos para filtrado
+     */
+    public static function getFilterableFields(): array
+    {
+        return [
+            'id',
+            'quantity',
+            'type',
+            'created_at',
+            'product_inventory',
+            'product_inventory.product.name',
+            'user', // Relación permitida
+            'user.name',
+            'product_inventory.product'
+        ];
+    }
+
+    /**
+     * Relaciones permitidas para filtrado
+     */
+    public static function getFilterableRelations(): array
+    {
+        return [
+            'product_inventory',
+            'user',
+        ];
+    }
+
+    /**
+     * Campos permitidos para ordenamiento
+     */
+    public static function getSortableFields(): array
+    {
+        return [
+            'id',
+            'quantity',
+            'type',
+            'created_at',
+        ];
+    }
 }
