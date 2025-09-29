@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\ProductInventoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,3 +15,7 @@ Route::middleware('auth', 'permission:edit product_inventory')
 Route::middleware('auth', 'permission:edit product_inventory')
     ->post('/inventory/store', [ProductInventoryController::class, 'store'])
     ->name('inventory.store');
+
+Route::middleware('auth', 'permission:show product_inventory')
+    ->get('/inventory/movements', [InventoryMovementController::class, 'index'])
+    ->name('inventory.movements.index');
