@@ -1,0 +1,12 @@
+<?php
+
+use App\Http\Controllers\ProductInventoryController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth', 'permission:show product_inventory')
+    ->get('/inventory', [ProductInventoryController::class, 'index'])
+    ->name('products.inventory');
+
+Route::middleware('auth', 'permission:edit product_inventory')
+    ->patch('/inventory/update/{product}', [ProductInventoryController::class, 'update'])
+    ->name('inventory.update');
