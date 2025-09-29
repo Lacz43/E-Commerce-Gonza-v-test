@@ -110,9 +110,17 @@ export default function ModalCreate({ onClose }: Props) {
 		});
 	}, [watchedProducts, fields, fetchProduct]);
 
-	const onSubmit = (data: FormData) => {
+	const onSubmit = async (data: FormData) => {
 		console.log("Submitted data:", data);
-		toast.success("Inventario creado correctamente");
+		try {
+			await axios.post(route("inventory.store"), data);
+			toast.success("Inventario creado correctamente");
+		} catch (e) {
+			console.error("Error creando inventario", e);
+			toast.error(
+				`Error al crear inventario: ${e instanceof AxiosError ? e.message : "Error desconocido"}`,
+			);
+		}
 	};
 
 	const addItem = () => {
