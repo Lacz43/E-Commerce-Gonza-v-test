@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import { Button, TextField } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
@@ -31,7 +32,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		reset,
 	} = methods;
 
@@ -69,6 +70,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 		try {
 			await axios.put(route("inventory.update", id), data);
 			toast.success("Inventario actualizado correctamente");
+			onClose();
+			router.visit(route("inventory.index"), {
+				preserveState: true,
+				preserveScroll: true,
+			});
 		} catch (e) {
 			console.error("Error actualizando inventario", e);
 			toast.error(
@@ -149,7 +155,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 					</form>
 				</FormProvider>
 			}
-			footer={<Button onClick={handleSubmit(onSubmit)}>Guardar</Button>}
+			footer={<Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>Guardar</Button>}
 		/>
 	);
 }
