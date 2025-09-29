@@ -6,7 +6,9 @@ use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\File;
 
 class AttachmentService
 {
@@ -22,8 +24,25 @@ class AttachmentService
     public static function attachFile(UploadedFile $file, Model $attachable, ?string $path = null, string $disk = 'public'): Attachment
     {
         // Validar el archivo
-        $validated = $file->validate([
-            'file' => 'required|file|max:10240|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,gif,zip,rar',
+        Validator::validate(['attachment' => $file], [
+            'attachment' => [
+                'required',
+                File::types([
+                    'jpeg',
+                    'jpg',
+                    'png',
+                    'pdf',
+                    'doc',
+                    'docx',
+                    'xlsx',
+                    'xls',
+                    'csv',
+                    'mp3',
+                    'wav'
+                ])
+                    ->min(1024)
+                    ->max(12 * 1024),
+            ],
         ]);
 
         // Generar nombre único para el archivo
