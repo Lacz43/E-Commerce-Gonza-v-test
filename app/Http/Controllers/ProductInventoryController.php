@@ -55,31 +55,38 @@ class ProductInventoryController extends Controller
             'files.*' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,xls,csv|max:2048',
         ]);
 
-        $movements = [];
+        try {
+            $movements = [];
 
-        foreach ($request->items as $item) {
-            [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
-                $item['product'],
-                $item['stock'],
-                ProductInventory::class,
-                null,
-                Auth::user()->id,
-            );
-            $movements[] = $inventoryMovement;
-        }
+            foreach ($request->items as $item) {
+                [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
+                    $item['product'],
+                    $item['stock'],
+                    ProductInventory::class,
+                    null,
+                    Auth::user()->id,
+                );
+                $movements[] = $inventoryMovement;
+            }
 
-        // Adjuntar archivos a cada movimiento si existen
-        if ($request->hasFile('files')) {
-            foreach ($movements as $movement) {
-                foreach ($request->file('files') as $file) {
-                    AttachmentService::attachFile($file, $movement);
+            // Adjuntar archivos a cada movimiento si existen
+            if ($request->hasFile('files')) {
+                foreach ($movements as $movement) {
+                    foreach ($request->file('files') as $file) {
+                        AttachmentService::attachFile($file, $movement);
+                    }
                 }
             }
-        }
 
-        return response()->json([
-            'message' => 'Inventario actualizado (placeholder)',
-        ]);
+            return response()->json([
+                'message' => 'Inventario actualizado correctamente',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar el inventario',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -94,23 +101,31 @@ class ProductInventoryController extends Controller
             'files.*' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx,xlsx,xls,csv|max:2048',
         ]);
 
-        [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
-            $product->id,
-            $request->stock,
-            get_class($product),
-            $product->id,
-            Auth::user()->id
-        );
+        try {
+            [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
+                $product->id,
+                $request->stock,
+                get_class($product),
+                $product->id,
+                Auth::user()->id
+            );
 
-        // Adjuntar archivos al movimiento si existen
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                AttachmentService::attachFile($file, $inventoryMovement);
+            // Adjuntar archivos al movimiento si existen
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    AttachmentService::attachFile($file, $inventoryMovement);
+                }
             }
+
+            return response()->json([
+                'message' => 'Inventario actualizado correctamente',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar el inventario',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-        return response()->json([
-            'message' => 'Inventario actualizado (placeholder)',
-        ]);
     }
     /**
      * Elimina (si aplica) un registro de inventario (placeholder).
