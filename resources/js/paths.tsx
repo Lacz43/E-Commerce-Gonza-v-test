@@ -61,6 +61,10 @@ export const paths: Record<string, Route> = {
 				path: "products.categories.index",
 				name: "Categorias",
 			},
+			brands: {
+				path: "products.brands.index",
+				name: "Marcas",
+			},
 		},
 	},
 	inventory: {
