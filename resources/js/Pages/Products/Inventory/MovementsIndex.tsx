@@ -77,8 +77,14 @@ export default function MovementsIndex({
 			},
 			{
 				field: "previous_stock",
-				headerName: "Stock Anterior",
+				headerName: "Anterior",
 				type: "number",
+			},
+			{
+				field: "stock",
+				headerName: "Actual",
+				type: "number",
+				valueGetter: (_v, r) => r.product_inventory?.stock ?? 0,
 			},
 			{
 				field: "type",

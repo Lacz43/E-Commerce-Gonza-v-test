@@ -10,6 +10,7 @@ import ModalStyled from "@/Components/Modals/ModalStyled";
 
 type MovementData = MovementItem & {
 	attachments?: Attachment[];
+	product_inventory?: ProductInventory;
 };
 
 type Props = {
@@ -77,6 +78,9 @@ export default function ModalMovementDetail({
 								</p>
 								<p>
 									<span className="font-medium">Stock Anterior:</span> {data.previous_stock}
+								</p>
+								<p>
+									<span className="font-medium">Stock Actual:</span> {data.product_inventory?.stock}
 								</p>
 								<p>
 									<span className="font-medium">Fecha:</span>{" "}
