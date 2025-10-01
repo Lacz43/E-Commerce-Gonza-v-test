@@ -53,7 +53,9 @@ class BrandController extends Controller
             'created_by' => Auth::id(),
         ]);
 
-        return redirect()->back()->with('success', 'Marca creada exitosamente');
+        return response()->json([
+            'message' => 'Marca creada exitosamente',
+        ]);
     }
 
     /**
@@ -85,7 +87,9 @@ class BrandController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->back()->with('success', 'Marca actualizada exitosamente');
+        return response()->json([
+            'message' => 'Marca actualizada exitosamente',
+        ]);
     }
 
     /**
@@ -94,6 +98,8 @@ class BrandController extends Controller
     public function destroy(Brand $brand)
     {
         $brand->delete();
-        return redirect()->back()->with('success', 'Marca eliminada exitosamente');
+        return response()->json([
+            'message' => 'Marca eliminada exitosamente',
+        ]);
     }
 }
