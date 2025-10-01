@@ -76,6 +76,9 @@ export default function ModalMovementDetail({
 									<span className="font-medium">Cantidad:</span> {data.quantity}
 								</p>
 								<p>
+									<span className="font-medium">Stock Anterior:</span> {data.previous_stock}
+								</p>
+								<p>
 									<span className="font-medium">Fecha:</span>{" "}
 									{new Date(data.created_at).toLocaleString()}
 								</p>

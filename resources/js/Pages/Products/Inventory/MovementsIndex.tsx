@@ -76,6 +76,11 @@ export default function MovementsIndex({
 				type: "number",
 			},
 			{
+				field: "previous_stock",
+				headerName: "Stock Anterior",
+				type: "number",
+			},
+			{
 				field: "type",
 				headerName: "Tipo",
 				type: "singleSelect",
