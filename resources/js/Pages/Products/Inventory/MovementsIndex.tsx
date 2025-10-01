@@ -1,7 +1,14 @@
 import { Head } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	lazy,
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -32,7 +39,9 @@ export default function MovementsIndex({
 	const handleRowClick = useCallback(
 		async (row: MovementItem) => {
 			try {
-				const { data } = await axios.get(route("inventory.movements.show", row.id));
+				const { data } = await axios.get(
+					route("inventory.movements.show", row.id),
+				);
 				openModal(({ closeModal }) => (
 					<ModalMovementDetail
 						data={data}
@@ -54,25 +63,21 @@ export default function MovementsIndex({
 			{
 				field: "product_inventory.product.name",
 				headerName: "Producto",
-				width: 200,
 				valueGetter: (_v, r) => r.product_inventory?.product?.name ?? "",
 			},
 			{
 				field: "barcode",
 				headerName: "Código",
-				width: 150,
 				valueGetter: (_v, r) => r.product_inventory?.product?.barcode ?? "",
 			},
 			{
 				field: "quantity",
 				headerName: "Cantidad",
 				type: "number",
-				width: 100,
 			},
 			{
 				field: "type",
 				headerName: "Tipo",
-				width: 100,
 				type: "singleSelect",
 				valueOptions: [
 					{ label: "Entrada", value: "ingress" },
@@ -82,19 +87,21 @@ export default function MovementsIndex({
 			{
 				field: "user.name",
 				headerName: "Usuario",
-				width: 150,
 				valueGetter: (_v, r) => r.user?.name ?? "",
 			},
 			{
 				field: "created_at",
 				headerName: "Fecha",
 				width: 180,
-				valueGetter: (_v, r) => new Date(r.created_at).toLocaleString(),
+				type: "dateTime",
+				valueGetter: (_params, row) => {
+					const date = new Date(row.created_at);
+					return Number.isNaN(date.getTime()) ? null : date;
+				},
 			},
 			{
 				field: "model_type",
 				headerName: "Origen",
-				width: 150,
 				type: "singleSelect",
 				valueOptions: Object.entries(modelsName ?? {}).map(([key, label]) => ({
 					label,
