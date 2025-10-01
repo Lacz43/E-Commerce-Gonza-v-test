@@ -1,8 +1,11 @@
 import { Head } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import ModalMovementDetail from "./Partials/ModalMovementDetail";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
@@ -20,10 +23,29 @@ export default function MovementsIndex({
 	sortAvailable,
 }: Props) {
 	const [movementsData, setMovementsData] = useState(movements);
+	const { openModal } = useModal();
 
 	useEffect(() => {
 		setMovementsData(movements);
 	}, [movements]);
+
+	const handleRowClick = useCallback(
+		async (row: MovementItem) => {
+			try {
+				const { data } = await axios.get(route("inventory.movements.show", row.id));
+				openModal(({ closeModal }) => (
+					<ModalMovementDetail
+						data={data}
+						modelsName={modelsName}
+						onClose={closeModal}
+					/>
+				));
+			} catch {
+				console.error("Error al cargar los detalles del movimiento");
+			}
+		},
+		[modelsName, openModal],
+	);
 
 	// Columnas de la tabla
 	const columns = useMemo<GridColDef[]>(
@@ -83,6 +105,19 @@ export default function MovementsIndex({
 		[modelsName],
 	);
 
+	const onViewConfig = useMemo(
+		() => ({
+			permissions: ["show product_inventory"],
+			hook: (id: number) => {
+				const movement = movementsData.data.find((m) => m.id === id);
+				if (movement) {
+					handleRowClick(movement);
+				}
+			},
+		}),
+		[handleRowClick, movementsData.data],
+	);
+
 	return (
 		<AuthenticatedLayout
 			header={
@@ -111,6 +146,7 @@ export default function MovementsIndex({
 									fill
 									filtersAvailable={filtersAvailable}
 									sortAvailable={sortAvailable}
+									onShow={onViewConfig}
 								/>
 							</Suspense>
 						</div>
