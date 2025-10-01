@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth', 'role:admin')->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/index', [UserController::class, 'index'])->name('users.index');
     Route::get('/roles', [UserController::class, 'roles'])->name('roles');
     Route::get('/users/activities', [ActivityController::class, 'index'])->name('users.activities');
     Route::get('/users/sessions', [SessionController::class, 'index'])->name('users.sessions');
