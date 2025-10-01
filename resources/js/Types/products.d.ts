@@ -37,6 +37,14 @@ declare interface ProductCategory {
 	created_by: User;
 }
 
+declare interface Brand {
+	id: number;
+	name: string;
+	created_by: number;
+	created_at: string;
+	updated_at: string;
+}
+
 declare interface MovementItem {
 	id: number;
 	quantity: number;
