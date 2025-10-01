@@ -19,7 +19,7 @@ class InventoryMovementService
      */
     public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId)
     {
-        $productInventory = ProductInventory::where('product_id', $productId)->first();
+        $productInventory = ProductInventory::firstOrCreate(['product_id' => $productId], ['stock' => 0]);
         $productInventory->stock += $quantity;
 
         $controllerName = request()->route()->getAction()['controller'];
