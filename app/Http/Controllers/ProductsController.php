@@ -30,6 +30,16 @@ class ProductsController extends Controller
     {
         $query = Product::with(['defaultImage:product_id,image', 'productInventory:id,product_id,stock', 'brand:id,name']);
 
+        if($request->query('minStock')) {
+            $query->whereHas('productInventory', function($q) use ($request) {
+                $q->where('stock', '>=', $request->query('minStock'));
+            });
+        }
+
+        if ($request->query('useImage')) {
+            $query->whereHas('defaultImage');
+        }
+
         // Parámetros opcionales de búsqueda:
         // 1) ?id=XXXXXXXX (coincidencia exacta)
         // 2) ?barcode=XXXXXXXX (coincidencia exacta)
