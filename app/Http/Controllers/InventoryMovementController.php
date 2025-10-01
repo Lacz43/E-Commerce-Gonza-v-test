@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InventoryMovement;
 use App\Services\QueryFilters;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,9 +19,14 @@ class InventoryMovementController extends Controller
             InventoryMovement::query()
                 ->with(['productInventory.product', 'user'])
         );
+        $modelsName = [
+            'ProductInventory' => 'Inventario',
+            'Sale' => 'Ventas',
+        ];
 
         return Inertia::render('Products/Inventory/MovementsIndex', [
             'movements' => $movements,
+            'modelsName' => $modelsName,
         ]);
     }
 }
