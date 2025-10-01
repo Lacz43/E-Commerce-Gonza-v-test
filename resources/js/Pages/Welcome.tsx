@@ -84,7 +84,7 @@ export default function Welcome() {
 				<InputProductSearch className="mx-auto bg-white" />
 				<Suspense>
 					<InfiniteScroll<Item, "products">
-						url={route("products")}
+						url={route("products", { minStock: 1, useImage: true })}
 						className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
 						transformResponse={(res) => res.products}
 					>
