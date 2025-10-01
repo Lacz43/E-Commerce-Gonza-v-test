@@ -22,12 +22,18 @@ class ActivityController extends Controller
         $filtersAvailable = ActivityLog::getFilterableFields();
         $sortAvailable = ActivityLog::getSortableFields();
         $modelsName = config('modules.model_names');
+        $events = [
+            'created' => 'Creado',
+            'updated' => 'Actualizado',
+            'deleted' => 'Eliminado',
+        ];
 
         return Inertia::render('Activity/Index', [
             'activities' => $activities,
             'filtersAvailable' => $filtersAvailable,
             'sortAvailable' => $sortAvailable,
             'modelsName' => $modelsName,
+            'events' => $events,
         ]);
     }
 }
