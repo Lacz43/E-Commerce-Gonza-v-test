@@ -55,7 +55,8 @@ class InventoryMovement extends Model
             'product_inventory.product.name',
             'user', // Relación permitida
             'user.name',
-            'product_inventory.product'
+            'product_inventory.product',
+            'model_type',
         ];
     }
 
