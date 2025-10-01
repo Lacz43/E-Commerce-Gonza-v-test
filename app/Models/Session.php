@@ -41,6 +41,7 @@ class Session extends Model
             'user_agent',
             'last_activity',
             'user.name',
+            'user',
         ];
     }
 
