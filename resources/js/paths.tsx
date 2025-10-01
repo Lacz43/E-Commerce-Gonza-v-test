@@ -84,6 +84,16 @@ export const paths: Record<string, Route> = {
 		name: "Usuarios",
 		icon: <Person />,
 		roles: ["admin"],
+		children: {
+			index: {
+				path: "users.index",
+				name: "Gestión",
+			},
+			activities: {
+				path: "users.activities",
+				name: "Bitácora",
+			},
+		},
 	},
 	settings: {
 		path: "backup.index",
