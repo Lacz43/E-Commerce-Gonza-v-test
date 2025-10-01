@@ -23,10 +23,14 @@ class InventoryMovementController extends Controller
             'ProductInventory' => 'Inventario',
             'Sale' => 'Ventas',
         ];
+        $filtersAvailable = InventoryMovement::getFilterableFields();
+        $sortAvailable = InventoryMovement::getSortableFields();
 
         return Inertia::render('Products/Inventory/MovementsIndex', [
             'movements' => $movements,
             'modelsName' => $modelsName,
+            'filtersAvailable' => $filtersAvailable,
+            'sortAvailable' => $sortAvailable,
         ]);
     }
 }
