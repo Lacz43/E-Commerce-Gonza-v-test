@@ -1,20 +1,17 @@
 import { Head } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
-import {
-	lazy,
-	Suspense,
-	useEffect,
-	useMemo,
-	useState,
-} from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
-type Props = { movements: paginateResponse<MovementItem> };
+type Props = {
+	movements: paginateResponse<MovementItem>;
+	modelsName: Record<string, string>;
+};
 
-export default function MovementsIndex({ movements }: Props) {
+export default function MovementsIndex({ movements, modelsName }: Props) {
 	const [movementsData, setMovementsData] = useState(movements);
 
 	useEffect(() => {
@@ -47,11 +44,11 @@ export default function MovementsIndex({ movements }: Props) {
 				field: "type",
 				headerName: "Tipo",
 				width: 100,
-                type: "singleSelect",
-                valueOptions: [
-                    { label: "Entrada", value: "ingress" },
-                    { label: "Salida", value: "egress" },
-                ],
+				type: "singleSelect",
+				valueOptions: [
+					{ label: "Entrada", value: "ingress" },
+					{ label: "Salida", value: "egress" },
+				],
 			},
 			{
 				field: "user.name",
@@ -66,12 +63,17 @@ export default function MovementsIndex({ movements }: Props) {
 				valueGetter: (_v, r) => new Date(r.created_at).toLocaleString(),
 			},
 			{
-				field: "controller_name",
+				field: "model_type",
 				headerName: "Origen",
 				width: 150,
+				type: "singleSelect",
+				valueOptions: Object.entries(modelsName ?? {}).map(([key, label]) => ({
+					label,
+					value: `App\\Models\\${key}`,
+				})),
 			},
 		],
-		[],
+		[modelsName],
 	);
 
 	return (
@@ -100,7 +102,12 @@ export default function MovementsIndex({ movements }: Props) {
 									response={movementsData}
 									columns={columns}
 									fill
-									filtersAvailable={["product_inventory.product.name", "user.name", "type"]}
+									filtersAvailable={[
+										"product_inventory.product.name",
+										"user.name",
+										"type",
+										"model_type",
+									]}
 									sortAvailable={["id", "created_at", "quantity", "type"]}
 								/>
 							</Suspense>
