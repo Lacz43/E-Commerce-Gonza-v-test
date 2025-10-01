@@ -22,6 +22,7 @@ type Props = {
 	filtersAvailable: string[];
 	sortAvailable: string[];
 	modelsName: Record<string, string>;
+	events: Record<string, string>;
 };
 
 export default function Index({
@@ -29,12 +30,22 @@ export default function Index({
 	filtersAvailable,
 	sortAvailable,
 	modelsName,
+	events,
 }: Props) {
 	const columns = useMemo<GridColDef[]>(
 		() => [
 			{ field: "id", headerName: "ID", width: 80 },
 			{ field: "description", headerName: "Descripción", width: 300 },
-			{ field: "event", headerName: "Evento", width: 100 },
+			{
+				field: "event",
+				headerName: "Evento",
+				width: 100,
+				type: "singleSelect",
+				valueOptions: Object.entries(events).map(([key, value]) => ({
+					value: key,
+					label: value,
+				})),
+			},
 			{
 				field: "causer.name",
 				headerName: "Usuario",
@@ -43,13 +54,13 @@ export default function Index({
 			},
 			{
 				field: "subject_type",
-				headerName: "Tipo de Sujeto",
+				headerName: "Modulo",
 				width: 200,
-                type: "singleSelect",
-                valueOptions: Object.entries(modelsName).map(([key, value]) => ({
-                    value: `App\\Models\\${key}`,
-                    label: value,
-                })),
+				type: "singleSelect",
+				valueOptions: Object.entries(modelsName).map(([key, value]) => ({
+					value: `App\\Models\\${key}`,
+					label: value,
+				})),
 			},
 			{
 				field: "created_at",
