@@ -8,25 +8,8 @@ import {
 import { Chip } from "@mui/material";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 
-type MovementData = {
-	id: number;
-	quantity: number;
-	type: string;
-	created_at: string;
-	model_type: string;
-	product_inventory?: {
-		product?: {
-			name?: string;
-			barcode?: string;
-		};
-	};
-	user?: {
-		name?: string;
-	};
-	attachments?: {
-		id: number;
-		file_name: string;
-	}[];
+type MovementData = MovementItem & {
+	attachments?: Attachment[];
 };
 
 type Props = {
