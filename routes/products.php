@@ -50,7 +50,7 @@ Route::middleware('auth', 'permission:create product_brands')
     ->name('products.brands.store');
 
 Route::middleware('auth', 'permission:edit product_brands')
-    ->patch('/products/brands/update/{brand}', [BrandController::class, 'update'])
+    ->put('/products/brands/update/{brand}', [BrandController::class, 'update'])
     ->name('products.brands.update');
 
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
