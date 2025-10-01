@@ -1,6 +1,6 @@
 <?php
 
-$modules = config('modules');
+$modules = config('modules.modules');
 
 return [
     'admin' => $modules,

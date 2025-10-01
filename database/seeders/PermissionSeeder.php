@@ -14,7 +14,7 @@ class PermissionSeeder extends Seeder
 
     public function run(): void
     {
-        $modules = config('modules');
+        $modules = config('modules.modules');
         $permissions = config('permission.permissions');
         $roles = config('roles');
 
