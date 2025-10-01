@@ -37,6 +37,22 @@ Route::middleware('auth', 'permission:edit product_categories')
     ->patch('/products/categories/update/{category}', [ProductCategoryController::class, 'update'])
     ->name('products.categories.update');
 
+Route::middleware('auth', 'permission:show product_brands')
+    ->get('/products/brands/index', [BrandController::class, 'index'])
+    ->name('products.brands.index');
+
+Route::middleware('auth', 'permission:delete product_brands')
+    ->delete('/products/brands/delete/{brand}', [BrandController::class, 'destroy'])
+    ->name('products.brands.delete');
+
+Route::middleware('auth', 'permission:create product_brands')
+    ->post('/products/brands/store', [BrandController::class, 'store'])
+    ->name('products.brands.store');
+
+Route::middleware('auth', 'permission:edit product_brands')
+    ->patch('/products/brands/update/{brand}', [BrandController::class, 'update'])
+    ->name('products.brands.update');
+
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
 Route::get('/products/categories', [ProductCategoryController::class, 'categories'])->name('products.categories');
 Route::get('/products/brands', [BrandController::class, 'brands'])->name('products.brands');
