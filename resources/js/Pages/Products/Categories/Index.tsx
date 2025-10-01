@@ -1,10 +1,9 @@
 import { Head, router } from "@inertiajs/react";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { AxiosError } from "axios";
-import { lazy, memo, Suspense, useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
-import type { tableProps } from "@/Components/DataTable";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -16,7 +15,13 @@ const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
 type Props = {
 	categories: paginateResponse<Item>;
 };
-const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
+
+export default function Products({ categories }: Props) {
+	console.log(categories);
+	const { openModal, closeModal } = useModal();
+
+	const [loading, setLoading] = useState(false);
+
 	const columns = useMemo<GridColDef[]>(
 		() => [
 			{ field: "id", headerName: "ID" },
@@ -24,26 +29,6 @@ const WrapperDataTable = memo((props: Omit<tableProps<Item>, "columns">) => {
 		],
 		[],
 	);
-	return (
-		<Suspense
-			fallback={
-				<DataTableSkeleton
-					columns={columns.length + 1}
-					rows={10}
-					showToolbar={false}
-				/>
-			}
-		>
-			<DataTable {...props} columns={columns} />
-		</Suspense>
-	);
-});
-
-export default function Products({ categories }: Props) {
-	console.log(categories);
-	const { openModal, closeModal } = useModal();
-
-	const [loading, setLoading] = useState(false);
 
 	const HandleDelete = useCallback(
 		async (id: number) => {
@@ -131,11 +116,22 @@ export default function Products({ categories }: Props) {
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
-							<WrapperDataTable
-								response={categories}
-								onDelete={onDeleteConfig}
-								onEdit={onEditConfig}
-							/>
+							<Suspense
+								fallback={
+									<DataTableSkeleton
+										columns={columns.length}
+										rows={10}
+										showToolbar={false}
+									/>
+								}
+							>
+								<DataTable
+									response={categories}
+									columns={columns}
+									onDelete={onDeleteConfig}
+									onEdit={onEditConfig}
+								/>
+							</Suspense>
 						</div>
 					</div>
 				</div>
