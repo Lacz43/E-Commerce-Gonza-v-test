@@ -21,12 +21,14 @@ type Props = {
 	activities: paginateResponse<Activity>;
 	filtersAvailable: string[];
 	sortAvailable: string[];
+	modelsName: Record<string, string>;
 };
 
 export default function Index({
 	activities,
 	filtersAvailable,
 	sortAvailable,
+	modelsName,
 }: Props) {
 	const columns = useMemo<GridColDef[]>(
 		() => [
@@ -43,7 +45,11 @@ export default function Index({
 				field: "subject_type",
 				headerName: "Tipo de Sujeto",
 				width: 200,
-				valueGetter: (_value, row) => row.subject_type ?? "",
+                type: "singleSelect",
+                valueOptions: Object.entries(modelsName).map(([key, value]) => ({
+                    value: `App\\Models\\${key}`,
+                    label: value,
+                })),
 			},
 			{
 				field: "created_at",
@@ -56,7 +62,7 @@ export default function Index({
 				},
 			},
 		],
-		[],
+		[modelsName],
 	);
 
 	return (
