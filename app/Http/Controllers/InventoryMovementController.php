@@ -33,4 +33,12 @@ class InventoryMovementController extends Controller
             'sortAvailable' => $sortAvailable,
         ]);
     }
+
+    /**
+     * Mostrar detalles de un movimiento.
+     */
+    public function show(InventoryMovement $movement)
+    {
+        return response()->json($movement->load(['productInventory.product', 'user', 'attachments']));
+    }
 }

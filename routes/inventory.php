@@ -19,3 +19,7 @@ Route::middleware('auth', 'permission:edit product_inventory')
 Route::middleware('auth', 'permission:show product_inventory')
     ->get('/inventory/movements', [InventoryMovementController::class, 'index'])
     ->name('inventory.movements.index');
+
+Route::middleware('auth', 'permission:show product_inventory')
+    ->get('/inventory/movements/{movement}', [InventoryMovementController::class, 'show'])
+    ->name('inventory.movements.show');
