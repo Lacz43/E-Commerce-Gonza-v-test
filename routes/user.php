@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/roles', [UserController::class, 'roles'])->name('roles');
+    Route::get('/users/activities', [ActivityController::class, 'index'])->name('users.activities');
 });
 
 Route::middleware('auth')->get('/permissions', [UserController::class, 'permissions'])->name('user.permissions');
