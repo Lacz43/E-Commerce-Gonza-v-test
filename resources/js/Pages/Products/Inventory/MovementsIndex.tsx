@@ -72,7 +72,7 @@ export default function MovementsIndex({
 			},
 			{
 				field: "quantity",
-				headerName: "Cantidad",
+				headerName: "Movimiento",
 				type: "number",
 			},
 			{

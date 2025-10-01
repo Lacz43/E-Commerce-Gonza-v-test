@@ -74,7 +74,7 @@ export default function ModalMovementDetail({
 									/>
 								</div>
 								<p>
-									<span className="font-medium">Cantidad:</span> {data.quantity}
+									<span className="font-medium">Movimiento:</span> {data.quantity}
 								</p>
 								<p>
 									<span className="font-medium">Antes:</span> {data.previous_stock}
