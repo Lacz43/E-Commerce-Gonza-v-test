@@ -9,9 +9,16 @@ const DataTable = lazy(() => import("@/Components/DataTable"));
 type Props = {
 	movements: paginateResponse<MovementItem>;
 	modelsName: Record<string, string>;
+	filtersAvailable: string[];
+	sortAvailable: string[];
 };
 
-export default function MovementsIndex({ movements, modelsName }: Props) {
+export default function MovementsIndex({
+	movements,
+	modelsName,
+	filtersAvailable,
+	sortAvailable,
+}: Props) {
 	const [movementsData, setMovementsData] = useState(movements);
 
 	useEffect(() => {
@@ -102,13 +109,8 @@ export default function MovementsIndex({ movements, modelsName }: Props) {
 									response={movementsData}
 									columns={columns}
 									fill
-									filtersAvailable={[
-										"product_inventory.product.name",
-										"user.name",
-										"type",
-										"model_type",
-									]}
-									sortAvailable={["id", "created_at", "quantity", "type"]}
+									filtersAvailable={filtersAvailable}
+									sortAvailable={sortAvailable}
 								/>
 							</Suspense>
 						</div>
