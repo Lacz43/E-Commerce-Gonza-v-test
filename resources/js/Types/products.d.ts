@@ -40,6 +40,7 @@ declare interface ProductCategory {
 declare interface MovementItem {
 	id: number;
 	quantity: number;
+	previous_stock: number;
 	type: 'ingress' | 'egress';
 	model_type: string;
 	model_id: number;
