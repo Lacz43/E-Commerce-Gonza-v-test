@@ -14,6 +14,7 @@ class InventoryMovement extends Model
     protected $fillable = [
         'product_inventory_id',
         'quantity',
+        'previous_stock',
         'type',
         'model_type',
         'model_id',
@@ -49,6 +50,7 @@ class InventoryMovement extends Model
         return [
             'id',
             'quantity',
+            'previous_stock',
             'type',
             'created_at',
             'product_inventory',
@@ -79,6 +81,7 @@ class InventoryMovement extends Model
         return [
             'id',
             'quantity',
+            'previous_stock',
             'type',
             'created_at',
         ];

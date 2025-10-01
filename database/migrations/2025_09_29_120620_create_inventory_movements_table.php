@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_inventory_id')->constrained('product_inventories')->cascadeOnDelete()->cascadeOnUpdate();
             $table->integer('quantity');
+            $table->integer('previous_stock')->default(0);
             $table->enum('type', ['ingress', 'egress']);
             $table->string('model_type')->nullable();
             $table->unsignedBigInteger('model_id')->nullable();
