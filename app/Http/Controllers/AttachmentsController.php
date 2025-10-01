@@ -10,9 +10,9 @@ class AttachmentsController extends Controller
     /**
      * Descarga un archivo adjunto.
      */
-    public function download($id)
+    public function downloadInventoryMovementAttachment($id)
     {
-        $response = AttachmentService::downloadFile($id);
+        $response = AttachmentService::downloadFile($id, disk: 'local');
 
         if (!$response) {
             abort(404, 'Archivo no encontrado');
