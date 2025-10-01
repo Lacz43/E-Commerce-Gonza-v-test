@@ -73,7 +73,7 @@ export default function Index({
 				},
 			},
 		],
-		[modelsName],
+		[modelsName, events],
 	);
 
 	return (
