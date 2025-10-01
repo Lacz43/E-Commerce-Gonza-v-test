@@ -64,7 +64,7 @@ export default function ModalMovementDetail({
 								<p>
 									<span className="font-medium">ID:</span> {data.id}
 								</p>
-								<p>
+								<div className="flex items-center">
 									<span className="font-medium">Tipo:</span>
 									<Chip
 										label={data.type === "ingress" ? "Entrada" : "Salida"}
@@ -72,7 +72,7 @@ export default function ModalMovementDetail({
 										color={data.type === "ingress" ? "success" : "error"}
 										className="ml-2"
 									/>
-								</p>
+								</div>
 								<p>
 									<span className="font-medium">Cantidad:</span> {data.quantity}
 								</p>
