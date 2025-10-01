@@ -93,6 +93,10 @@ export const paths: Record<string, Route> = {
 				path: "users.activities",
 				name: "Bitácora",
 			},
+			sessions: {
+				path: "users.sessions",
+				name: "Sesiones",
+			},
 		},
 	},
 	settings: {
