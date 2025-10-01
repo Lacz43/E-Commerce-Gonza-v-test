@@ -3,24 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-use Barryvdh\Debugbar\Facades\Debugbar;
+use App\Services\QueryFilters;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class BrandController extends Controller
 {
     public function brands()
     {
         $brands = Brand::get();
-        Debugbar::info($brands);
         return json_encode($brands);
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $brands = (new QueryFilters($request))->apply(Brand::query());
+        $filtersFields = Brand::getFilterableFields();
+        $sortFields = Brand::getSortableFields();
+        return Inertia::render('Products/Brands/Index', [
+            'brands' => $brands,
+            'filtersFields' => $filtersFields,
+            'sortFields' => $sortFields,
+        ]);
     }
 
     /**
@@ -36,7 +44,16 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:brands,name',
+        ]);
+
+        Brand::create([
+            'name' => $request->name,
+            'created_by' => Auth::id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Marca creada exitosamente');
     }
 
     /**
@@ -60,7 +77,15 @@ class BrandController extends Controller
      */
     public function update(Request $request, Brand $brand)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
+        ]);
+
+        $brand->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->back()->with('success', 'Marca actualizada exitosamente');
     }
 
     /**
@@ -68,6 +93,7 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
-        //
+        $brand->delete();
+        return redirect()->back()->with('success', 'Marca eliminada exitosamente');
     }
 }

@@ -15,6 +15,24 @@ class Brand extends Model
 
     protected $fillable = ['name', 'created_by'];
 
+    public static function getFilterableFields(): array
+    {
+        return [
+            'id',
+            'name',
+            'created_at',
+        ];
+    }
+
+    public static function getSortableFields(): array
+    {
+        return [
+            'id',
+            'name',
+            'created_at',
+        ];
+    }
+
     public static function createOrReadBrand(string $brandName)
     {
         $user = Auth::user();
