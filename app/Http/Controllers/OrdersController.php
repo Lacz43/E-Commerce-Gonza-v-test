@@ -8,9 +8,19 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\QueryFilters;
+use Inertia\Inertia;
 
 class OrdersController extends Controller
 {
+    public function index(Request $request)
+    {
+        $orders = (new QueryFilters($request))->apply(Order::query()->with(['user', 'orderItems.product']));
+        return Inertia::render('Orders/Index', [
+            'orders' => $orders,
+        ]);
+    }
+    
     public function store(Request $request)
     {
         $request->validate([
