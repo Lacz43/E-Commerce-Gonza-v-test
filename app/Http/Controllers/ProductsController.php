@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Services\QueryFilters;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -57,15 +58,15 @@ class ProductsController extends Controller
         $search = trim((string)$request->query('search', ''));
 
         if ($id !== '') {
-            $query->where('id', $id);
+            $query->where('products.id', $id);
         } elseif ($barcode !== '') {
-            $query->where('barcode', $barcode);
+            $query->where('products.barcode', $barcode);
         } elseif ($name !== '') {
-            $query->where('name', 'like', "%$name%");
+            $query->where('products.name', 'like', "%$name%");
         } elseif ($search !== '') {
             $query->where(function($q) use ($search) {
-                $q->where('barcode', $search)
-                  ->orWhere('name', 'like', "%$search%");
+                $q->where('products.barcode', $search)
+                  ->orWhere('products.name', 'like', "%$search%");
             });
         }
 
