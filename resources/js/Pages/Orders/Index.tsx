@@ -1,4 +1,6 @@
 import { Head } from "@inertiajs/react";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { IconButton, Tooltip } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import { lazy, Suspense, useMemo } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
@@ -27,7 +29,8 @@ export default function OrdersIndex({ orders }: Props) {
 				type: "number",
 				valueGetter: (_v, r: Order) =>
 					r.order_items?.reduce(
-						(sum: number, item: OrderItem) => Number(sum) + Number(item.price) * Number(item.quantity),
+						(sum: number, item: OrderItem) =>
+							Number(sum) + Number(item.price) * Number(item.quantity),
 						0,
 					) ?? 0,
 				valueFormatter: (value: number) => `$ ${value.toFixed(2)}`,
@@ -37,6 +40,25 @@ export default function OrdersIndex({ orders }: Props) {
 				headerName: "Fecha",
 				type: "dateTime",
 				valueGetter: (_v, r) => new Date(r.created_at),
+			},
+			{
+				field: "actions",
+				headerName: "Acciones",
+				renderCell: (params) => (
+					<div className="flex justify-center">
+						<Tooltip title="Procesar">
+							<IconButton
+								color="success"
+								onClick={(e) => {
+									e.stopPropagation();
+									console.log("Procesar pedido", params.row.id);
+								}}
+							>
+								<CheckCircleIcon />
+							</IconButton>
+						</Tooltip>
+					</div>
+				),
 			},
 		],
 		[],
