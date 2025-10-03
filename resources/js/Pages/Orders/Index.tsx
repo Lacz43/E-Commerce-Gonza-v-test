@@ -26,12 +26,11 @@ export default function OrdersIndex({ orders }: Props) {
 				headerName: "Total",
 				type: "number",
 				valueGetter: (_v, r: Order) =>
-					r.orderItems?.reduce(
-						(sum: number, item: OrderItem) => sum + item.price * item.quantity,
+					r.order_items?.reduce(
+						(sum: number, item: OrderItem) => Number(sum) + Number(item.price) * Number(item.quantity),
 						0,
 					) ?? 0,
-				valueFormatter: ({ value }: { value: number }) =>
-					`$${value?.toFixed(2)}`,
+				valueFormatter: (value: number) => `$ ${value.toFixed(2)}`,
 			},
 			{
 				field: "created_at",
