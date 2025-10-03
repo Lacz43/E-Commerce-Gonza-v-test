@@ -48,6 +48,41 @@ class QueryFilters
                 $this->builder = $this->applyFilter($field, $operator, $value);
             }
         }
+
+        // Aplicar búsqueda rápida
+        $search = $this->request->get('search');
+        if (!empty($search)) {
+            $this->applySearch($search);
+        }
+    }
+
+    protected function applySearch($value)
+    {
+        $model = $this->builder->getModel();
+        $searchableFields = method_exists($model, 'getSearchableFields')
+            ? $model::getSearchableFields()
+            : [];
+
+        if (empty($searchableFields)) {
+            return;
+        }
+
+        $this->builder->where(function ($query) use ($value, $searchableFields) {
+            foreach ($searchableFields as $field) {
+                if (strpos($field, '.') !== false) {
+                    // Es una relación
+                    $parts = explode('.', $field);
+                    $relation = $parts[0];
+                    $relationField = $parts[1];
+                    $relationMethod = $this->snakeToCamel($relation);
+                    $query->orWhereHas($relationMethod, function ($subQuery) use ($relationField, $value) {
+                        $subQuery->where($relationField, 'LIKE', "%$value%");
+                    });
+                } else {
+                    $query->orWhere($field, 'LIKE', "%$value%");
+                }
+            }
+        });
     }
 
     /**
