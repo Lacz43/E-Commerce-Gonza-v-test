@@ -1,10 +1,10 @@
 import { ShoppingCart, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import ProductsInCar from "@/Components/ProductsInCar";
-import axios from "axios";
-import toast from "react-hot-toast";
 import shoppingCart from "@/shoppingCart";
 
 type Props = {
@@ -25,6 +25,14 @@ export default function CartModal({ onClose }: Props) {
 		setItems(cart.items);
 	}, []);
 
+	const createOrder = useCallback(
+		async (items: { product_id: string | number; quantity: number | string }[]) => {
+			const response = await axios.post(route("order.store"), { items });
+			return response.data.order_id;
+		},
+		[],
+	);
+
 	useEffect(() => {
 		addEventListener("addCart", () => {
 			const cart = new shoppingCart();
@@ -33,50 +41,65 @@ export default function CartModal({ onClose }: Props) {
 		return () => removeEventListener("addCart", () => {});
 	}, []);
 
-	const sendMessage = useCallback(() => {
+	const sendMessage = useCallback(async () => {
 		// mover a otro componente
 
 		// construir el mensaje para enviar por whatsapp
 		let url = `https://wa.me/${import.meta.env.VITE_COMPANY_PHONE}`;
 
 		const cart = new shoppingCart();
-		let message = "";
-
-		for (const item of cart.items) {
-			message += `${item.name} \t${item.quantity}\n`;
-		}
-
-		url += `?text=${encodeURI(message)}`;
-		window.open(url);
-	}, []);
-
-	const sendOrder = useCallback(async () => {
-		const cart = new shoppingCart();
-		const items = cart.items.map(item => ({
+		const items = cart.items.map((item) => ({
 			product_id: item.id,
-			quantity: item.quantity,
+			quantity: item.quantity ?? 1,
 		}));
 
 		try {
-			await axios.post(route('order.store'), { items });
-			toast.success('Orden creada exitosamente');
+			const orderId = await createOrder(items);
+
+			let message = `Orden ID: ${orderId}\n`;
+			for (const item of cart.items) {
+				message += `${item.name} \t${item.quantity}\n`;
+			}
+			url += `?text=${encodeURI(message)}`;
+			window.open(url);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.log("Axios error:", error.response?.data);
+				toast.error(error.response?.data?.message || "Error al crear la orden");
+			} else {
+				console.log("Unexpected error:", error);
+				toast.error("Error inesperado");
+			}
+		}
+	}, [createOrder]);
+
+	const sendOrder = useCallback(async () => {
+		const cart = new shoppingCart();
+		const items = cart.items.map((item) => ({
+			product_id: item.id,
+			quantity: item.quantity ?? 1,
+		}));
+
+		try {
+			const orderId = await createOrder(items);
+			toast.success(`Orden creada exitosamente. ID: ${orderId}`);
 			cart.clear();
 			setItems([]);
 			onClose();
 		} catch (error) {
-			if (error.response) {
-				console.log('Error response:', error.response);
-				toast.error(error.response.data.message || 'Error al crear la orden');
+			if (axios.isAxiosError(error)) {
+				console.log("Axios error:", error.response?.data);
+				toast.error(error.response?.data?.message || "Error al crear la orden");
 			} else {
-				console.log('Error:', error);
-				toast.error('Error de conexión');
+				console.log("Unexpected error:", error);
+				toast.error("Error inesperado");
 			}
 		}
-	}, [onClose]);
+	}, [onClose, createOrder]);
 
 	return (
 		<ModalStyled
-            onClose={onClose}
+			onClose={onClose}
 			header={
 				<>
 					<h2 className="font-bold">Carrito</h2>
