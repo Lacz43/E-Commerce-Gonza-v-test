@@ -2,6 +2,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import { useMediaQuery, useTheme } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -49,6 +50,9 @@ const StyledTextField = styled(TextField)<{
 }));
 
 function CustomToolbar() {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
 	return (
 		<Toolbar>
 			<ColumnsPanelTrigger
@@ -72,25 +76,27 @@ function CustomToolbar() {
 			/>
 
 			<StyledQuickFilter>
-				<QuickFilterTrigger
-					render={(triggerProps, state) => (
-						<Tooltip title="Buscar" enterDelay={0}>
-							<StyledToolbarButton
-								{...triggerProps}
-								ownerState={{ expanded: state.expanded }}
-								color="default"
-								aria-disabled={state.expanded}
-							>
-								<SearchIcon fontSize="small" />
-							</StyledToolbarButton>
-						</Tooltip>
-					)}
-				/>
+				{isMobile && (
+					<QuickFilterTrigger
+						render={(triggerProps, state) => (
+							<Tooltip title="Buscar" enterDelay={0}>
+								<StyledToolbarButton
+									{...triggerProps}
+									ownerState={{ expanded: state.expanded }}
+									color="default"
+									aria-disabled={state.expanded}
+								>
+									<SearchIcon fontSize="small" />
+								</StyledToolbarButton>
+							</Tooltip>
+						)}
+					/>
+				)}
 				<QuickFilterControl
 					render={({ ref, ...controlProps }, state) => (
 						<StyledTextField
 							{...controlProps}
-							ownerState={{ expanded: state.expanded }}
+							ownerState={{ expanded: !isMobile || state.expanded }}
 							inputRef={ref}
 							aria-label="Buscar"
 							placeholder="Buscar..."
