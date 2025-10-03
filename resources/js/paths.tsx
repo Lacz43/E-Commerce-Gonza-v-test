@@ -108,7 +108,7 @@ export const paths: Record<string, Route> = {
 		path: "orders.index",
 		name: "Pedidos",
 		icon: <Receipt />,
-		roles: ["admin"],
+		roles: ["admin", "seller"],
 	},
 	settings: {
 		path: "backup.index",
