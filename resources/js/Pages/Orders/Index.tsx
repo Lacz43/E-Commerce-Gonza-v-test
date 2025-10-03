@@ -2,8 +2,10 @@ import { Head } from "@inertiajs/react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { IconButton, Tooltip } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
-import { lazy, Suspense, useMemo } from "react";
+import { lazy, Suspense, useCallback, useMemo } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import OrderDetailsModal from "@/Components/OrderDetailsModal";
+import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
@@ -12,6 +14,14 @@ type Props = { orders: paginateResponse<Order> };
 
 export default function OrdersIndex({ orders }: Props) {
 	const ordersData = orders;
+	const { openModal } = useModal();
+
+	const handleProcessOrder = useCallback(
+		(orderId: number) => {
+			openModal(() => <OrderDetailsModal orderId={orderId} />);
+		},
+		[openModal],
+	);
 
 	// Columnas de la tabla
 	const columns = useMemo<GridColDef[]>(
@@ -51,7 +61,7 @@ export default function OrdersIndex({ orders }: Props) {
 								color="success"
 								onClick={(e) => {
 									e.stopPropagation();
-									console.log("Procesar pedido", params.row.id);
+									handleProcessOrder(params.row.id);
 								}}
 							>
 								<CheckCircleIcon />
@@ -61,7 +71,7 @@ export default function OrdersIndex({ orders }: Props) {
 				),
 			},
 		],
-		[],
+		[handleProcessOrder],
 	);
 
 	return (
