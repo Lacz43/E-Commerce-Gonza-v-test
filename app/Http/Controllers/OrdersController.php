@@ -33,7 +33,7 @@ class OrdersController extends Controller
 
         // Create order and items in transaction
         try {
-            DB::transaction(function () use ($items) {
+            $order = DB::transaction(function () use ($items) {
                 $order = Order::create([
                     'user_id' => Auth::check() ? Auth::id() : null,
                     'status' => 'pending',
@@ -47,9 +47,11 @@ class OrdersController extends Controller
                         'price' => Product::find($item['product_id'])->price, // Assuming current price
                     ]);
                 }
+
+                return $order;
             });
 
-            return response()->json(['message' => 'Orden creada exitosamente'], 201);
+            return response()->json(['order_id' => $order->id, 'message' => 'Orden creada exitosamente'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Error al crear la orden: ' . $e->getMessage()], 500);
