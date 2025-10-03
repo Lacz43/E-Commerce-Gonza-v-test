@@ -20,6 +20,23 @@ class OrdersController extends Controller
             'orders' => $orders,
         ]);
     }
+
+    public function show(Order $order)
+    {
+        $order->load(['user', 'orderItems.product']);
+        return response()->json($order);
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled',
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        return response()->json(['message' => 'Estado actualizado exitosamente']);
+    }
     
     public function store(Request $request)
     {
