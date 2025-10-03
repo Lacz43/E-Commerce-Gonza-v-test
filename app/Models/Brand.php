@@ -33,6 +33,14 @@ class Brand extends Model
         ];
     }
 
+    public static function getSearchableFields(): array
+    {
+        return [
+            'id',
+            'name',
+        ];
+    }
+
     public static function createOrReadBrand(string $brandName)
     {
         $user = Auth::user();
