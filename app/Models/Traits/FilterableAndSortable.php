@@ -13,4 +13,9 @@ trait FilterableAndSortable
     {
         return [];
     }
+
+    public static function getSearchableFields(): array
+    {
+        return [];
+    }
 }
