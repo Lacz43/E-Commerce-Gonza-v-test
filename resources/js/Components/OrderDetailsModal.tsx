@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import {
     Box,
     Button,
@@ -13,6 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import { useModal } from "@/Context/Modal";
 
@@ -48,14 +50,22 @@ export default function OrderDetailsModal({ orderId }: Props) {
 		});
 	}, [orderId]);
 
-	const updateStatus = (status: string) => {
+	const updateStatus = async (status: string) => {
 		setUpdating(true);
-		axios.put(`/orders/${orderId}`, { status }).then(() => {
+		try {
+			await axios.put(`/orders/${orderId}`, { status });
 			if (order) {
 				setOrder({ ...order, status });
 			}
+			toast.success(`Estado actualizado a ${status}`);
+			closeModal();
+			router.reload();
+		} catch (error) {
+			toast.error("Error al actualizar el estado");
+			console.error(error);
+		} finally {
 			setUpdating(false);
-		});
+		}
 	};
 
 	const total =
@@ -153,7 +163,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 				Cambiar Estado
 			</Typography>
 			<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-				{["pending", "processing", "shipped", "delivered", "cancelled"].map(
+				{["cancelled", "expired", "completed", "paid"].map(
 					(status) => (
 						<Button
 							key={status}
