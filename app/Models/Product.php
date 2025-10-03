@@ -59,6 +59,22 @@ class Product extends Model
         return $this->hasOne(ProductInventory::class, 'product_id', 'id');
     }
 
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function getAvailableStockAttribute(): int
+    {
+        $orderedQuantity = $this->orderItems()
+            ->whereHas('order', function ($query) {
+                $query->whereIn('status', ['pending', 'paid', 'completed']);
+            })
+            ->sum('quantity');
+
+        return $this->productInventory->stock - $orderedQuantity;
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnlyDirty();
