@@ -5,7 +5,7 @@ declare interface Order {
 	created_at: string;
 	updated_at: string;
 	user?: User;
-	orderItems?: OrderItem[];
+	order_items?: OrderItem[];
 }
 
 declare interface OrderItem {
