@@ -62,6 +62,9 @@ export default function CartModal({ onClose }: Props) {
 			}
 			url += `?text=${encodeURI(message)}`;
 			window.open(url);
+			cart.clear();
+			setItems([]);
+			onClose();
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
 				console.log("Axios error:", error.response?.data);
