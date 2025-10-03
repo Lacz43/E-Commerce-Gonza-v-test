@@ -1,8 +1,10 @@
 import { ShoppingCart, WhatsApp } from "@mui/icons-material";
 import Button from "@mui/material/Button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import ProductsInCar from "@/Components/ProductsInCar";
+import axios from "axios";
+import toast from "react-hot-toast";
 import shoppingCart from "@/shoppingCart";
 
 type Props = {
@@ -31,7 +33,7 @@ export default function CartModal({ onClose }: Props) {
 		return () => removeEventListener("addCart", () => {});
 	}, []);
 
-	function sendMessage() {
+	const sendMessage = useCallback(() => {
 		// mover a otro componente
 
 		// construir el mensaje para enviar por whatsapp
@@ -46,7 +48,31 @@ export default function CartModal({ onClose }: Props) {
 
 		url += `?text=${encodeURI(message)}`;
 		window.open(url);
-	}
+	}, []);
+
+	const sendOrder = useCallback(async () => {
+		const cart = new shoppingCart();
+		const items = cart.items.map(item => ({
+			product_id: item.id,
+			quantity: item.quantity,
+		}));
+
+		try {
+			await axios.post(route('order.store'), { items });
+			toast.success('Orden creada exitosamente');
+			cart.clear();
+			setItems([]);
+			onClose();
+		} catch (error) {
+			if (error.response) {
+				console.log('Error response:', error.response);
+				toast.error(error.response.data.message || 'Error al crear la orden');
+			} else {
+				console.log('Error:', error);
+				toast.error('Error de conexión');
+			}
+		}
+	}, [onClose]);
 
 	return (
 		<ModalStyled
@@ -85,7 +111,7 @@ export default function CartModal({ onClose }: Props) {
 							size="medium"
 							variant="contained"
 							endIcon={<ShoppingCart />}
-							onClick={() => sendMessage()}
+							onClick={() => sendOrder()}
 							className="w-auto max-md:w-full"
 							disabled={items.length <= 0}
 						>
