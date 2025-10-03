@@ -3,7 +3,7 @@
 use App\Http\Controllers\OrdersController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'role:admin|seller'])->group(function () {
     Route::get('/orders/index', [OrdersController::class, 'index'])->name('orders.index');
 });
 
