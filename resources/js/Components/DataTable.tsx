@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import usePermissions from "@/Hook/usePermissions";
 import { removeParamsFromUrl } from "@/utils";
 import CrudButton from "./CrudButton";
+import CustomToolbar from "./CustomToolbar";
 
 type ActionHandler = {
 	permissions?: string[];
@@ -292,6 +293,8 @@ export default function DataTable<T>({
 				paginationMode="server"
 				filterMode="server"
 				sortingMode="server"
+				slots={{ toolbar: CustomToolbar }}
+				showToolbar
 				sx={{
 					border: 0,
 					"& .MuiDataGrid-topContainer": {
