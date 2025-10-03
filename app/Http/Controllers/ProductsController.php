@@ -11,8 +11,7 @@ use App\Models\Product;
 use App\Services\QueryFilters;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -28,12 +27,19 @@ class ProductsController extends Controller
 
     public function products(Request $request)
     {
-        $query = Product::with(['defaultImage:product_id,image', 'productInventory:id,product_id,stock', 'brand:id,name']);
+        $query = Product::with(['defaultImage:product_id,image', 'brand:id,name']);
+
+        $query->leftJoin('product_inventories', 'products.id', '=', 'product_inventories.product_id')
+            ->select('products.*', 'product_inventories.stock');
 
         if($request->query('minStock')) {
-            $query->whereHas('productInventory', function($q) use ($request) {
-                $q->where('stock', '>=', $request->query('minStock'));
-            });
+            $query->where('product_inventories.stock', '>=', $request->query('minStock'));
+        }
+
+        if($request->query('minAvailableStock')) {
+            $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as total_ordered FROM order_items oi INNER JOIN orders o ON oi.order_id = o.id WHERE o.status IN ("pending", "paid", "completed") GROUP BY product_id) as ordered'), 'products.id', '=', 'ordered.product_id')
+                ->addSelect(DB::raw('product_inventories.stock - COALESCE(ordered.total_ordered, 0) as available_stock'))
+                ->whereRaw('(product_inventories.stock - COALESCE(ordered.total_ordered, 0)) >= ?', [$request->query('minAvailableStock')]);
         }
 
         if ($request->query('useImage')) {
