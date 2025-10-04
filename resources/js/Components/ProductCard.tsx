@@ -2,6 +2,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StarIcon from "@mui/icons-material/Star";
 import Button from "@mui/material/Button";
 import type { HTMLAttributes } from "react";
+import ProductDetailsModal from "@/Components/Modals/ProductDetailsModal";
+import { useModal } from "@/Context/Modal";
 import { imageUrl } from "@/utils";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
@@ -15,11 +17,21 @@ export default function ProductCard({
 	addCart,
 	...props
 }: CardProps) {
+	const { openModal } = useModal();
+
 	if (!item?.default_image) return null;
 
 	const priceFormatted =
 		typeof item.price === "number" ? item.price.toFixed(2) : item.price;
 
+	const handleOpenModal = () => {
+		openModal(({ closeModal }) => (
+			<ProductDetailsModal
+				productId={Number(item.id)}
+				closeModal={closeModal}
+			/>
+		));
+	};
 	return (
 		<div {...props} className={`relative group ${className}`}>
 			{/* Gradient background frame */}
@@ -28,7 +40,10 @@ export default function ProductCard({
 			{/* Card surface */}
 			<div className="relative flex flex-col h-full rounded-3xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-lg shadow-orange-100/40 ring-1 ring-black/5 overflow-hidden">
 				{/* Media */}
-				<div className="relative w-full h-56 overflow-hidden">
+				<div
+					className="relative w-full h-56 overflow-hidden"
+					onClick={() => handleOpenModal()}
+				>
 					<img
 						src={imageUrl(item.default_image.image)}
 						alt={item.name || "Producto"}
@@ -102,10 +117,12 @@ export default function ProductCard({
 								letterSpacing: ".5px",
 								borderRadius: "1rem",
 								paddingY: 1.2,
-								background: "linear-gradient(90deg,rgba(255, 124, 10, 1) 12%, rgba(0, 214, 89, 1) 80%, rgba(237, 221, 83, 1) 100%)", // darker orange (600) to teal/emerald (600)
+								background:
+									"linear-gradient(90deg,rgba(255, 124, 10, 1) 12%, rgba(0, 214, 89, 1) 80%, rgba(237, 221, 83, 1) 100%)", // darker orange (600) to teal/emerald (600)
 								boxShadow: "0 4px 14px 0 rgba(13,148,136,.35)",
 								"&:hover": {
-									background: "linear-gradient(90deg,rgba(199, 95, 4, 1) 12%, rgba(0, 186, 78, 1) 80%, rgba(199, 186, 72, 1) 100%)", // even darker on hover
+									background:
+										"linear-gradient(90deg,rgba(199, 95, 4, 1) 12%, rgba(0, 186, 78, 1) 80%, rgba(199, 186, 72, 1) 100%)", // even darker on hover
 									boxShadow: "0 6px 20px 0 rgba(13,148,136,.45)",
 								},
 								"& .MuiButton-endIcon": { color: "rgba(255,255,255,0.9)" },
