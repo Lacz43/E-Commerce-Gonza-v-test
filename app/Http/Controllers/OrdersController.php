@@ -19,11 +19,13 @@ class OrdersController extends Controller
         
         $filters = Order::getFilterableFields();
         $sortables = Order::getSortableFields();
+        $statuses = Order::getStatus();
         
         return Inertia::render('Orders/Index', [
             'orders' => $orders,
             'filters' => $filters,
             'sortables' => $sortables,
+            'statuses' => $statuses,
         ]);
     }
 

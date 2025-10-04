@@ -28,6 +28,17 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public static function getStatus(): array
+    {
+        return [
+            'cancelled' => 'Cancelado',
+            'pending' => 'Pendiente',
+            'expired' => 'Expirado',
+            'completed' => 'Completado',
+            'paid' => 'Pagado',
+        ];
+    }
+
     public static function getFilterableFields(): array
     {
         return [
