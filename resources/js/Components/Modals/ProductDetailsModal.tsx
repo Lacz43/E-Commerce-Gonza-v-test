@@ -11,7 +11,7 @@ type ProductDetailsModalProps = {
 };
 
 type Product = Item & {
-    stock: number;
+	stock: number;
 };
 
 export default function ProductDetailsModal({
@@ -34,7 +34,7 @@ export default function ProductDetailsModal({
 			});
 			const productData = response.data.products.data[0];
 			setProduct(productData);
-            console.log(productData);
+			console.log(productData);
 		} catch (error) {
 			console.error("Error fetching product details:", error);
 			toast.error("Error al cargar los detalles del producto");
@@ -43,48 +43,48 @@ export default function ProductDetailsModal({
 			setLoading(false);
 		}
 	};
-
 	if (loading) {
 		return (
 			<ModalStyled
 				header={<h2 className="text-lg font-semibold">Cargando producto...</h2>}
 				body={
-					<div className="max-w-4xl mx-auto space-y-6">
-						{/* Image Skeleton */}
-						<Skeleton
-							variant="rectangular"
-							className="w-full aspect-square md:aspect-video max-h-96 rounded-xl"
-						/>
-
-						{/* Content Skeleton */}
-						<div className="space-y-4">
-							<div className="text-center md:text-left space-y-2">
+					<div className="max-w-6xl mx-auto">
+						{/* Responsive Layout: Images + Info Side by Side on Desktop */}
+						<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+							{/* Left Column: Image Skeleton */}
+							<div className="order-2 lg:order-1">
 								<Skeleton
-									variant="text"
-									height={40}
-									width="80%"
-									className="mx-auto md:mx-0"
-								/>
-								<Skeleton
-									variant="text"
-									height={50}
-									width="60%"
-									className="mx-auto md:mx-0"
+									variant="rectangular"
+									className="w-full aspect-square lg:aspect-video max-h-96 rounded-xl"
 								/>
 							</div>
 
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<div className="space-y-3">
-									<Skeleton variant="rectangular" height={40} />
-									<Skeleton variant="rectangular" height={40} />
+							{/* Right Column: Content Skeleton */}
+							<div className="order-1 lg:order-2 space-y-6">
+								<div className="text-center lg:text-left space-y-2">
+									<Skeleton
+										variant="text"
+										height={40}
+										width="80%"
+										className="mx-auto lg:mx-0"
+									/>
+									<Skeleton
+										variant="text"
+										height={50}
+										width="60%"
+										className="mx-auto lg:mx-0"
+									/>
 								</div>
-								<div className="space-y-3">
-									<Skeleton variant="rectangular" height={40} />
-									<Skeleton variant="rectangular" height={40} />
-								</div>
-							</div>
 
-							<Skeleton variant="rectangular" height={80} />
+								<div className="space-y-3">
+									<Skeleton variant="rectangular" height={40} />
+									<Skeleton variant="rectangular" height={40} />
+									<Skeleton variant="rectangular" height={40} />
+									<Skeleton variant="rectangular" height={40} />
+								</div>
+
+								<Skeleton variant="rectangular" height={80} />
+							</div>
 						</div>
 					</div>
 				}
@@ -149,67 +149,69 @@ export default function ProductDetailsModal({
 				</h2>
 			}
 			body={
-				<div className="max-w-4xl mx-auto">
-					{/* Image Gallery Section */}
-					{hasImages && (
-						<div className="mb-8">
-							{/* Main Image */}
-							<div className="relative aspect-square md:aspect-video max-h-96 mb-4 overflow-hidden rounded-xl bg-gray-100 shadow-lg">
-								<img
-									src={imageUrl(images[selectedImageIndex].image)}
-									alt={product.name}
-									className="w-full h-full object-cover transition-all duration-300"
-								/>
-								{/* Image counter */}
-								{images.length > 1 && (
-									<div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
-										{selectedImageIndex + 1} / {images.length}
+				<div className="max-w-6xl mx-auto">
+					{/* Responsive Layout: Images + Info Side by Side on Desktop */}
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+						{/* Left Column: Image Gallery */}
+						<div className="order-2 lg:order-1">
+							{hasImages && (
+								<div className="space-y-4">
+									{/* Main Image */}
+									<div className="relative aspect-square lg:aspect-video max-h-96 overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+										<img
+											src={imageUrl(images[selectedImageIndex].image)}
+											alt={product.name}
+											className="w-full h-full object-cover transition-all duration-300"
+										/>
+										{/* Image counter */}
+										{images.length > 1 && (
+											<div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
+												{selectedImageIndex + 1} / {images.length}
+											</div>
+										)}
 									</div>
-								)}
-							</div>
 
-							{/* Thumbnail Gallery */}
-							{images.length > 1 && (
-								<div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-									{images.map((image, index) => (
-										<button
-											key={index}
-											onClick={() => setSelectedImageIndex(index)}
-											className={`flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
-												selectedImageIndex === index
-													? "border-green-500 ring-2 ring-green-200 shadow-md"
-													: "border-gray-200 hover:border-gray-400"
-											}`}
-											aria-label={`Ver imagen ${index + 1} de ${product.name}`}
-										>
-											<img
-												src={imageUrl(image.image)}
-												alt={`${product.name} - imagen ${index + 1}`}
-												className="w-full h-full object-cover"
-												loading="lazy"
-											/>
-										</button>
-									))}
+									{/* Thumbnail Gallery */}
+									{images.length > 1 && (
+										<div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+											{images.map((image, index) => (
+												<button
+													key={index}
+													onClick={() => setSelectedImageIndex(index)}
+													className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
+														selectedImageIndex === index
+															? "border-green-500 ring-2 ring-green-200 shadow-md"
+															: "border-gray-200 hover:border-gray-400"
+													}`}
+													aria-label={`Ver imagen ${index + 1} de ${product.name}`}
+												>
+													<img
+														src={imageUrl(image.image)}
+														alt={`${product.name} - imagen ${index + 1}`}
+														className="w-full h-full object-cover"
+														loading="lazy"
+													/>
+												</button>
+											))}
+										</div>
+									)}
 								</div>
 							)}
 						</div>
-					)}
 
-					{/* Product Details Section */}
-					<div className="space-y-6">
-						{/* Header with Name and Price */}
-						<div className="text-center md:text-left">
-							<h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 leading-tight">
-								{product.name}
-							</h3>
-							<div className="text-3xl md:text-4xl font-bold text-green-600 mb-4">
-								{product.price.toFixed(2)} Bs
+						{/* Right Column: Product Details */}
+						<div className="order-1 lg:order-2 space-y-6">
+							{/* Header with Name and Price */}
+							<div className="text-center lg:text-left">
+								<h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+									{product.name}
+								</h3>
+								<div className="text-3xl lg:text-4xl font-bold text-green-600 mb-6">
+									{product.price.toFixed(2)} Bs
+								</div>
 							</div>
-						</div>
 
-						{/* Product Info Grid */}
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							{/* Left Column */}
+							{/* Product Info Grid */}
 							<div className="space-y-4">
 								{/* Barcode */}
 								<div className="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -236,10 +238,7 @@ export default function ProductDetailsModal({
 										{product.stock ?? 0} unidades
 									</span>
 								</div>
-							</div>
 
-							{/* Right Column */}
-							<div className="space-y-4">
 								{/* Brand */}
 								{product.brand && (
 									<div className="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -264,21 +263,21 @@ export default function ProductDetailsModal({
 									</div>
 								)}
 							</div>
-						</div>
 
-						{/* Description */}
-						{product.description && (
-							<div className="border-t pt-6">
-								<h4 className="text-sm font-semibold text-gray-600 mb-3">
-									Descripción:
-								</h4>
-								<div className="bg-gray-50 rounded-lg p-4">
-									<p className="text-gray-700 leading-relaxed whitespace-pre-line">
-										{product.description}
-									</p>
+							{/* Description */}
+							{product.description && (
+								<div className="border-t pt-6">
+									<h4 className="text-sm font-semibold text-gray-600 mb-3">
+										Descripción:
+									</h4>
+									<div className="bg-gray-50 rounded-lg p-4">
+										<p className="text-gray-700 leading-relaxed whitespace-pre-line">
+											{product.description}
+										</p>
+									</div>
 								</div>
-							</div>
-						)}
+							)}
+						</div>
 					</div>
 				</div>
 			}
