@@ -11,6 +11,7 @@ return [
         'backups',
         'sales',
         'users',
+        'orders'
     ],
     'model_names' => [
         'ProductInventory' => 'Inventario',
