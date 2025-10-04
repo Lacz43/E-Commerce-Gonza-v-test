@@ -37,6 +37,10 @@ class ProductsController extends Controller
             $query->where('product_inventories.stock', '>=', $request->query('minStock'));
         }
 
+        if($request->query('whitImages')) {
+            $query->with('images');
+        }
+
         if($request->query('minAvailableStock')) {
             $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as total_ordered FROM order_items oi INNER JOIN orders o ON oi.order_id = o.id WHERE o.status IN ("pending", "paid", "completed") GROUP BY product_id) as ordered'), 'products.id', '=', 'ordered.product_id')
                 ->addSelect(DB::raw('product_inventories.stock - COALESCE(ordered.total_ordered, 0) as available_stock'))
