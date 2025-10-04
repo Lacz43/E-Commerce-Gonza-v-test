@@ -44,6 +44,11 @@ export default function OrdersIndex({
 				valueGetter: (_v, r) => r.user?.name ?? "Anónimo",
 			},
 			{
+				field: "user.email",
+				headerName: "Email",
+				valueGetter: (_v, r) => r.user?.email ?? "Anónimo",
+			},
+			{
 				field: "status",
 				headerName: "Estado",
 				type: "singleSelect",
