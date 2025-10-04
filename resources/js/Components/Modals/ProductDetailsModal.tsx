@@ -1,9 +1,11 @@
+import ModalStyled from "@/Components/Modals/ModalStyled";
+import { imageUrl } from "@/utils";
 import { Button, Skeleton } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import ModalStyled from "@/Components/Modals/ModalStyled";
-import { imageUrl } from "@/utils";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import shoppingCart from "@/shoppingCart";
 
 type ProductDetailsModalProps = {
 	closeModal: () => void;
@@ -41,6 +43,20 @@ export default function ProductDetailsModal({
 			closeModal();
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const addToCart = () => {
+		if (product) {
+			const cart = new shoppingCart();
+			cart.add({
+				id: product.id,
+				default_image: product.default_image,
+				name: product.name,
+				price: product.price,
+				barcode: product.barcode,
+			} as Item);
+			toast.success("Producto añadido al carrito");
 		}
 	};
 	if (loading) {
@@ -283,6 +299,37 @@ export default function ProductDetailsModal({
 			}
 			footer={
 				<div className="flex gap-2">
+					<Button
+						onClick={addToCart}
+						variant="contained"
+						startIcon={<ShoppingCartIcon />}
+						fullWidth
+						sx={{
+							color: "#FFFFFF",
+							textTransform: "none",
+							fontWeight: 600,
+							letterSpacing: ".5px",
+							borderRadius: "1rem",
+							paddingY: 1.2,
+							whiteSpace: "nowrap",
+							background:
+								"linear-gradient(90deg,rgba(255, 124, 10, 1) 12%, rgba(0, 214, 89, 1) 80%, rgba(237, 221, 83, 1) 100%)",
+							boxShadow: "0 4px 14px 0 rgba(13,148,136,.35)",
+							"&:hover": {
+								background:
+									"linear-gradient(90deg,rgba(199, 95, 4, 1) 12%, rgba(0, 186, 78, 1) 80%, rgba(199, 186, 72, 1) 100%)",
+								boxShadow: "0 6px 20px 0 rgba(13,148,136,.45)",
+							},
+							"& .MuiButton-startIcon": { color: "rgba(255,255,255,0.9)" },
+							"&:active": { transform: "translateY(1px)" },
+							"&:focus-visible": {
+								outline: "2px solid #0d9488",
+								outlineOffset: "2px",
+							},
+						}}
+					>
+						Añadir al Carrito
+					</Button>
 					<Button onClick={closeModal} variant="outlined" fullWidth>
 						Cerrar
 					</Button>
