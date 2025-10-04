@@ -10,11 +10,22 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
-type Props = { orders: paginateResponse<Order> };
+type Props = {
+	orders: paginateResponse<Order>;
+	filters: string[];
+	sortables: string[];
+	statuses: Record<string, string>;
+};
 
-export default function OrdersIndex({ orders }: Props) {
+export default function OrdersIndex({
+	orders,
+	filters,
+	sortables,
+	statuses,
+}: Props) {
 	const ordersData = orders;
 	const { openModal } = useModal();
+    console.log(orders.data);
 
 	const handleProcessOrder = useCallback(
 		(orderId: number) => {
@@ -32,7 +43,15 @@ export default function OrdersIndex({ orders }: Props) {
 				headerName: "Usuario",
 				valueGetter: (_v, r) => r.user?.name ?? "Anónimo",
 			},
-			{ field: "status", headerName: "Estado" },
+			{
+				field: "status",
+				headerName: "Estado",
+				type: "singleSelect",
+				valueOptions: Object.entries(statuses ?? {}).map(([key, value]) => ({
+					value: key,
+					label: value,
+				})),
+			},
 			{
 				field: "total",
 				headerName: "Total",
@@ -71,7 +90,7 @@ export default function OrdersIndex({ orders }: Props) {
 				),
 			},
 		],
-		[handleProcessOrder],
+		[handleProcessOrder, statuses],
 	);
 
 	return (
@@ -100,8 +119,8 @@ export default function OrdersIndex({ orders }: Props) {
 									response={ordersData}
 									columns={columns}
 									fill
-									filtersAvailable={["user"]}
-									sortAvailable={["id", "status", "created_at"]}
+									filtersAvailable={filters}
+									sortAvailable={sortables}
 								/>
 							</Suspense>
 						</div>
