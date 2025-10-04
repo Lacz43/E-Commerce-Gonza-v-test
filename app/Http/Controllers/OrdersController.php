@@ -16,8 +16,14 @@ class OrdersController extends Controller
     public function index(Request $request)
     {
         $orders = (new QueryFilters($request))->apply(Order::query()->with(['user', 'orderItems.product']));
+        
+        $filters = Order::getFilterableFields();
+        $sortables = Order::getSortableFields();
+        
         return Inertia::render('Orders/Index', [
             'orders' => $orders,
+            'filters' => $filters,
+            'sortables' => $sortables,
         ]);
     }
 
