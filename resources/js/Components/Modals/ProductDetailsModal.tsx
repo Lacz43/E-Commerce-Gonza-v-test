@@ -1,11 +1,11 @@
-import ModalStyled from "@/Components/Modals/ModalStyled";
-import { imageUrl } from "@/utils";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Button, Skeleton } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ModalStyled from "@/Components/Modals/ModalStyled";
 import shoppingCart from "@/shoppingCart";
+import { imageUrl } from "@/utils";
 
 type ProductDetailsModalProps = {
 	closeModal: () => void;
@@ -14,6 +14,7 @@ type ProductDetailsModalProps = {
 
 type Product = Item & {
 	stock: number;
+	available_stock: number;
 };
 
 export default function ProductDetailsModal({
@@ -32,7 +33,7 @@ export default function ProductDetailsModal({
 		try {
 			setLoading(true);
 			const response = await axios.get(route("products"), {
-				params: { id: productId, whitImages: true },
+				params: { id: productId, whitImages: true, minAvailableStock: 1 },
 			});
 			const productData = response.data.products.data[0];
 			setProduct(productData);
@@ -246,12 +247,12 @@ export default function ProductDetailsModal({
 									</span>
 									<span
 										className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium ${
-											product.stock && product.stock > 0
+											product.available_stock && product.available_stock > 0
 												? "bg-green-100 text-green-800"
 												: "bg-red-100 text-red-800"
 										}`}
 									>
-										{product.stock ?? 0} unidades
+										{product.available_stock ?? 0} unidades
 									</span>
 								</div>
 
