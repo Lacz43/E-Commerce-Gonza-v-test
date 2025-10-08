@@ -31,3 +31,4 @@ require __DIR__.'/user.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/attachments.php';
 require __DIR__.'/orders.php';
+require __DIR__.'/metrics.php';
