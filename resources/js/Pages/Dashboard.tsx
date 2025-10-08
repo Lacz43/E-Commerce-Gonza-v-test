@@ -1,4 +1,11 @@
 import { Head } from "@inertiajs/react";
+import {
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	TextField,
+} from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -11,7 +18,7 @@ interface MetricsData {
 	product_metrics: {
 		movements: Record<
 			string,
-			Array<{ month: string; type: string; total_quantity: number }>
+			Array<{ period: string; type: string; total_quantity: number }>
 		>;
 		total_stock: number;
 		low_stock_products: Array<{ name: string; stock: number }>;
@@ -19,28 +26,39 @@ interface MetricsData {
 	order_metrics: {
 		orders_by_month: Record<
 			string,
-			Array<{ month: string; total_orders: number; status: string }>
+			Array<{ period: string; total_orders: number; status: string }>
 		>;
-		revenue_by_month: Array<{ month: string; total_revenue: number }>;
+		revenue_by_month: Array<{ period: string; total_revenue: number }>;
 	};
 }
 
 export default function Dashboard() {
 	const [metrics, setMetrics] = useState<MetricsData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [period, setPeriod] = useState("monthly");
+	const [startDate, setStartDate] = useState("");
+	const [endDate, setEndDate] = useState("");
 
 	useEffect(() => {
+		const params: any = {};
+		if (period === "custom") {
+			params.start_date = startDate;
+			params.end_date = endDate;
+		} else {
+			params.period = period;
+		}
 		axios
-			.get("/metrics/dashboard")
+			.get("/metrics/dashboard", { params })
 			.then((response) => {
 				setMetrics(response.data);
 				setLoading(false);
+                console.log(response.data);
 			})
 			.catch((error) => {
 				console.error("Error fetching metrics:", error);
 				setLoading(false);
 			});
-	}, []);
+	}, [period, startDate, endDate]);
 
 	if (loading) {
 		return (
@@ -102,6 +120,42 @@ export default function Dashboard() {
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+					{/* Period Selector */}
+					<div className="bg-white shadow-sm sm:rounded-lg p-6">
+						<FormControl fullWidth margin="normal">
+							<InputLabel>Seleccionar Periodo</InputLabel>
+							<Select
+								value={period}
+								label="Seleccionar Periodo"
+								onChange={(e) => setPeriod(e.target.value)}
+							>
+								<MenuItem value="daily">Diario (último día)</MenuItem>
+								<MenuItem value="weekly">Semanal (última semana)</MenuItem>
+								<MenuItem value="monthly">Mensual (último mes)</MenuItem>
+								<MenuItem value="annual">Anual (último año)</MenuItem>
+								<MenuItem value="custom">Personalizado</MenuItem>
+							</Select>
+						</FormControl>
+						{period === "custom" && (
+							<div className="mt-4 flex gap-4">
+								<TextField
+									label="Fecha Inicio"
+									type="date"
+									value={startDate}
+									onChange={(e) => setStartDate(e.target.value)}
+									fullWidth
+								/>
+								<TextField
+									label="Fecha Fin"
+									type="date"
+									value={endDate}
+									onChange={(e) => setEndDate(e.target.value)}
+									fullWidth
+								/>
+							</div>
+						)}
+					</div>
+
 					<MetricsCards
 						totalStock={metrics.product_metrics.total_stock}
 						lowStockProducts={metrics.product_metrics.low_stock_products}
@@ -111,14 +165,17 @@ export default function Dashboard() {
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 						<ProductMovementsChart
 							movements={metrics.product_metrics.movements}
+							period={period}
 						/>
 						<OrdersChart
 							ordersByMonth={metrics.order_metrics.orders_by_month}
+							period={period}
 						/>
 					</div>
 
 					<RevenueChart
 						revenueByMonth={metrics.order_metrics.revenue_by_month}
+						period={period}
 					/>
 				</div>
 			</div>
