@@ -113,7 +113,7 @@ class MetricsController extends Controller
             case 'annual':
                 return '%Y';
             case 'custom':
-                return '%Y-%m'; // default to month for custom
+                return '%Y-%m-%d'; // for custom range, use daily granularity
             default:
                 return '%Y-%m';
         }
@@ -126,7 +126,6 @@ class MetricsController extends Controller
 
         if ($period === 'custom') {
             $start = $request->query('start_date');
-            $end = $request->query('end_date');
             // For custom, we use start_date as start, but in where, we'll use between if needed
             return $start ? \Carbon\Carbon::parse($start) : $now->subMonths(12);
         }
