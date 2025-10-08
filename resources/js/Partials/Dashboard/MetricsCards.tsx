@@ -24,13 +24,6 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({
 				<p className="text-2xl font-bold text-red-600">
 					{lowStockProducts.length}
 				</p>
-				<ul className="mt-2 text-sm text-gray-600">
-					{lowStockProducts.slice(0, 3).map((product) => (
-						<li key={product.name}>
-							{product.name}: {product.stock}
-						</li>
-					))}
-				</ul>
 			</div>
 			<div className="bg-white shadow-sm sm:rounded-lg p-6">
 				<h3 className="text-lg font-medium text-gray-900">Ingresos Totales</h3>
