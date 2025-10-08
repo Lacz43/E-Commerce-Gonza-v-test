@@ -5,7 +5,6 @@ import {
 	Person,
 	Receipt,
 	Settings,
-	ShoppingCart,
 } from "@mui/icons-material";
 import type { JSX } from "react";
 
@@ -27,11 +26,6 @@ export const paths: Record<string, Route> = {
 		path: "dashboard",
 		name: "Principal",
 		icon: <Home />,
-	},
-	ecommerce: {
-		path: "welcome",
-		name: "Ecommerce",
-		icon: <ShoppingCart />,
 	},
 	auth: {
 		path: "",
