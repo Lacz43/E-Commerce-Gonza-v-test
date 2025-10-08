@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\InventoryMovementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,12 @@ class OrdersController extends Controller
         ]);
 
         $order->update(['status' => $request->status]);
+
+        if($request->status === 'completed') {
+            $order->orderItems->each(function ($orderItem) {
+                InventoryMovementService::inventoryMovement($orderItem->product_id, -$orderItem->quantity, Order::class, $orderItem->order_id, Auth::id());
+            });
+        }
 
         return response()->json(['message' => 'Estado actualizado exitosamente']);
     }
