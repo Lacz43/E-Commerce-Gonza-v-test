@@ -33,7 +33,7 @@ export default function ProductDetailsModal({
 		try {
 			setLoading(true);
 			const response = await axios.get(route("products"), {
-				params: { id: productId, whitImages: true, minAvailableStock: 1 },
+				params: { id: productId, whitImages: true, minAvailableStock: 0 },
 			});
 			const productData = response.data.products.data[0];
 			setProduct(productData);
