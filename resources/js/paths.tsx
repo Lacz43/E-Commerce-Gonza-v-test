@@ -94,10 +94,6 @@ export const paths: Record<string, Route> = {
 				path: "users.index",
 				name: "Gestión",
 			},
-			activities: {
-				path: "users.activities",
-				name: "Bitácora",
-			},
 			sessions: {
 				path: "users.sessions",
 				name: "Sesiones",
@@ -119,6 +115,10 @@ export const paths: Record<string, Route> = {
 			backup: {
 				path: "backup.index",
 				name: "Respaldo y Restauracion",
+			},
+			activities: {
+				path: "settings.activities",
+				name: "Bitácora",
 			},
 		},
 	},
