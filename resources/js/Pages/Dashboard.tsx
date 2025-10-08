@@ -9,6 +9,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import LowStockTable from "@/Partials/Dashboard/LowStockTable";
 import MetricsCards from "@/Partials/Dashboard/MetricsCards";
 import OrdersChart from "@/Partials/Dashboard/OrdersChart";
 import ProductMovementsChart from "@/Partials/Dashboard/ProductMovementsChart";
@@ -181,7 +182,14 @@ export default function Dashboard() {
 						period={period}
 					/>
 
-					<TopProductsTable topProducts={metrics.order_metrics.top_products} />
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+						<TopProductsTable
+							topProducts={metrics.order_metrics.top_products}
+						/>
+						<LowStockTable
+							lowStockProducts={metrics.product_metrics.low_stock_products}
+						/>
+					</div>
 				</div>
 			</div>
 		</AuthenticatedLayout>
