@@ -44,6 +44,7 @@ export default function Dashboard() {
 		if (period === "custom") {
 			params.start_date = startDate;
 			params.end_date = endDate;
+            params.period = "custom";
 		} else {
 			params.period = period;
 		}
