@@ -21,7 +21,7 @@ class InventoryMovementController extends Controller
         );
         $modelsName = [
             'ProductInventory' => 'Inventario',
-            'Sale' => 'Ventas',
+            'Order' => 'Ventas',
         ];
         $filtersAvailable = InventoryMovement::getFilterableFields();
         $sortAvailable = InventoryMovement::getSortableFields();
