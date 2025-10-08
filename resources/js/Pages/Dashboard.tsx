@@ -13,6 +13,7 @@ import MetricsCards from "@/Partials/Dashboard/MetricsCards";
 import OrdersChart from "@/Partials/Dashboard/OrdersChart";
 import ProductMovementsChart from "@/Partials/Dashboard/ProductMovementsChart";
 import RevenueChart from "@/Partials/Dashboard/RevenueChart";
+import TopProductsTable from "@/Partials/Dashboard/TopProductsTable";
 
 interface MetricsData {
 	product_metrics: {
@@ -29,6 +30,7 @@ interface MetricsData {
 			Array<{ period: string; total_orders: number; status: string }>
 		>;
 		revenue_by_month: Array<{ period: string; total_revenue: number }>;
+		top_products: Array<{ name: string; total_sold: number }>;
 	};
 }
 
@@ -40,11 +42,11 @@ export default function Dashboard() {
 	const [endDate, setEndDate] = useState("");
 
 	useEffect(() => {
-		const params: any = {};
+		const params: Record<string, string> = {};
 		if (period === "custom") {
 			params.start_date = startDate;
 			params.end_date = endDate;
-            params.period = "custom";
+			params.period = "custom";
 		} else {
 			params.period = period;
 		}
@@ -53,7 +55,7 @@ export default function Dashboard() {
 			.then((response) => {
 				setMetrics(response.data);
 				setLoading(false);
-                console.log(response.data);
+				console.log(response.data);
 			})
 			.catch((error) => {
 				console.error("Error fetching metrics:", error);
@@ -178,6 +180,8 @@ export default function Dashboard() {
 						revenueByMonth={metrics.order_metrics.revenue_by_month}
 						period={period}
 					/>
+
+					<TopProductsTable topProducts={metrics.order_metrics.top_products} />
 				</div>
 			</div>
 		</AuthenticatedLayout>
