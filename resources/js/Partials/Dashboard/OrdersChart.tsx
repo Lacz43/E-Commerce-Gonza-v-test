@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import type React from "react";
 import { Bar } from "react-chartjs-2";
+import { getPeriodLabel } from "@/utils";
 
 ChartJS.register(
 	CategoryScale,
@@ -26,11 +27,12 @@ ChartJS.register(
 interface OrdersChartProps {
 	ordersByMonth: Record<
 		string,
-		Array<{ month: string; total_orders: number; status: string }>
+		Array<{ period: string; total_orders: number; status: string }>
 	>;
+	period: string;
 }
 
-const OrdersChart: React.FC<OrdersChartProps> = ({ ordersByMonth }) => {
+const OrdersChart: React.FC<OrdersChartProps> = ({ ordersByMonth, period }) => {
 	const labels = Object.keys(ordersByMonth);
 	const pendingData = labels.map(
 		(month) =>
@@ -78,7 +80,7 @@ const OrdersChart: React.FC<OrdersChartProps> = ({ ordersByMonth }) => {
 	return (
 		<div className="bg-white shadow-sm sm:rounded-lg p-6">
 			<h3 className="text-lg font-medium text-gray-900 mb-4">
-				Pedidos por Mes
+				Pedidos por {getPeriodLabel(period)}
 			</h3>
 			<Bar data={data} />
 		</div>

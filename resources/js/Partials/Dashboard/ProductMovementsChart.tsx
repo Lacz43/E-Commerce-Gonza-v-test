@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import type React from "react";
 import { Line } from "react-chartjs-2";
+import { getPeriodLabel } from "@/utils";
 
 ChartJS.register(
 	CategoryScale,
@@ -24,18 +25,28 @@ ChartJS.register(
 );
 
 interface ProductMovementsChartProps {
-	movements: Record<string, Array<{ month: string; type: string; total_quantity: number }>>;
+	movements: Record<
+		string,
+		Array<{ period: string; type: string; total_quantity: number }>
+	>;
+	period: string;
 }
 
 const ProductMovementsChart: React.FC<ProductMovementsChartProps> = ({
 	movements,
+	period,
 }) => {
 	const labels = Object.keys(movements);
-	const inData = labels.map((month) =>
-		movements[month].find((item) => item.type === "ingress")?.total_quantity || 0
+	const inData = labels.map(
+		(month) =>
+			movements[month].find((item) => item.type === "ingress")
+				?.total_quantity || 0,
 	);
 	const outData = labels.map((month) =>
-		Math.abs(movements[month].find((item) => item.type === "egress")?.total_quantity || 0)
+		Math.abs(
+			movements[month].find((item) => item.type === "egress")?.total_quantity ||
+				0,
+		),
 	);
 
 	const data = {
@@ -59,7 +70,7 @@ const ProductMovementsChart: React.FC<ProductMovementsChartProps> = ({
 	return (
 		<div className="bg-white shadow-sm sm:rounded-lg p-6">
 			<h3 className="text-lg font-medium text-gray-900 mb-4">
-				Movimientos de Productos
+				Movimientos de Productos por {getPeriodLabel(period)}
 			</h3>
 			<Line data={data} />
 		</div>
