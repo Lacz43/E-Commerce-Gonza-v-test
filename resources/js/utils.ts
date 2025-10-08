@@ -135,3 +135,20 @@ export const isValidUPC = (code: string) => {
 	const checkDigit = (10 - (total % 10)) % 10;
 	return checkDigit === digits[11]; // Último dígito es el verificador
 };
+
+export const getPeriodLabel = (period: string) => {
+	switch (period) {
+		case "daily":
+			return "Día";
+		case "weekly":
+			return "Semana";
+		case "monthly":
+			return "Mes";
+		case "annual":
+			return "Año";
+		case "custom":
+			return "Periodo";
+		default:
+			return "Mes";
+	}
+};
