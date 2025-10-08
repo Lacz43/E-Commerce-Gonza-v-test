@@ -95,9 +95,30 @@ class MetricsController extends Controller
             ->orderBy('period')
             ->get();
 
+        $topProductsQuery = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->whereIn('orders.status', ['completed', 'paid'])
+            ->select(
+                'products.name',
+                DB::raw('SUM(order_items.quantity) as total_sold')
+            )
+            ->groupBy('order_items.product_id', 'products.name')
+            ->orderBy('total_sold', 'desc')
+            ->limit(10);
+
+        if ($period === 'custom') {
+            $topProductsQuery->whereBetween('orders.created_at', [$start, $end]);
+        } else {
+            $topProductsQuery->where('orders.created_at', '>=', $start);
+        }
+
+        $topProducts = $topProductsQuery->get();
+
         return response()->json([
             'orders_by_month' => $ordersByMonth,
             'revenue_by_month' => $revenueByMonth,
+            'top_products' => $topProducts,
         ]);
     }
 
