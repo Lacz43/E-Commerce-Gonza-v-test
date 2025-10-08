@@ -68,7 +68,7 @@ class Product extends Model
     {
         $orderedQuantity = $this->orderItems()
             ->whereHas('order', function ($query) {
-                $query->whereIn('status', ['pending', 'paid', 'completed']);
+                $query->whereIn('status', ['pending', 'paid']);
             })
             ->sum('quantity');
 

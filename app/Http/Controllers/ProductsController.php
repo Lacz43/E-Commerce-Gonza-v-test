@@ -33,7 +33,7 @@ class ProductsController extends Controller
         $query->leftJoin('product_inventories', 'products.id', '=', 'product_inventories.product_id')
             ->select('products.*', 'product_inventories.stock');
 
-        if($request->query('minStock')) {
+        if($request->has('minStock')) {
             $query->where('product_inventories.stock', '>=', $request->query('minStock'));
         }
 
@@ -41,8 +41,8 @@ class ProductsController extends Controller
             $query->with('images');
         }
 
-        if($request->query('minAvailableStock')) {
-            $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as total_ordered FROM order_items oi INNER JOIN orders o ON oi.order_id = o.id WHERE o.status IN ("pending", "paid", "completed") GROUP BY product_id) as ordered'), 'products.id', '=', 'ordered.product_id')
+        if($request->has('minAvailableStock')) {
+            $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as total_ordered FROM order_items oi INNER JOIN orders o ON oi.order_id = o.id WHERE o.status IN ("pending", "paid") GROUP BY product_id) as ordered'), 'products.id', '=', 'ordered.product_id')
                 ->addSelect(DB::raw('product_inventories.stock - COALESCE(ordered.total_ordered, 0) as available_stock'))
                 ->whereRaw('(product_inventories.stock - COALESCE(ordered.total_ordered, 0)) >= ?', [$request->query('minAvailableStock')]);
         }
