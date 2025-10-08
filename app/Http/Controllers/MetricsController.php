@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InventoryMovement;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,16 +13,29 @@ class MetricsController extends Controller
 {
     public function getProductMetrics(Request $request)
     {
-        // Movimientos de inventario por tipo (in/out) agrupados por mes
-        $movements = InventoryMovement::select(
-            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+        $period = $request->query('period', 'monthly');
+        $dateFormat = $this->getDateFormat($period);
+
+        $query = InventoryMovement::select(
+            DB::raw("DATE_FORMAT(created_at, '{$dateFormat}') as period"),
             'type',
             DB::raw('SUM(quantity) as total_quantity')
-        )
-        ->groupBy('month', 'type')
-        ->orderBy('month')
-        ->get()
-        ->groupBy('month');
+        );
+
+        if ($period === 'custom') {
+            $start = $this->getStartDate($request);
+            $end = $this->getEndDate($request);
+            $query->whereBetween('created_at', [$start, $end]);
+        } else {
+            $start = $this->getStartDate($request);
+            $query->where('created_at', '>=', $start);
+        }
+
+        $movements = $query
+            ->groupBy('period', 'type')
+            ->orderBy('period')
+            ->get()
+            ->groupBy('period');
 
         // Stock total actual
         $totalStock = DB::table('product_inventories')->sum('stock');
@@ -42,33 +56,106 @@ class MetricsController extends Controller
 
     public function getOrderMetrics(Request $request)
     {
-        // Pedidos por mes
-        $ordersByMonth = Order::select(
-            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+        $period = $request->query('period', 'monthly');
+        $dateFormat = $this->getDateFormat($period);
+
+        $ordersQuery = Order::select(
+            DB::raw("DATE_FORMAT(created_at, '{$dateFormat}') as period"),
             DB::raw('COUNT(*) as total_orders'),
             'status'
-        )
-        ->groupBy('month', 'status')
-        ->orderBy('month')
-        ->get()
-        ->groupBy('month');
+        );
 
-        // Ingresos por mes (sum de quantity * price en order_items para orders completadas/pagadas)
-        $revenueByMonth = DB::table('orders')
+        $revenueQuery = DB::table('orders')
             ->join('order_items', 'orders.id', '=', 'order_items.order_id')
             ->whereIn('orders.status', ['completed', 'paid'])
             ->select(
-                DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m") as month'),
+                DB::raw("DATE_FORMAT(orders.created_at, '{$dateFormat}') as period"),
                 DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue')
-            )
-            ->groupBy('month')
-            ->orderBy('month')
+            );
+
+        if ($period === 'custom') {
+            $start = $this->getStartDate($request);
+            $end = $this->getEndDate($request);
+            $ordersQuery->whereBetween('created_at', [$start, $end]);
+            $revenueQuery->whereBetween('orders.created_at', [$start, $end]);
+        } else {
+            $start = $this->getStartDate($request);
+            $ordersQuery->where('created_at', '>=', $start);
+            $revenueQuery->where('orders.created_at', '>=', $start);
+        }
+
+        $ordersByMonth = $ordersQuery
+            ->groupBy('period', 'status')
+            ->orderBy('period')
+            ->get()
+            ->groupBy('period');
+
+        $revenueByMonth = $revenueQuery
+            ->groupBy('period')
+            ->orderBy('period')
             ->get();
 
         return response()->json([
             'orders_by_month' => $ordersByMonth,
             'revenue_by_month' => $revenueByMonth,
         ]);
+    }
+
+    private function getDateFormat($period)
+    {
+        switch ($period) {
+            case 'daily':
+                return '%Y-%m-%d';
+            case 'weekly':
+                return '%Y-%U';
+            case 'monthly':
+                return '%Y-%m';
+            case 'annual':
+                return '%Y';
+            case 'custom':
+                return '%Y-%m'; // default to month for custom
+            default:
+                return '%Y-%m';
+        }
+    }
+
+    private function getStartDate($request)
+    {
+        $period = $request->query('period');
+        $now = now();
+
+        if ($period === 'custom') {
+            $start = $request->query('start_date');
+            $end = $request->query('end_date');
+            // For custom, we use start_date as start, but in where, we'll use between if needed
+            return $start ? \Carbon\Carbon::parse($start) : $now->subMonths(12);
+        }
+
+        switch ($period) {
+            case 'daily':
+                return $now->subDays(1);
+            case 'weekly':
+                return $now->subWeeks(1);
+            case 'monthly':
+                return $now->subMonths(1);
+            case 'annual':
+                return $now->subYears(1);
+            default:
+                return $now->subMonths(12);
+        }
+    }
+
+    private function getEndDate($request)
+    {
+        $period = $request->query('period');
+        $now = now();
+
+        if ($period === 'custom') {
+            $end = $request->query('end_date');
+            return $end ? \Carbon\Carbon::parse($end) : $now;
+        }
+
+        return $now;
     }
 
     public function dashboard(Request $request)
