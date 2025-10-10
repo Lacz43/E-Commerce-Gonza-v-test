@@ -349,7 +349,7 @@ export default function BackupAndRestore({ backups }: Props) {
 									columns={Columns}
 									response={backups}
 									filtersAvailable={false}
-									sortAvailable={false}
+									sortAvailable={["lastModified", "size"]}
 									fill
 								/>
 							</Suspense>

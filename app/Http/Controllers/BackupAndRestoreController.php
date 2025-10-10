@@ -45,7 +45,23 @@ class BackupAndRestoreController extends Controller
             });
         }
 
-        $backups = $backups->sortByDesc('lastModified'); // ordenamos por fecha de modificacion
+        // Aplicar ordenamiento dinámico
+        $sort = $request->get('sort', []);
+        $sortBy = $sort['field'] ?? 'lastModified';
+        $sortOrder = $sort['order'] ?? 'desc';
+
+        // Solo permitir ordenamiento por campos disponibles
+        $allowedSortFields = ['lastModified', 'name', 'size'];
+        if (in_array($sortBy, $allowedSortFields)) {
+            if ($sortOrder === 'desc') {
+                $backups = $backups->sortByDesc($sortBy);
+            } else {
+                $backups = $backups->sortBy($sortBy);
+            }
+        } else {
+            // Ordenamiento por defecto
+            $backups = $backups->sortByDesc('lastModified');
+        }
 
         $perPage = $request->get('perPage', 20);
         $currentPage = $request->get('page', 1);
