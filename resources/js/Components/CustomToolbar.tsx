@@ -13,12 +13,13 @@ import {
 	Toolbar,
 	ToolbarButton,
 } from "@mui/x-data-grid";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function CustomToolbar() {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [search, setSearch] = useState("");
+	const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		const url = new URL(window.location.href);
@@ -26,9 +27,25 @@ function CustomToolbar() {
 		setSearch(currentSearch);
 	}, []);
 
-	const handleSearchChange = useCallback(
-		(value: string) => {
-			setSearch(value);
+	// Cleanup timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (debounceRef.current) {
+				clearTimeout(debounceRef.current);
+			}
+		};
+	}, []);
+
+	const handleSearchChange = useCallback((value: string) => {
+		setSearch(value);
+
+		// Clear existing timeout
+		if (debounceRef.current) {
+			clearTimeout(debounceRef.current);
+		}
+
+		// Set new timeout for debounced search
+		debounceRef.current = setTimeout(() => {
 			const url = new URL(window.location.href);
 			if (value) {
 				url.searchParams.set("search", value);
@@ -40,9 +57,8 @@ function CustomToolbar() {
 				preserveScroll: true,
 				replace: true,
 			});
-		},
-		[],
-	);
+		}, 500); // 500ms debounce delay
+	}, []);
 
 	return (
 		<Toolbar>
