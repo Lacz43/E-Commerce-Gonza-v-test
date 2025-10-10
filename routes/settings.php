@@ -1,7 +1,14 @@
 <?php
 
 use App\Http\Controllers\BackupAndRestoreController;
+use App\Http\Controllers\GeneralSettingsController;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth', 'permission:edit settings')->group(function () {
+    Route::get('/settings/general', [GeneralSettingsController::class, 'index'])->name('settings.general');
+    Route::post('/settings/general', [GeneralSettingsController::class, 'update'])->name('settings.general.update');
+    Route::delete('/settings/general/logo', [GeneralSettingsController::class, 'deleteLogo'])->name('settings.general.logo.delete');
+});
 
 Route::middleware('auth', 'permission:show backups')->group(function () {
     Route::get('/settings/backup/index', [BackupAndRestoreController::class, 'index'])->name('backup.index');
