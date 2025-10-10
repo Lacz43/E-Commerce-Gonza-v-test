@@ -12,6 +12,8 @@ use Spatie\LaravelSettings\Settings;
  * company_address: dirección de la empresa
  * company_rif: RIF de la empresa
  * company_email: email de la empresa
+ * currency: moneda utilizada (USD o VES)
+ * reference_price: precio de referencia (ej. tasa de cambio)
  */
 class GeneralSettings extends Settings
 {
@@ -21,6 +23,8 @@ class GeneralSettings extends Settings
     public ?string $company_address = null;
     public ?string $company_rif = null;
     public ?string $company_email = null;
+    public string $currency = 'VES';
+    public ?float $reference_price = null;
 
     public static function group(): string
     {
