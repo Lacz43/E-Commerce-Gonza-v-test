@@ -20,7 +20,7 @@ class ProductsController extends Controller
 {
     public function index(Request $request)
     {
-        $products = (new QueryFilters($request))->apply(Product::query());
+        $products = (new QueryFilters($request))->apply(Product::query()->with(['defaultImage:product_id,image']));
         $filtersFields = Product::getFilterableFields();
         $sortFields = Product::getSortableFields();
         return Inertia::render('Products/Index', ['products' => $products, 'filtersFields' => $filtersFields, 'sortFields' => $sortFields]);
