@@ -31,7 +31,7 @@ interface MetricsData {
 			Array<{ period: string; total_orders: number; status: string }>
 		>;
 		revenue_by_month: Array<{ period: string; total_revenue: number }>;
-		top_products: Array<{ name: string; total_sold: number }>;
+		top_products: Array<{ name: string; total_sold: number; image?: string }>;
 	};
 }
 

@@ -1,7 +1,8 @@
 import type React from "react";
+import { imageUrl } from "@/utils";
 
 interface TopProductsTableProps {
-	topProducts: Array<{ name: string; total_sold: number }>;
+	topProducts: Array<{ name: string; total_sold: number; image?: string }>;
 }
 
 const TopProductsTable: React.FC<TopProductsTableProps> = ({ topProducts }) => {
@@ -18,6 +19,9 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({ topProducts }) => {
 						<thead className="bg-gray-50">
 							<tr>
 								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Imagen
+								</th>
+								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 									Producto
 								</th>
 								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -26,8 +30,19 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({ topProducts }) => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{topProducts.map((product, index) => (
+							{topProducts.map((product) => (
 								<tr key={product.name}>
+									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+										<img
+											src={
+												product.image
+													? imageUrl(product.image)
+													: "/placeholder-product.png"
+											}
+											alt={product.name}
+											className="w-12 h-12 object-cover rounded"
+										/>
+									</td>
 									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 										{product.name}
 									</td>
