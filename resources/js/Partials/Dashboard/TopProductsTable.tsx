@@ -41,6 +41,7 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({ topProducts }) => {
 											}
 											alt={product.name}
 											className="w-12 h-12 object-cover rounded"
+											loading="lazy"
 										/>
 									</td>
 									<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

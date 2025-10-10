@@ -28,6 +28,7 @@ const renderImageCell = (params: { row: Item }) => (
 		}
 		alt={params.row.name}
 		style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
+		loading="lazy"
 	/>
 );
 
