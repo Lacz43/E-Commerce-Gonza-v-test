@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Session extends Model
 {
+    use LogsActivity;
     protected $table = 'sessions';
 
     public $timestamps = false;
@@ -55,5 +58,13 @@ class Session extends Model
             'last_activity',
             'user_id',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['user_id', 'ip_address', 'user_agent', 'last_activity'])
+            ->logOnlyDirty()
+            ->dontLogIfAttributesChangedOnly(['updated_at']);
     }
 }

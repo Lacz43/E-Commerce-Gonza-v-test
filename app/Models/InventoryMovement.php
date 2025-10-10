@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class InventoryMovement extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'product_inventory_id',
@@ -85,5 +88,13 @@ class InventoryMovement extends Model
             'type',
             'created_at',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['product_inventory_id', 'quantity', 'previous_stock', 'type', 'model_type', 'model_id', 'user_id', 'controller_name'])
+            ->logOnlyDirty()
+            ->dontLogIfAttributesChangedOnly(['updated_at']);
     }
 }

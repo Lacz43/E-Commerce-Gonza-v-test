@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ProductImage extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = ['image', 'default', 'product_id'];
 
@@ -46,5 +49,13 @@ class ProductImage extends Model
             ]);
         }
 
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['image', 'default', 'product_id'])
+            ->logOnlyDirty()
+            ->dontLogIfAttributesChangedOnly(['updated_at']);
     }
 }

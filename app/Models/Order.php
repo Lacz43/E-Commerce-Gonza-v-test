@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Order extends Model
 {
     use HasFactory;
     use \App\Models\Traits\FilterableAndSortable;
+    use LogsActivity;
 
     protected $fillable = ['user_id', 'status'];
 
@@ -65,5 +68,13 @@ class Order extends Model
             'status',
             'user.name',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['user_id', 'status'])
+            ->logOnlyDirty()
+            ->dontLogIfAttributesChangedOnly(['updated_at']);
     }
 }
