@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductCategoryRequest;
 use App\Models\ProductCategory;
+use App\Services\QueryFilters;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,9 +21,17 @@ class ProductCategoryController extends Controller
 
     public function index(Request $request)
     {
-        $categories = ProductCategory::paginate($request->query("perPage", 20));
+        $categories = (new QueryFilters($request))->apply(
+            ProductCategory::query()
+        );
+
+        $filtersAvailable = ProductCategory::getFilterableFields();
+        $sortAvailable = ProductCategory::getSortableFields();
+        
         return Inertia::render('Products/Categories/Index', [
-            'categories' => $categories
+            'categories' => $categories,
+            'filtersAvailable' => $filtersAvailable,
+            'sortAvailable' => $sortAvailable,
         ]);
     }
 

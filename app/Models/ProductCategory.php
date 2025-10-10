@@ -15,6 +15,43 @@ class ProductCategory extends Model
 
     protected $fillable = ['name', 'created_by'];
 
+    /**
+     * Campos permitidos para filtrado
+     */
+    public static function getFilterableFields(): array
+    {
+        return [
+            'id',
+            'name',
+            'created_by',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    /**
+     * Campos permitidos para ordenamiento
+     */
+    public static function getSortableFields(): array
+    {
+        return [
+            'id',
+            'name',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    /**
+     * Campos permitidos para búsqueda
+     */
+    public static function getSearchableFields(): array
+    {
+        return [
+            'name',
+        ];
+    }
+
     public static function createOrReadCategory(string $categoryName)
     {
         $user = Auth::user();
