@@ -14,9 +14,15 @@ const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
 
 type Props = {
 	categories: paginateResponse<Item>;
+	filtersAvailable: string[];
+	sortAvailable: string[];
 };
 
-export default function Products({ categories }: Props) {
+export default function Products({
+	categories,
+	filtersAvailable,
+	sortAvailable,
+}: Props) {
 	console.log(categories);
 	const { openModal, closeModal } = useModal();
 
@@ -127,6 +133,8 @@ export default function Products({ categories }: Props) {
 							>
 								<DataTable
 									response={categories}
+									filtersAvailable={filtersAvailable}
+									sortAvailable={sortAvailable}
 									columns={columns}
 									onDelete={onDeleteConfig}
 									onEdit={onEditConfig}
