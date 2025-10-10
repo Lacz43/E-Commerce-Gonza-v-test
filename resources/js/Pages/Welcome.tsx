@@ -2,7 +2,7 @@ import ProductCard from "@/Components/ProductCard";
 import Ecommerce from "@/Layouts/EcommerceLayout";
 import "../../css/welcome.css";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type {
 	GenericInfiniteScroll,
 	InfiniteScrollProps,
@@ -29,6 +29,12 @@ function InfiniteScroll<T, K extends string>(props: InfiniteScrollProps<T, K>) {
 
 export default function Welcome() {
 	const { settings } = useGeneralSettings();
+	const [searchParams, setSearchParams] = useState<{
+		search?: string;
+		id?: string;
+		barcode?: string;
+		name?: string;
+	}>({});
 
 	function addToCart(item: Item) {
 		const cart = new shoppingCart();
@@ -94,16 +100,21 @@ export default function Welcome() {
 			</div>
 
 			<div id="productos" className="content mx-5 sm:mx-0 w-full scroll-mt-10">
-				<InputProductSearch className="mx-auto bg-white" />
+				<InputProductSearch
+					className="mx-auto bg-white"
+					onSearchChange={setSearchParams}
+				/>
 				<Suspense>
 					<InfiniteScroll<Item, "products">
 						url={route("products", {
 							minStock: 1,
 							useImage: true,
 							minAvailableStock: 1,
+							...searchParams,
 						})}
 						className="my-5 mx-2 grid grid-cols-[repeat(auto-fill,minmax(20rem,_1fr))] gap-4"
 						transformResponse={(res) => res.products}
+						key={JSON.stringify(searchParams)} // Forzar re-render cuando cambien los parámetros
 					>
 						{{
 							card: (item) => (
