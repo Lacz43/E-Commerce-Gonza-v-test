@@ -7,6 +7,8 @@ import {
 	Card,
 	CardContent,
 	CardHeader,
+	MenuItem,
+	Select,
 	TextField,
 	Tooltip,
 	Typography,
@@ -35,6 +37,8 @@ type GeneralSettings = {
 	company_address: string;
 	company_rif: string;
 	company_email: string;
+	currency: string;
+	reference_price: number;
 };
 
 /*
@@ -53,6 +57,8 @@ type FormStructure = {
 	company_address: string;
 	company_rif: string;
 	company_email: string;
+	currency: string;
+	reference_price: string;
 };
 
 // INFO: Props: propiedades que recibe el componente
@@ -81,6 +87,8 @@ export default function Index({ settings }: Props) {
 			company_address: settings.company_address,
 			company_rif: settings.company_rif,
 			company_email: settings.company_email,
+			currency: settings.currency || "VES",
+			reference_price: settings.reference_price?.toString() || "",
 		},
 	});
 
@@ -126,6 +134,8 @@ export default function Index({ settings }: Props) {
 				company_address: data.company_address,
 				company_rif: data.company_rif,
 				company_email: data.company_email,
+				currency: data.currency,
+				reference_price: data.reference_price,
 			});
 
 			const response = await axios.post(
@@ -213,7 +223,8 @@ export default function Index({ settings }: Props) {
 														required: "El teléfono es requerido",
 														pattern: {
 															value: /^0[24][0-9]{2}-?[0-9]{7}$/,
-															message: "Formato de teléfono inválido (ej: 0412-1234567)",
+															message:
+																"Formato de teléfono inválido (ej: 0412-1234567)",
 														},
 													})}
 													error={!!errors.company_phone}
@@ -280,6 +291,46 @@ export default function Index({ settings }: Props) {
 													helperText={errors.company_rif?.message}
 												/>
 											</Tooltip>
+										</Box>
+									</Box>
+
+									<Box
+										sx={{
+											display: "grid",
+											gap: 2,
+											gridTemplateColumns: "repeat(12, 1fr)",
+										}}
+									>
+										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
+											<TextField
+												select
+												label="Moneda"
+												fullWidth
+												{...register("currency", {
+													required: "La moneda es requerida",
+												})}
+												error={!!errors.currency}
+												helperText={errors.currency?.message}
+											>
+												<MenuItem value="USD">Dólares (USD)</MenuItem>
+												<MenuItem value="VES">Bolívares (VES)</MenuItem>
+											</TextField>
+										</Box>
+										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
+											<TextField
+												label="Precio de Referencia"
+												type="number"
+												fullWidth
+												{...register("reference_price", {
+													required: "El precio de referencia es requerido",
+													min: {
+														value: 1,
+														message: "El precio debe ser mayor o igual a 1",
+													},
+												})}
+												error={!!errors.reference_price}
+												helperText={errors.reference_price?.message}
+											/>
 										</Box>
 									</Box>
 
