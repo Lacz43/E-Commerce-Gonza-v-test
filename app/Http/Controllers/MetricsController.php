@@ -98,12 +98,17 @@ class MetricsController extends Controller
         $topProductsQuery = DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('products.id', '=', 'product_images.product_id')
+                     ->where('product_images.default', '=', 1);
+            })
             ->whereIn('orders.status', ['completed', 'paid'])
             ->select(
                 'products.name',
-                DB::raw('SUM(order_items.quantity) as total_sold')
+                DB::raw('SUM(order_items.quantity) as total_sold'),
+                'product_images.image'
             )
-            ->groupBy('order_items.product_id', 'products.name')
+            ->groupBy('order_items.product_id', 'products.name', 'product_images.image')
             ->orderBy('total_sold', 'desc')
             ->limit(10);
 
