@@ -1,5 +1,3 @@
-// import { router } from "@inertiajs/react";
-
 import ProductCard from "@/Components/ProductCard";
 import Ecommerce from "@/Layouts/EcommerceLayout";
 import "../../css/welcome.css";
@@ -10,7 +8,9 @@ import type {
 	InfiniteScrollProps,
 } from "@/Components/InfiniteScroll";
 import InputProductSearch from "@/Components/InputProductSearch";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import shoppingCart from "@/shoppingCart";
+import { imageUrl } from "@/utils";
 
 // Importar InfiniteScroll de manera dinamica
 const _InfiniteScroll = lazy(
@@ -28,6 +28,8 @@ function InfiniteScroll<T, K extends string>(props: InfiniteScrollProps<T, K>) {
 }
 
 export default function Welcome() {
+	const { settings } = useGeneralSettings();
+
 	function addToCart(item: Item) {
 		const cart = new shoppingCart();
 		cart.add(item);
@@ -50,14 +52,25 @@ export default function Welcome() {
 
 	return (
 		<Ecommerce>
-			<title>Gonza</title>
+			<title>{settings.company_name}</title>
 			<div
 				className="relative flex flex-col items-center justify-center text-center px-4 overflow-hidden"
 				style={{ minHeight: "calc(100vh - var(--navbar-h, 0px))" }} // Establecer la altura mínima restante
 			>
 				<div className="relative max-w-3xl mt-auto">
+					{/* Logo de la empresa */}
+					{settings.company_logo_url && (
+						<div className="flex justify-center mb-3">
+							<img
+								src={imageUrl(settings.company_logo_url)}
+								alt={`Logo de ${settings.company_name}`}
+								className="h-40 w-40 md:h-60 md:w-60 object-contain drop-shadow-lg"
+							/>
+						</div>
+					)}
+
 					<h1 className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-orange-500 to-emerald-600 bg-clip-text text-transparent drop-shadow-sm">
-						Gonza
+						{settings.company_name}
 					</h1>
 					<p className="mt-6 text-xl md:text-2xl font-light text-slate-600 leading-relaxed">
 						La mejor opción para realizar tus compras con rapidez, variedad y
