@@ -1,221 +1,187 @@
 import * as React from "react";
+import axios from "axios";
 import TextField from "@mui/material/TextField";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 
-const filter = createFilterOptions<FilmOptionType>();
+// Función debounce nativa con método cancel
+function debounce(
+	func: (query: string) => Promise<void>,
+	wait: number,
+): ((query: string) => void) & { cancel: () => void } {
+	let timeout: NodeJS.Timeout;
+	const debounced = (query: string) => {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
+			func(query);
+		}, wait);
+	};
+	debounced.cancel = () => {
+		clearTimeout(timeout);
+	};
+	return debounced;
+}
 
-export default function FreeSoloCreateOption({
+interface ProductOption {
+	id: number;
+	name: string;
+	barcode?: string;
+}
+
+interface InputProductSearchProps extends React.HTMLAttributes<HTMLElement> {
+	onSearchChange?: (searchParams: {
+		search?: string;
+		id?: string;
+		barcode?: string;
+		name?: string;
+	}) => void;
+}
+
+export default function InputProductSearch({
 	className,
-}: React.HTMLAttributes<HTMLElement>) {
-	const [value, setValue] = React.useState<FilmOptionType | null>(null);
+	onSearchChange,
+}: InputProductSearchProps) {
+	const [searchTerm, setSearchTerm] = React.useState("");
+	const [options, setOptions] = React.useState<ProductOption[]>([]);
+	const [loading, setLoading] = React.useState(false);
+
+	// Función debounced para buscar productos
+	const searchProducts = React.useMemo(
+		() =>
+			debounce(async (query: string) => {
+				if (query.length < 2) {
+					setOptions([]);
+					onSearchChange?.({});
+					return;
+				}
+
+				setLoading(true);
+				try {
+					const response = await axios.get(route("products"), {
+						params: {
+							search: query,
+							perPage: 10,
+							minStock: 1,
+							useImage: true,
+							minAvailableStock: 1,
+						},
+					});
+
+					const products = response.data.products.data || [];
+					setOptions(
+						products.map(
+							(product: { id: number; name: string; barcode?: string }) => ({
+								id: product.id,
+								name: product.name,
+								barcode: product.barcode,
+							}),
+						),
+					);
+
+					// Notificar al componente padre sobre el cambio de búsqueda
+					onSearchChange?.({ search: query });
+				} catch (error) {
+					console.error("Error searching products:", error);
+					setOptions([]);
+				} finally {
+					setLoading(false);
+				}
+			}, 500),
+		[onSearchChange],
+	);
+
+	React.useEffect(() => {
+		searchProducts(searchTerm);
+		return () => {
+			searchProducts.cancel();
+		};
+	}, [searchTerm, searchProducts]);
+
+	const handleInputChange = (
+		_event: React.SyntheticEvent,
+		newInputValue: string,
+	) => {
+		setSearchTerm(newInputValue);
+	};
+
+	const handleOptionSelect = (
+		_event: React.SyntheticEvent,
+		selectedOption: ProductOption | string | null,
+	) => {
+		if (selectedOption && typeof selectedOption === "object") {
+			// Si se selecciona un producto específico del dropdown, buscar por ID
+			onSearchChange?.({ id: selectedOption.id.toString() });
+		} else {
+			// Si se selecciona una opción "free solo" o se limpia la selección, hacer búsqueda general
+			const searchValue =
+				typeof selectedOption === "string" ? selectedOption : searchTerm;
+			onSearchChange?.(searchValue ? { search: searchValue } : {});
+		}
+	};
 
 	return (
 		<Autocomplete
 			className={className}
-			value={value}
-			onChange={(_event, newValue) => {
-				if (typeof newValue === "string") {
-					setValue({
-						title: newValue,
-					});
-				} else if (newValue && newValue.inputValue) {
-					// Create a new value from the user input
-					setValue({
-						title: newValue.inputValue,
-					});
-				} else {
-					setValue(newValue);
-				}
-			}}
-			filterOptions={(options, params) => {
-				const filtered = filter(options, params);
-
-				const { inputValue } = params;
-				// Suggest the creation of a new value
-				const isExisting = options.some(
-					(option) => inputValue === option.title,
-				);
-				if (inputValue !== "" && !isExisting) {
-					filtered.push({
-						inputValue,
-						title: `Añadir "${inputValue}"`,
-					});
-				}
-
-				return filtered;
-			}}
-			selectOnFocus
-			clearOnBlur
-			handleHomeEndKeys
-			id="search-products"
-			options={top100Films}
+			options={options}
 			getOptionLabel={(option) => {
-				// Value selected with enter, right from the input
+				// Si es un string (free solo), devolver el string
 				if (typeof option === "string") {
 					return option;
 				}
-				// Add "xxx" option created dynamically
-				if (option.inputValue) {
-					return option.inputValue;
-				}
-				// Regular option
-				return option.title;
+				// Si es un objeto ProductOption, devolver el nombre
+				return option.name;
 			}}
+			onInputChange={handleInputChange}
+			onChange={handleOptionSelect}
+			loading={loading}
+			freeSolo={true}
+			renderInput={(params) => (
+				<TextField
+					{...params}
+					label="Buscar Productos"
+					placeholder="Escribe para buscar productos..."
+					InputProps={{
+						...params.InputProps,
+						endAdornment: (
+							<>
+								{loading ? (
+									<div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full" />
+								) : null}
+								{params.InputProps.endAdornment}
+							</>
+						),
+					}}
+				/>
+			)}
 			renderOption={(props, option) => {
 				const { key, ...optionProps } = props;
 				return (
 					<li key={key} {...optionProps}>
-						{option.title}
+						<div className="flex flex-col">
+							<span className="font-medium">
+								{typeof option === "string" ? option : option.name}
+							</span>
+							{typeof option === "object" && option.barcode && (
+								<span className="text-sm text-gray-500">
+									Código: {option.barcode}
+								</span>
+							)}
+						</div>
 					</li>
 				);
 			}}
+			noOptionsText={
+				searchTerm.length < 2
+					? "Escribe al menos 2 caracteres"
+					: "No se encontraron productos"
+			}
 			sx={{
 				width: "100%",
-                maxWidth: 500,
+				maxWidth: 500,
 				borderRadius: "20px",
-				"& .MuiOutlinedInput-root": { // modificar estilos de MUI
+				"& .MuiOutlinedInput-root": {
 					borderRadius: "20px",
 				},
 			}}
-			freeSolo
-			renderInput={(params) => (
-				<TextField {...params} label="Buscar Productos" />
-			)}
 		/>
 	);
 }
-
-interface FilmOptionType {
-	inputValue?: string;
-	title: string;
-	year?: number;
-}
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films: readonly FilmOptionType[] = [
-	{ title: "The Shawshank Redemption", year: 1994 },
-	{ title: "The Godfather", year: 1972 },
-	{ title: "The Godfather: Part II", year: 1974 },
-	{ title: "The Dark Knight", year: 2008 },
-	{ title: "12 Angry Men", year: 1957 },
-	{ title: "Schindler's List", year: 1993 },
-	{ title: "Pulp Fiction", year: 1994 },
-	{
-		title: "The Lord of the Rings: The Return of the King",
-		year: 2003,
-	},
-	{ title: "The Good, the Bad and the Ugly", year: 1966 },
-	{ title: "Fight Club", year: 1999 },
-	{
-		title: "The Lord of the Rings: The Fellowship of the Ring",
-		year: 2001,
-	},
-	{
-		title: "Star Wars: Episode V - The Empire Strikes Back",
-		year: 1980,
-	},
-	{ title: "Forrest Gump", year: 1994 },
-	{ title: "Inception", year: 2010 },
-	{
-		title: "The Lord of the Rings: The Two Towers",
-		year: 2002,
-	},
-	{ title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-	{ title: "Goodfellas", year: 1990 },
-	{ title: "The Matrix", year: 1999 },
-	{ title: "Seven Samurai", year: 1954 },
-	{
-		title: "Star Wars: Episode IV - A New Hope",
-		year: 1977,
-	},
-	{ title: "City of God", year: 2002 },
-	{ title: "Se7en", year: 1995 },
-	{ title: "The Silence of the Lambs", year: 1991 },
-	{ title: "It's a Wonderful Life", year: 1946 },
-	{ title: "Life Is Beautiful", year: 1997 },
-	{ title: "The Usual Suspects", year: 1995 },
-	{ title: "Léon: The Professional", year: 1994 },
-	{ title: "Spirited Away", year: 2001 },
-	{ title: "Saving Private Ryan", year: 1998 },
-	{ title: "Once Upon a Time in the West", year: 1968 },
-	{ title: "American History X", year: 1998 },
-	{ title: "Interstellar", year: 2014 },
-	{ title: "Casablanca", year: 1942 },
-	{ title: "City Lights", year: 1931 },
-	{ title: "Psycho", year: 1960 },
-	{ title: "The Green Mile", year: 1999 },
-	{ title: "The Intouchables", year: 2011 },
-	{ title: "Modern Times", year: 1936 },
-	{ title: "Raiders of the Lost Ark", year: 1981 },
-	{ title: "Rear Window", year: 1954 },
-	{ title: "The Pianist", year: 2002 },
-	{ title: "The Departed", year: 2006 },
-	{ title: "Terminator 2: Judgment Day", year: 1991 },
-	{ title: "Back to the Future", year: 1985 },
-	{ title: "Whiplash", year: 2014 },
-	{ title: "Gladiator", year: 2000 },
-	{ title: "Memento", year: 2000 },
-	{ title: "The Prestige", year: 2006 },
-	{ title: "The Lion King", year: 1994 },
-	{ title: "Apocalypse Now", year: 1979 },
-	{ title: "Alien", year: 1979 },
-	{ title: "Sunset Boulevard", year: 1950 },
-	{
-		title:
-			"Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
-		year: 1964,
-	},
-	{ title: "The Great Dictator", year: 1940 },
-	{ title: "Cinema Paradiso", year: 1988 },
-	{ title: "The Lives of Others", year: 2006 },
-	{ title: "Grave of the Fireflies", year: 1988 },
-	{ title: "Paths of Glory", year: 1957 },
-	{ title: "Django Unchained", year: 2012 },
-	{ title: "The Shining", year: 1980 },
-	{ title: "WALL·E", year: 2008 },
-	{ title: "American Beauty", year: 1999 },
-	{ title: "The Dark Knight Rises", year: 2012 },
-	{ title: "Princess Mononoke", year: 1997 },
-	{ title: "Aliens", year: 1986 },
-	{ title: "Oldboy", year: 2003 },
-	{ title: "Once Upon a Time in America", year: 1984 },
-	{ title: "Witness for the Prosecution", year: 1957 },
-	{ title: "Das Boot", year: 1981 },
-	{ title: "Citizen Kane", year: 1941 },
-	{ title: "North by Northwest", year: 1959 },
-	{ title: "Vertigo", year: 1958 },
-	{
-		title: "Star Wars: Episode VI - Return of the Jedi",
-		year: 1983,
-	},
-	{ title: "Reservoir Dogs", year: 1992 },
-	{ title: "Braveheart", year: 1995 },
-	{ title: "M", year: 1931 },
-	{ title: "Requiem for a Dream", year: 2000 },
-	{ title: "Amélie", year: 2001 },
-	{ title: "A Clockwork Orange", year: 1971 },
-	{ title: "Like Stars on Earth", year: 2007 },
-	{ title: "Taxi Driver", year: 1976 },
-	{ title: "Lawrence of Arabia", year: 1962 },
-	{ title: "Double Indemnity", year: 1944 },
-	{
-		title: "Eternal Sunshine of the Spotless Mind",
-		year: 2004,
-	},
-	{ title: "Amadeus", year: 1984 },
-	{ title: "To Kill a Mockingbird", year: 1962 },
-	{ title: "Toy Story 3", year: 2010 },
-	{ title: "Logan", year: 2017 },
-	{ title: "Full Metal Jacket", year: 1987 },
-	{ title: "Dangal", year: 2016 },
-	{ title: "The Sting", year: 1973 },
-	{ title: "2001: A Space Odyssey", year: 1968 },
-	{ title: "Singin' in the Rain", year: 1952 },
-	{ title: "Toy Story", year: 1995 },
-	{ title: "Bicycle Thieves", year: 1948 },
-	{ title: "The Kid", year: 1921 },
-	{ title: "Inglourious Basterds", year: 2009 },
-	{ title: "Snatch", year: 2000 },
-	{ title: "3 Idiots", year: 2009 },
-	{ title: "Monty Python and the Holy Grail", year: 1975 },
-];
