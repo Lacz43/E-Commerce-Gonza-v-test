@@ -26,7 +26,12 @@ class Product extends Model
 
     public static function getSortableFields(): array
     {
-        return ['id', 'name', 'barcode', 'category_id', 'price'];
+        return ['id', 'name', 'category_id', 'price'];
+    }
+
+    public static function getSearchableFields(): array
+    {
+        return ['id', 'name' ];
     }
 
     public function images(): HasMany
