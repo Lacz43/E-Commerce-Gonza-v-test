@@ -12,10 +12,23 @@ import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { imageUrl } from "@/utils";
 import ModalCreate from "./Partials/ModalCreate";
 import ModalEdit from "./Partials/ModalEdit";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
+
+const renderImageCell = (params: { row: Item }) => (
+	<img
+		src={
+			params.row.default_image?.image
+				? imageUrl(params.row.default_image.image)
+				: "/placeholder-product.png"
+		}
+		alt={params.row.name}
+		style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
+	/>
+);
 
 type InventoryItem = Item & { stock?: number };
 
@@ -35,6 +48,12 @@ export default function InventoryIndex({ products }: Props) {
 		() => [
 			{ field: "id", headerName: "ID", type: "number" },
 			{ field: "name", headerName: "Producto" },
+			{
+				field: "default_image",
+				headerName: "Imagen",
+				width: 100,
+				renderCell: renderImageCell,
+			},
 			{ field: "barcode", headerName: "Código de Barras" },
 			{
 				field: "product_inventory",
@@ -49,7 +68,13 @@ export default function InventoryIndex({ products }: Props) {
 
 	const openModalEdit = useCallback(
 		(id?: number) => {
-			openModal(({ closeModal }) => id ? <ModalEdit onClose={closeModal} id={id} /> : <ModalCreate onClose={closeModal} />);
+			openModal(({ closeModal }) =>
+				id ? (
+					<ModalEdit onClose={closeModal} id={id} />
+				) : (
+					<ModalCreate onClose={closeModal} />
+				),
+			);
 		},
 		[openModal],
 	);
