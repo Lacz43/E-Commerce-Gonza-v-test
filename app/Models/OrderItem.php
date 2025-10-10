@@ -20,6 +20,51 @@ class OrderItem extends Model
         'price' => 'decimal:2',
     ];
 
+    /**
+     * Campos permitidos para filtrado
+     */
+    public static function getFilterableFields(): array
+    {
+        return [
+            'id',
+            'order_id',
+            'product_id',
+            'quantity',
+            'price',
+            'created_at',
+            'updated_at',
+            'order',
+            'product',
+            'product.name',
+        ];
+    }
+
+    /**
+     * Campos permitidos para ordenamiento
+     */
+    public static function getSortableFields(): array
+    {
+        return [
+            'id',
+            'order_id',
+            'product_id',
+            'quantity',
+            'price',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    /**
+     * Campos permitidos para búsqueda
+     */
+    public static function getSearchableFields(): array
+    {
+        return [
+            'product.name',
+        ];
+    }
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
