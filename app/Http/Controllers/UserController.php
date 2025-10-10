@@ -117,11 +117,35 @@ class UserController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         if (!empty($validated['password'])) {
-            $user->password = $validated['password']; 
+            $user->password = $validated['password'];
         }
         $user->save();
 
+        // Prevenir cambio de roles para el propio usuario o usuario principal
         if (array_key_exists('role', $validated)) {
+            $currentRoleId = $user->roles->first()?->id;
+
+            // Solo bloquear si realmente se está cambiando el rol
+            $roleChanging = $currentRoleId !== $validated['role'];
+
+            if ($roleChanging) {
+                // No permitir cambiar roles del propio usuario
+                if (auth()->check() && $user->id === auth()->id()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'No puedes modificar tus propios permisos/roles',
+                    ], 403);
+                }
+
+                // No permitir cambiar roles del usuario principal (ID 1)
+                if ($user->id === 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'No se pueden modificar los permisos del usuario principal del sistema',
+                    ], 403);
+                }
+            }
+
             if ($validated['role']) {
                 $role = Role::find($validated['role']);
                 if ($role) {
