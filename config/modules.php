@@ -15,6 +15,7 @@ return [
     ],
     'model_names' => [
         'ProductInventory' => 'Inventario',
+        'ProductImage' => 'Imagenes de Productos',
         'Setting' => 'Configuración',
         'Product' => 'Productos',
         'Brand' => 'Marcas',
