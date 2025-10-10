@@ -188,7 +188,7 @@ export default function Index({ settings }: Props) {
 									<TextField
 										label="Nombre de la Empresa"
 										fullWidth
-										{...register("company_name")}
+										{...register("company_name", { required: "El nombre de la empresa es requerido" })}
 										value={companyName}
 										error={!!errors.company_name}
 										helperText={errors.company_name?.message}
@@ -205,7 +205,10 @@ export default function Index({ settings }: Props) {
 											<TextField
 												label="Teléfono"
 												fullWidth
-												{...register("company_phone")}
+												{...register("company_phone", { 
+													required: "El teléfono es requerido",
+													pattern: { value: /^[0-9\s\-\+\(\)]+$/, message: "Formato de teléfono inválido" }
+												})}
 												error={!!errors.company_phone}
 												helperText={errors.company_phone?.message}
 											/>
@@ -215,7 +218,10 @@ export default function Index({ settings }: Props) {
 												label="Email"
 												type="email"
 												fullWidth
-												{...register("company_email")}
+												{...register("company_email", {
+													required: "El email es requerido",
+													pattern: { value: /^\S+@\S+\.\S+$/, message: "Formato de email inválido" }
+												})}
 												error={!!errors.company_email}
 												helperText={errors.company_email?.message}
 											/>
@@ -227,7 +233,7 @@ export default function Index({ settings }: Props) {
 										fullWidth
 										multiline
 										rows={3}
-										{...register("company_address")}
+										{...register("company_address", { required: "La dirección es requerida" })}
 										error={!!errors.company_address}
 										helperText={errors.company_address?.message}
 									/>
@@ -243,7 +249,10 @@ export default function Index({ settings }: Props) {
 											<TextField
 												label="RIF"
 												fullWidth
-												{...register("company_rif")}
+												{...register("company_rif", {
+													required: "El RIF es requerido",
+													pattern: { value: /^[V|E|J|G|P]-[0-9]{8}-[0-9]$/, message: "Formato de RIF inválido (ej: V-12345678-9)" }
+												})}
 												error={!!errors.company_rif}
 												helperText={errors.company_rif?.message}
 											/>
