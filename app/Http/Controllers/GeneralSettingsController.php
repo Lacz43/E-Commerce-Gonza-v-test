@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Settings\GeneralSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Spatie\Activitylog\Models\Activity;
 
 class GeneralSettingsController extends Controller
 {
@@ -35,6 +37,11 @@ class GeneralSettingsController extends Controller
             'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB max
         ]);
 
+        $oldSettings = [
+            'company_name' => $settings->company_name,
+            'company_logo' => $settings->company_logo,
+        ];
+
         // Handle company logo upload
         if ($request->hasFile('company_logo')) {
             // Delete old logo if exists
@@ -52,6 +59,44 @@ class GeneralSettingsController extends Controller
 
         $settings->save();
 
+        // Registrar la actividad de actualización de configuración
+        $user = Auth::user();
+        $changes = [];
+
+        if ($oldSettings['company_name'] !== $settings->company_name) {
+            $changes['company_name'] = [
+                'old' => $oldSettings['company_name'],
+                'new' => $settings->company_name,
+            ];
+        }
+
+        if ($oldSettings['company_logo'] !== $settings->company_logo) {
+            $changes['company_logo'] = [
+                'old' => $oldSettings['company_logo'],
+                'new' => $settings->company_logo,
+                'uploaded' => $request->hasFile('company_logo'),
+            ];
+        }
+
+        Activity::create([
+            'log_name' => 'settings',
+            'description' => 'Configuración general actualizada',
+            'subject_type' => null,
+            'subject_id' => null,
+            'causer_type' => 'App\Models\User',
+            'causer_id' => $user ? $user->id : null,
+            'properties' => [
+                'changes' => $changes,
+                'new_settings' => [
+                    'company_name' => $settings->company_name,
+                    'company_logo' => $settings->company_logo,
+                ],
+                'user_name' => $user ? $user->name : 'Sistema',
+                'user_email' => $user ? $user->email : 'system@gonzago.com',
+            ],
+            'event' => 'general_settings_updated',
+        ]);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Configuración general actualizada correctamente',
@@ -68,10 +113,29 @@ class GeneralSettingsController extends Controller
      */
     public function deleteLogo(GeneralSettings $settings)
     {
+        $oldLogo = $settings->company_logo;
+
         if ($settings->company_logo && Storage::disk('public')->exists($settings->company_logo)) {
             Storage::disk('public')->delete($settings->company_logo);
             $settings->company_logo = null;
             $settings->save();
+
+            // Registrar la actividad de eliminación del logo
+            $user = Auth::user();
+            Activity::create([
+                'log_name' => 'settings',
+                'description' => 'Logo de empresa eliminado',
+                'subject_type' => null,
+                'subject_id' => null,
+                'causer_type' => 'App\Models\User',
+                'causer_id' => $user ? $user->id : null,
+                'properties' => [
+                    'deleted_logo' => $oldLogo,
+                    'user_name' => $user ? $user->name : 'Sistema',
+                    'user_email' => $user ? $user->email : 'system@gonzago.com',
+                ],
+                'event' => 'company_logo_deleted',
+            ]);
         }
 
         return response()->json([
