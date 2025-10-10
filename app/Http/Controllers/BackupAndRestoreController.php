@@ -35,7 +35,17 @@ class BackupAndRestoreController extends Controller
                 'lastModified' => Storage::disk('backups')->lastModified($file),
                 'url' => route('backup.download', ['file' => encrypt($file)]),
             ];
-        })->sortByDesc('lastModified'); // ordenamos por fecha de modificacion
+        });
+
+        // Aplicar búsqueda por nombre si existe
+        $search = $request->get('search');
+        if (!empty($search)) {
+            $backups = $backups->filter(function ($backup) use ($search) {
+                return str_contains(strtolower($backup['name']), strtolower($search));
+            });
+        }
+
+        $backups = $backups->sortByDesc('lastModified'); // ordenamos por fecha de modificacion
 
         $perPage = $request->get('perPage', 20);
         $currentPage = $request->get('page', 1);
