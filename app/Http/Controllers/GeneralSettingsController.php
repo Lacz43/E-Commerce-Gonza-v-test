@@ -28,6 +28,19 @@ class GeneralSettingsController extends Controller
     }
 
     /**
+     * Get general settings for public use (logo, company name).
+     */
+    public function getPublicSettings()
+    {
+        $settings = app(GeneralSettings::class);
+
+        return response()->json([
+            'company_name' => $settings->company_name ?? 'Gonza Go',
+            'company_logo_url' => $settings->company_logo ? Storage::disk('public')->url($settings->company_logo) : null,
+        ]);
+    }
+
+    /**
      * Update general settings including company logo.
      */
     public function update(Request $request, GeneralSettings $settings)

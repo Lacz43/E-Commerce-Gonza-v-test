@@ -28,3 +28,6 @@ Route::middleware('auth', 'permission:edit backups')->group(function () {
 Route::middleware('auth', 'permission:delete backups')->group(function () {
     Route::delete('/settings/backup/delete', [BackupAndRestoreController::class, 'destroy'])->name('backup.delete');
 });
+
+// Ruta pública para obtener settings generales (sin middleware auth)
+Route::get('/settings/public', [GeneralSettingsController::class, 'getPublicSettings'])->name('settings.public');
