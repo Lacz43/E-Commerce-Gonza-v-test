@@ -21,21 +21,37 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
  * company_name: nombre de la empresa
  * company_logo: ruta del logo de la empresa
  * company_logo_url: URL completa del logo
+ * company_phone: teléfono de la empresa
+ * company_address: dirección de la empresa
+ * company_rif: RIF de la empresa
+ * company_email: email de la empresa
  */
 type GeneralSettings = {
 	company_name: string;
 	company_logo: string | null;
 	company_logo_url: string | null;
+	company_phone: string;
+	company_address: string;
+	company_rif: string;
+	company_email: string;
 };
 
 /*
  * INFO: FormStructure
  * company_name: nombre de la empresa
  * company_logo: archivo del logo
+ * company_phone: teléfono de la empresa
+ * company_address: dirección de la empresa
+ * company_rif: RIF de la empresa
+ * company_email: email de la empresa
  */
 type FormStructure = {
 	company_name: string;
 	company_logo: File | null;
+	company_phone: string;
+	company_address: string;
+	company_rif: string;
+	company_email: string;
 };
 
 // INFO: Props: propiedades que recibe el componente
@@ -60,6 +76,10 @@ export default function Index({ settings }: Props) {
 		defaultValues: {
 			company_name: settings.company_name,
 			company_logo: null,
+			company_phone: settings.company_phone,
+			company_address: settings.company_address,
+			company_rif: settings.company_rif,
+			company_email: settings.company_email,
 		},
 	});
 
@@ -101,6 +121,10 @@ export default function Index({ settings }: Props) {
 			const formData = toFormData({
 				company_name: data.company_name,
 				company_logo: data.company_logo,
+				company_phone: data.company_phone,
+				company_address: data.company_address,
+				company_rif: data.company_rif,
+				company_email: data.company_email,
 			});
 
 			const response = await axios.post(
@@ -120,7 +144,7 @@ export default function Index({ settings }: Props) {
 				setLogoPreview(response.data.settings.company_logo_url);
 			}
 		} catch (error) {
-            console.log(error);
+			console.log(error);
 			if (error instanceof AxiosError) {
 				toast.error(
 					error.response?.data?.message ||
@@ -141,106 +165,236 @@ export default function Index({ settings }: Props) {
 					Configuración General
 				</Typography>
 
-				<Card>
-					<CardHeader
-						title="Información de la Empresa"
-						avatar={<SettingsIcon />}
-					/>
-					<CardContent>
-						<Box
-							component="form"
-							onSubmit={handleSubmit(onSubmit)}
-							sx={{ display: "flex", flexDirection: "column", gap: 3 }}
-						>
-							<TextField
-								label="Nombre de la Empresa"
-								fullWidth
-								{...register("company_name")}
-								value={companyName}
-								error={!!errors.company_name}
-								helperText={errors.company_name?.message}
+				<Box
+					sx={{
+						display: "grid",
+						gap: 4,
+						gridTemplateColumns: "repeat(12, 1fr)",
+					}}
+				>
+					{/* Columna Izquierda: Información de la Empresa */}
+					<Box sx={{ gridColumn: { xs: "span 12", md: "span 8" } }}>
+						<Card>
+							<CardHeader
+								title="Información de la Empresa"
+								avatar={<SettingsIcon />}
 							/>
+							<CardContent>
+								<Box
+									component="form"
+									onSubmit={handleSubmit(onSubmit)}
+									sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+								>
+									<TextField
+										label="Nombre de la Empresa"
+										fullWidth
+										{...register("company_name")}
+										value={companyName}
+										error={!!errors.company_name}
+										helperText={errors.company_name?.message}
+									/>
 
-							<Box>
-								<Typography variant="h6" gutterBottom>
-									Logo de la Empresa
-								</Typography>
-
-								{/* Vista previa del logo */}
-								{logoPreview && (
 									<Box
 										sx={{
-											mb: 2,
-											display: "flex",
-											alignItems: "center",
+											display: "grid",
 											gap: 2,
+											gridTemplateColumns: "repeat(12, 1fr)",
 										}}
 									>
-										<img
-											src={logoPreview}
-											alt="Logo de la empresa"
-											style={{
-												maxWidth: "200px",
-												maxHeight: "100px",
-												objectFit: "contain",
-											}}
-										/>
+										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
+											<TextField
+												label="Teléfono"
+												fullWidth
+												{...register("company_phone")}
+												error={!!errors.company_phone}
+												helperText={errors.company_phone?.message}
+											/>
+										</Box>
+										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
+											<TextField
+												label="Email"
+												type="email"
+												fullWidth
+												{...register("company_email")}
+												error={!!errors.company_email}
+												helperText={errors.company_email?.message}
+											/>
+										</Box>
+									</Box>
+
+									<TextField
+										label="Dirección"
+										fullWidth
+										multiline
+										rows={3}
+										{...register("company_address")}
+										error={!!errors.company_address}
+										helperText={errors.company_address?.message}
+									/>
+
+									<Box
+										sx={{
+											display: "grid",
+											gap: 2,
+											gridTemplateColumns: "repeat(12, 1fr)",
+										}}
+									>
+										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
+											<TextField
+												label="RIF"
+												fullWidth
+												{...register("company_rif")}
+												error={!!errors.company_rif}
+												helperText={errors.company_rif?.message}
+											/>
+										</Box>
+									</Box>
+
+									<Box
+										sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
+									>
 										<Button
-											variant="outlined"
-											color="error"
-											startIcon={<DeleteIcon />}
-											onClick={handleLogoDelete}
-											size="small"
+											type="submit"
+											variant="contained"
+											disabled={isSubmitting}
+											size="large"
 										>
-											Eliminar Logo
+											{isSubmitting ? "Guardando..." : "Guardar Cambios"}
 										</Button>
 									</Box>
-								)}
+								</Box>
+							</CardContent>
+						</Card>
+					</Box>
 
-								{/* Input de archivo */}
-								<Button
-									variant="outlined"
-									component="label"
-									fullWidth
-									sx={{ mb: 1 }}
+					{/* Columna Derecha: Logo de la Empresa */}
+					<Box sx={{ gridColumn: { xs: "span 12", md: "span 4" } }}>
+						<Card sx={{ height: "fit-content" }}>
+							<CardHeader
+								title="Logo Corporativo"
+								subheader="Identidad visual de tu empresa"
+							/>
+							<CardContent>
+								<Box
+									sx={{
+										display: "flex",
+										flexDirection: "column",
+										alignItems: "center",
+										gap: 3,
+									}}
 								>
-									Seleccionar Logo
-									<input
-										ref={fileInputRef}
-										type="file"
-										hidden
-										accept="image/*"
-										onChange={handleLogoChange}
-									/>
-								</Button>
+									{/* Vista previa del logo */}
+									{logoPreview ? (
+										<Box
+											sx={{
+												display: "flex",
+												flexDirection: "column",
+												alignItems: "center",
+												gap: 2,
+												p: 3,
+												border: "2px solid",
+												borderColor: "primary.main",
+												borderRadius: 2,
+												backgroundColor: "primary.50",
+												width: "100%",
+												maxWidth: "250px",
+											}}
+										>
+											<img
+												src={logoPreview}
+												alt="Logo de la empresa"
+												style={{
+													maxWidth: "150px",
+													maxHeight: "150px",
+													objectFit: "contain",
+												}}
+											/>
+											<Button
+												variant="outlined"
+												color="error"
+												size="small"
+												startIcon={<DeleteIcon />}
+												onClick={handleLogoDelete}
+												fullWidth
+											>
+												Eliminar Logo
+											</Button>
+										</Box>
+									) : (
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												width: "100%",
+												maxWidth: "250px",
+												height: "200px",
+												border: "2px dashed",
+												borderColor: "grey.400",
+												borderRadius: 2,
+												backgroundColor: "grey.50",
+											}}
+										>
+											<Typography
+												variant="body2"
+												color="text.secondary"
+												align="center"
+											>
+												Sin logo configurado
+											</Typography>
+										</Box>
+									)}
 
-								<Typography variant="caption" color="text.secondary">
-									Formatos permitidos: JPG, PNG, GIF, SVG. Tamaño máximo: 2MB
-								</Typography>
-
-								{errors.company_logo && (
-									<Typography
-										variant="caption"
-										color="error"
-										sx={{ display: "block", mt: 1 }}
+									{/* Input de archivo */}
+									<Button
+										variant="outlined"
+										component="label"
+										fullWidth
+										sx={{
+											minHeight: "60px",
+											border: "2px dashed",
+											borderColor: "grey.400",
+											"&:hover": {
+												borderColor: "primary.main",
+												backgroundColor: "primary.50",
+											},
+										}}
 									>
-										{errors.company_logo.message}
-									</Typography>
-								)}
-							</Box>
+										<Box sx={{ textAlign: "center" }}>
+											<Typography variant="body2" color="text.secondary">
+												{logoPreview ? "Cambiar Logo" : "Seleccionar Logo"}
+											</Typography>
+											<Typography
+												variant="caption"
+												color="text.secondary"
+												display="block"
+											>
+												JPG, PNG, GIF, SVG - Máx. 2MB
+											</Typography>
+										</Box>
+										<input
+											ref={fileInputRef}
+											type="file"
+											hidden
+											accept="image/*"
+											onChange={handleLogoChange}
+										/>
+									</Button>
 
-							<Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-								<Button
-									type="submit"
-									variant="contained"
-									disabled={isSubmitting}
-								>
-									{isSubmitting ? "Guardando..." : "Guardar Cambios"}
-								</Button>
-							</Box>
-						</Box>
-					</CardContent>
-				</Card>
+									{errors.company_logo && (
+										<Typography
+											variant="caption"
+											color="error"
+											sx={{ textAlign: "center" }}
+										>
+											{errors.company_logo.message}
+										</Typography>
+									)}
+								</Box>
+							</CardContent>
+						</Card>
+					</Box>
+				</Box>
 			</Box>
 		</AuthenticatedLayout>
 	);
