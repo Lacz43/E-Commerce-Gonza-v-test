@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
+use App\Models\Product;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
-use App\Models\Product;
 use App\Services\QueryFilters;
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class ProductsController extends Controller
 {
@@ -33,15 +34,15 @@ class ProductsController extends Controller
         $query->leftJoin('product_inventories', 'products.id', '=', 'product_inventories.product_id')
             ->select('products.*', 'product_inventories.stock');
 
-        if($request->has('minStock')) {
+        if ($request->has('minStock')) {
             $query->where('product_inventories.stock', '>=', $request->query('minStock'));
         }
 
-        if($request->query('whitImages')) {
+        if ($request->query('whitImages')) {
             $query->with('images');
         }
 
-        if($request->has('minAvailableStock')) {
+        if ($request->has('minAvailableStock')) {
             $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as total_ordered FROM order_items oi INNER JOIN orders o ON oi.order_id = o.id WHERE o.status IN ("pending", "paid") GROUP BY product_id) as ordered'), 'products.id', '=', 'ordered.product_id')
                 ->addSelect(DB::raw('product_inventories.stock - COALESCE(ordered.total_ordered, 0) as available_stock'))
                 ->whereRaw('(product_inventories.stock - COALESCE(ordered.total_ordered, 0)) >= ?', [$request->query('minAvailableStock')]);
@@ -68,9 +69,9 @@ class ProductsController extends Controller
         } elseif ($name !== '') {
             $query->where('products.name', 'like', "%$name%");
         } elseif ($search !== '') {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('products.barcode', $search)
-                  ->orWhere('products.name', 'like', "%$search%");
+                    ->orWhere('products.name', 'like', "%$search%");
             });
         }
 
@@ -79,7 +80,7 @@ class ProductsController extends Controller
 
         Debugbar::info($products);
 
-        return json_encode([
+        return response()->json([
             'products' => $products,
         ]);
     }
@@ -91,73 +92,130 @@ class ProductsController extends Controller
 
     public function storage(ProductRequest $request)
     {
-        Debugbar::info($request);
+        try {
+            Debugbar::info($request);
 
-        $category = ProductCategory::createOrReadCategory($request['category']);
-        if (!$category) {
-            return response()->json(['message' => 'No tienes permiso para crear categorias.'], 403);
+            $category = ProductCategory::createOrReadCategory($request['category']);
+            if (!$category) {
+                return response()->json(['message' => 'No tienes permiso para crear categorias.'], 403);
+            }
+
+            $brand = Brand::createOrReadBrand($request['brand']);
+            if (!$brand) {
+                return response()->json(['message' => 'No tienes permiso para crear marcas.'], 403);
+            }
+
+            $product = Product::create([
+                'name' => $request['name'],
+                'barcode' => $request['barcode'],
+                'price' => $request['price'],
+                'category_id' => $category,
+                'description' => $request['description'],
+                'created_by' => Auth::user()->id,
+            ]);
+
+            ProductBrand::firstOrCreate([
+                'product_id' => $product->id,
+                'brand_id' => $brand,
+            ]);
+
+            ProductImage::saveImages($product->id, $request->file('images'), $request['image_used'] ?? null);
+            return response()->json([
+                'message' => 'Producto creado exitosamente',
+            ]);
+        } catch (QueryException $e) {
+            // Manejar errores de duplicados en la base de datos
+            if ($e->getCode() == 23000) { // Código de error para violación de restricción
+                $errorMessage = $e->getMessage();
+
+                if (str_contains($errorMessage, 'products_barcode_unique')) {
+                    return response()->json([
+                        'message' => 'Ya existe un producto con este código de barras. Por favor, utiliza un código diferente.',
+                        'field' => 'barcode'
+                    ], 422);
+                }
+
+                if (str_contains($errorMessage, 'products_name_unique')) {
+                    return response()->json([
+                        'message' => 'Ya existe un producto con este nombre. Por favor, utiliza un nombre diferente.',
+                        'field' => 'name'
+                    ], 422);
+                }
+
+                // Error genérico de duplicado
+                return response()->json([
+                    'message' => 'Ya existe un producto con estos datos. Por favor, verifica la información e intenta nuevamente.',
+                ], 422);
+            }
+
+            // Re-lanzar otros tipos de errores
+            throw $e;
         }
-
-        $brand = Brand::createOrReadBrand($request['brand']);
-        if (!$brand) {
-            return response()->json(['message' => 'No tienes permiso para crear marcas.'], 403);
-        }
-
-        $product = Product::create([
-            'name' => $request['name'],
-            'barcode' => $request['barcode'],
-            'price' => $request['price'],
-            'category_id' => $category,
-            'description' => $request['description'],
-            'created_by' => Auth::user()->id,
-        ]);
-
-        ProductBrand::firstOrCreate([
-            'product_id' => $product->id,
-            'brand_id' => $brand,
-        ]);
-
-        ProductImage::saveImages($product->id, $request->file('images'), $data['image_used'] ?? null);
-        return response()->json([
-            'message' => 'Producto creado exitosamente',
-        ]);
     }
 
     public function edit(Product $product)
     {
         $product = $product->load(['images', 'brand', 'category']);
-        Debugbar::info($product);
         return Inertia::render('Products/Edit', ['product' => $product]);
     }
 
     public function update(Product $product, ProductRequest $request)
     {
-        Debugbar::info($request, $product);
+        try {
+            Debugbar::info($request, $product);
 
-        $category = ProductCategory::createOrReadCategory($request['category']);
-        if (!$category) {
-            return response()->json(["message" => "No tienes permiso para crear categorias."], 403);
+            $category = ProductCategory::createOrReadCategory($request['category']);
+            if (!$category) {
+                return response()->json(["message" => "No tienes permiso para crear categorias."], 403);
+            }
+
+            $brand = Brand::createOrReadBrand($request['brand']);
+            if (!$brand) {
+                return response()->json(["message" => "No tienes permiso para crear categorias."], 403);
+            }
+
+            $product->update([
+                'name' => $request['name'],
+                'barcode' => $request['barcode'],
+                'price' => $request['price'],
+                'category_id' => $category,
+                'description' => $request['description'],
+            ]);
+
+            ProductBrand::where('product_id', $product->id)->update(['brand_id' => $brand]);
+            ProductImage::where('product_id', $product->id)->delete();
+            Storage::disk('public')->deleteDirectory('products/' . $product->id);
+            ProductImage::saveImages($product->id, $request->file('images'), $request['image_used'] ?? null);
+
+            return response()->json(["message" => "Producto actualizado exitosamente"]);
+        } catch (QueryException $e) {
+            // Manejar errores de duplicados en la base de datos
+            if ($e->getCode() == 23000) { // Código de error para violación de restricción
+                $errorMessage = $e->getMessage();
+
+                if (str_contains($errorMessage, 'products_barcode_unique')) {
+                    return response()->json([
+                        'message' => 'Ya existe otro producto con este código de barras. Por favor, utiliza un código diferente.',
+                        'field' => 'barcode'
+                    ], 422);
+                }
+
+                if (str_contains($errorMessage, 'products_name_unique')) {
+                    return response()->json([
+                        'message' => 'Ya existe otro producto con este nombre. Por favor, utiliza un nombre diferente.',
+                        'field' => 'name'
+                    ], 422);
+                }
+
+                // Error genérico de duplicado
+                return response()->json([
+                    'message' => 'Ya existe un producto con estos datos. Por favor, verifica la información e intenta nuevamente.',
+                ], 422);
+            }
+
+            // Re-lanzar otros tipos de errores
+            throw $e;
         }
-
-        $brand = Brand::createOrReadBrand($request['brand']);
-        if (!$brand) {
-            return response()->json(["message" => "No tienes permiso para crear categorias."], 403);
-        }
-
-        $product->update([
-            'name' => $request['name'],
-            'barcode' => $request['barcode'],
-            'price' => $request['price'],
-            'category_id' => $category,
-            'description' => $request['description'],
-        ]);
-
-        ProductBrand::where('product_id', $product->id)->update(['brand_id' => $brand]);
-        ProductImage::where('product_id', $product->id)->delete();
-        Storage::disk('public')->deleteDirectory('products/' . $product->id);
-        ProductImage::saveImages($product->id, $request->file('images'), $request['image_used'] ?? null);
-
-        return response()->json(["message" => "Producto actualizado exitosamente"]);
     }
 
     /**
@@ -169,5 +227,4 @@ class ProductsController extends Controller
         $product->delete();
         return redirect()->route('products.index');
     }
-
 }
