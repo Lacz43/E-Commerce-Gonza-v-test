@@ -21,7 +21,9 @@ return [
         'Category' => 'Categorías',
         'ProductCategory' => 'Categorías de Productos',
         'ProductBrand' => 'Marcas de Productos',
-        'Sale' => 'Ventas',
+        'Order' => 'Ventas',
         'User' => 'Usuarios',
+        'InventoryMovement' => 'Movimientos de Inventario',
+        'Attachment' => 'Archivos',
     ],
 ];
