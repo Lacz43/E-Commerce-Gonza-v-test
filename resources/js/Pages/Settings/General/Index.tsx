@@ -212,8 +212,8 @@ export default function Index({ settings }: Props) {
 													{...register("company_phone", {
 														required: "El teléfono es requerido",
 														pattern: {
-															value: /^[0-9\s\-\+\(\)]+$/,
-															message: "Formato de teléfono inválido",
+															value: /^0[24][0-9]{2}-?[0-9]{7}$/,
+															message: "Formato de teléfono inválido (ej: 0412-1234567)",
 														},
 													})}
 													error={!!errors.company_phone}
