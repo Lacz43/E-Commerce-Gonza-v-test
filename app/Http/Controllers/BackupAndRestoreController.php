@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use ZipArchive;
+use Spatie\Activitylog\Models\Activity;
 
 class BackupAndRestoreController extends Controller
 {
@@ -63,6 +65,24 @@ class BackupAndRestoreController extends Controller
     {
         try {
             Artisan::call('backup:run --only-db');
+
+            // Registrar la actividad de respaldo
+            $user = Auth::user();
+            Activity::create([
+                'log_name' => 'backup',
+                'description' => 'Backup de base de datos realizado',
+                'subject_type' => null,
+                'subject_id' => null,
+                'causer_type' => 'App\Models\User',
+                'causer_id' => $user ? $user->id : null,
+                'properties' => [
+                    'backup_type' => 'database_only',
+                    'command' => 'backup:run --only-db',
+                    'user_name' => $user ? $user->name : 'Sistema',
+                    'user_email' => $user ? $user->email : 'system@gonzago.com',
+                ],
+                'event' => 'backup_created',
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -86,6 +106,25 @@ class BackupAndRestoreController extends Controller
         if (! Storage::disk('backups')->exists($path)) {
             abort(404);
         }
+
+        // Registrar la actividad de descarga
+        $user = Auth::user();
+        Activity::create([
+            'log_name' => 'backup',
+            'description' => 'Archivo de backup descargado',
+            'subject_type' => null,
+            'subject_id' => null,
+            'causer_type' => 'App\Models\User',
+            'causer_id' => $user ? $user->id : null,
+            'properties' => [
+                'file_name' => basename($path),
+                'file_path' => $path,
+                'file_size' => Storage::disk('backups')->size($path),
+                'user_name' => $user ? $user->name : 'Sistema',
+                'user_email' => $user ? $user->email : 'system@gonzago.com',
+            ],
+            'event' => 'backup_downloaded',
+        ]);
 
         // descarga el archivo
         return Storage::disk('backups')->download($path, basename($path));
@@ -151,6 +190,24 @@ class BackupAndRestoreController extends Controller
                 throw new Exception('Formato de archivo no soportado. Solo se permiten archivos ZIP y SQL.');
             }
             Storage::disk('backups')->delete($filePath);
+
+            // Registrar la actividad de restauración
+            $user = Auth::user();
+            Activity::create([
+                'log_name' => 'backup',
+                'description' => 'Restauración de backup realizada',
+                'subject_type' => null,
+                'subject_id' => null,
+                'causer_type' => 'App\Models\User',
+                'causer_id' => $user ? $user->id : null,
+                'properties' => [
+                    'restore_type' => $file->getClientOriginalExtension(),
+                    'file_name' => $file->getClientOriginalName(),
+                    'user_name' => $user ? $user->name : 'Sistema',
+                    'user_email' => $user ? $user->email : 'system@gonzago.com',
+                ],
+                'event' => 'backup_restored',
+            ]);
 
             return response()->json([
                 'message' => 'Restauración completada con éxito.',
@@ -238,7 +295,37 @@ class BackupAndRestoreController extends Controller
     {
         $request->validate(['file' => 'required|string']);
         $path = config('backup.backup.destination.path', '');
-        Storage::disk('backups')->delete($path.'/'.$request->file);
+        $fullPath = $path.'/'.$request->file;
+
+        // Obtener información del archivo antes de eliminarlo
+        $fileInfo = null;
+        if (Storage::disk('backups')->exists($fullPath)) {
+            $fileInfo = [
+                'name' => $request->file,
+                'size' => Storage::disk('backups')->size($fullPath),
+                'last_modified' => Storage::disk('backups')->lastModified($fullPath),
+            ];
+        }
+
+        Storage::disk('backups')->delete($fullPath);
+
+        // Registrar la actividad de eliminación
+        $user = Auth::user();
+        Activity::create([
+            'log_name' => 'backup',
+            'description' => 'Archivo de backup eliminado',
+            'subject_type' => null,
+            'subject_id' => null,
+            'causer_type' => 'App\Models\User',
+            'causer_id' => $user ? $user->id : null,
+            'properties' => [
+                'file_name' => $request->file,
+                'file_info' => $fileInfo,
+                'user_name' => $user ? $user->name : 'Sistema',
+                'user_email' => $user ? $user->email : 'system@gonzago.com',
+            ],
+            'event' => 'backup_deleted',
+        ]);
 
         return response()->json([
             'message' => 'Respaldo borrado con éxito.',
