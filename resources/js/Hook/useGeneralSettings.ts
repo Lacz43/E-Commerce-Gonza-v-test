@@ -4,12 +4,18 @@ import { useEffect, useState } from "react";
 interface GeneralSettings {
 	company_name: string;
 	company_logo_url: string | null;
+	company_phone: string;
+	company_address: string;
+	company_email: string;
 }
 
 export function useGeneralSettings() {
 	const [settings, setSettings] = useState<GeneralSettings>({
 		company_name: "Gonza Go",
 		company_logo_url: null,
+		company_phone: "",
+		company_address: "",
+		company_email: "",
 	});
 	const [loading, setLoading] = useState(true);
 

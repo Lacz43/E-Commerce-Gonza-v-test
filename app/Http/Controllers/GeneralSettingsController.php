@@ -23,6 +23,10 @@ class GeneralSettingsController extends Controller
                 'company_name' => $settings->company_name ?? '',
                 'company_logo' => $settings->company_logo ?? null,
                 'company_logo_url' => $settings->company_logo ? Storage::disk('public')->url($settings->company_logo) : null,
+                'company_phone' => $settings->company_phone ?? '',
+                'company_address' => $settings->company_address ?? '',
+                'company_rif' => $settings->company_rif ?? '',
+                'company_email' => $settings->company_email ?? '',
             ],
         ]);
     }
@@ -37,6 +41,9 @@ class GeneralSettingsController extends Controller
         return response()->json([
             'company_name' => $settings->company_name ?? 'Gonza Go',
             'company_logo_url' => $settings->company_logo ? Storage::disk('public')->url($settings->company_logo) : null,
+            'company_phone' => $settings->company_phone ?? '',
+            'company_address' => $settings->company_address ?? '',
+            'company_email' => $settings->company_email ?? '',
         ]);
     }
 
@@ -48,11 +55,19 @@ class GeneralSettingsController extends Controller
         $request->validate([
             'company_name' => 'nullable|string|max:255',
             'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB max
+            'company_phone' => 'nullable|string|max:20',
+            'company_address' => 'nullable|string|max:500',
+            'company_rif' => 'nullable|string|max:20',
+            'company_email' => 'nullable|email|max:255',
         ]);
 
         $oldSettings = [
             'company_name' => $settings->company_name,
             'company_logo' => $settings->company_logo,
+            'company_phone' => $settings->company_phone,
+            'company_address' => $settings->company_address,
+            'company_rif' => $settings->company_rif,
+            'company_email' => $settings->company_email,
         ];
 
         // Handle company logo upload
@@ -67,8 +82,12 @@ class GeneralSettingsController extends Controller
             $settings->company_logo = $logoPath;
         }
 
-        // Update company name
+        // Update company fields
         $settings->company_name = $request->company_name ?? '';
+        $settings->company_phone = $request->company_phone ?? null;
+        $settings->company_address = $request->company_address ?? null;
+        $settings->company_rif = $request->company_rif ?? null;
+        $settings->company_email = $request->company_email ?? null;
 
         $settings->save();
 
@@ -76,11 +95,19 @@ class GeneralSettingsController extends Controller
         $user = Auth::user();
         $changes = [];
 
-        if ($oldSettings['company_name'] !== $settings->company_name) {
-            $changes['company_name'] = [
-                'old' => $oldSettings['company_name'],
-                'new' => $settings->company_name,
-            ];
+        // Check each field for changes
+        $fieldsToCheck = [
+            'company_name', 'company_phone', 'company_address',
+            'company_rif', 'company_email'
+        ];
+
+        foreach ($fieldsToCheck as $field) {
+            if ($oldSettings[$field] !== $settings->$field) {
+                $changes[$field] = [
+                    'old' => $oldSettings[$field],
+                    'new' => $settings->$field,
+                ];
+            }
         }
 
         if ($oldSettings['company_logo'] !== $settings->company_logo) {
@@ -103,6 +130,10 @@ class GeneralSettingsController extends Controller
                 'new_settings' => [
                     'company_name' => $settings->company_name,
                     'company_logo' => $settings->company_logo,
+                    'company_phone' => $settings->company_phone,
+                    'company_address' => $settings->company_address,
+                    'company_rif' => $settings->company_rif,
+                    'company_email' => $settings->company_email,
                 ],
                 'user_name' => $user ? $user->name : 'Sistema',
                 'user_email' => $user ? $user->email : 'system@gonzago.com',
@@ -117,6 +148,10 @@ class GeneralSettingsController extends Controller
                 'company_name' => $settings->company_name,
                 'company_logo' => $settings->company_logo,
                 'company_logo_url' => $settings->company_logo ? Storage::disk('public')->url($settings->company_logo) : null,
+                'company_phone' => $settings->company_phone,
+                'company_address' => $settings->company_address,
+                'company_rif' => $settings->company_rif,
+                'company_email' => $settings->company_email,
             ],
         ]);
     }
