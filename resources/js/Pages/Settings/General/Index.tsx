@@ -8,6 +8,7 @@ import {
 	CardContent,
 	CardHeader,
 	TextField,
+	Tooltip,
 	Typography,
 } from "@mui/material";
 import axios, { AxiosError, toFormData } from "axios";
@@ -188,7 +189,9 @@ export default function Index({ settings }: Props) {
 									<TextField
 										label="Nombre de la Empresa"
 										fullWidth
-										{...register("company_name", { required: "El nombre de la empresa es requerido" })}
+										{...register("company_name", {
+											required: "El nombre de la empresa es requerido",
+										})}
 										value={companyName}
 										error={!!errors.company_name}
 										helperText={errors.company_name?.message}
@@ -202,29 +205,42 @@ export default function Index({ settings }: Props) {
 										}}
 									>
 										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
-											<TextField
-												label="Teléfono"
-												fullWidth
-												{...register("company_phone", { 
-													required: "El teléfono es requerido",
-													pattern: { value: /^[0-9\s\-\+\(\)]+$/, message: "Formato de teléfono inválido" }
-												})}
-												error={!!errors.company_phone}
-												helperText={errors.company_phone?.message}
-											/>
+											<Tooltip title="Ejemplo: 0412-1234567" placement="top">
+												<TextField
+													label="Teléfono"
+													fullWidth
+													{...register("company_phone", {
+														required: "El teléfono es requerido",
+														pattern: {
+															value: /^[0-9\s\-\+\(\)]+$/,
+															message: "Formato de teléfono inválido",
+														},
+													})}
+													error={!!errors.company_phone}
+													helperText={errors.company_phone?.message}
+												/>
+											</Tooltip>
 										</Box>
 										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
-											<TextField
-												label="Email"
-												type="email"
-												fullWidth
-												{...register("company_email", {
-													required: "El email es requerido",
-													pattern: { value: /^\S+@\S+\.\S+$/, message: "Formato de email inválido" }
-												})}
-												error={!!errors.company_email}
-												helperText={errors.company_email?.message}
-											/>
+											<Tooltip
+												title="Ejemplo: usuario@ejemplo.com"
+												placement="top"
+											>
+												<TextField
+													label="Email"
+													type="email"
+													fullWidth
+													{...register("company_email", {
+														required: "El email es requerido",
+														pattern: {
+															value: /^\S+@\S+\.\S+$/,
+															message: "Formato de email inválido",
+														},
+													})}
+													error={!!errors.company_email}
+													helperText={errors.company_email?.message}
+												/>
+											</Tooltip>
 										</Box>
 									</Box>
 
@@ -233,7 +249,9 @@ export default function Index({ settings }: Props) {
 										fullWidth
 										multiline
 										rows={3}
-										{...register("company_address", { required: "La dirección es requerida" })}
+										{...register("company_address", {
+											required: "La dirección es requerida",
+										})}
 										error={!!errors.company_address}
 										helperText={errors.company_address?.message}
 									/>
@@ -246,16 +264,22 @@ export default function Index({ settings }: Props) {
 										}}
 									>
 										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
-											<TextField
-												label="RIF"
-												fullWidth
-												{...register("company_rif", {
-													required: "El RIF es requerido",
-													pattern: { value: /^[V|E|J|G|P]-[0-9]{8}-[0-9]$/, message: "Formato de RIF inválido (ej: V-12345678-9)" }
-												})}
-												error={!!errors.company_rif}
-												helperText={errors.company_rif?.message}
-											/>
+											<Tooltip title="Ejemplo: V-12345678-9" placement="top">
+												<TextField
+													label="RIF"
+													fullWidth
+													{...register("company_rif", {
+														required: "El RIF es requerido",
+														pattern: {
+															value: /^[V|E|J|G|P]-[0-9]{8}-[0-9]$/,
+															message:
+																"Formato de RIF inválido (ej: V-12345678-9)",
+														},
+													})}
+													error={!!errors.company_rif}
+													helperText={errors.company_rif?.message}
+												/>
+											</Tooltip>
 										</Box>
 									</Box>
 
@@ -355,40 +379,45 @@ export default function Index({ settings }: Props) {
 									)}
 
 									{/* Input de archivo */}
-									<Button
-										variant="outlined"
-										component="label"
-										fullWidth
-										sx={{
-											minHeight: "60px",
-											border: "2px dashed",
-											borderColor: "grey.400",
-											"&:hover": {
-												borderColor: "primary.main",
-												backgroundColor: "primary.50",
-											},
-										}}
+									<Tooltip
+										title="Formatos aceptados: JPG, PNG, GIF, SVG - Tamaño máximo: 2MB"
+										placement="top"
 									>
-										<Box sx={{ textAlign: "center" }}>
-											<Typography variant="body2" color="text.secondary">
-												{logoPreview ? "Cambiar Logo" : "Seleccionar Logo"}
-											</Typography>
-											<Typography
-												variant="caption"
-												color="text.secondary"
-												display="block"
-											>
-												JPG, PNG, GIF, SVG - Máx. 2MB
-											</Typography>
-										</Box>
-										<input
-											ref={fileInputRef}
-											type="file"
-											hidden
-											accept="image/*"
-											onChange={handleLogoChange}
-										/>
-									</Button>
+										<Button
+											variant="outlined"
+											component="label"
+											fullWidth
+											sx={{
+												minHeight: "60px",
+												border: "2px dashed",
+												borderColor: "grey.400",
+												"&:hover": {
+													borderColor: "primary.main",
+													backgroundColor: "primary.50",
+												},
+											}}
+										>
+											<Box sx={{ textAlign: "center" }}>
+												<Typography variant="body2" color="text.secondary">
+													{logoPreview ? "Cambiar Logo" : "Seleccionar Logo"}
+												</Typography>
+												<Typography
+													variant="caption"
+													color="text.secondary"
+													display="block"
+												>
+													JPG, PNG, GIF, SVG - Máx. 2MB
+												</Typography>
+											</Box>
+											<input
+												ref={fileInputRef}
+												type="file"
+												hidden
+												accept="image/*"
+												onChange={handleLogoChange}
+											/>
+										</Button>
+									</Tooltip>
 
 									{errors.company_logo && (
 										<Typography
