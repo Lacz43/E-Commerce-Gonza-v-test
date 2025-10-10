@@ -106,6 +106,10 @@ export const paths: Record<string, Route> = {
 		icon: <Settings />,
 		roles: ["admin"],
 		children: {
+			general: {
+				path: "settings.general",
+				name: "General",
+			},
 			backup: {
 				path: "backup.index",
 				name: "Respaldo y Restauracion",
