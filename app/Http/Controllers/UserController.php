@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\QueryFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -15,12 +16,19 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::with('roles')
-            ->withCount('roles')
-            ->orderByDesc('roles_count')
-            ->paginate($request->query("perPage", 20));
+        $users = (new QueryFilters($request))->apply(
+            User::query()
+                ->with('roles')
+                ->withCount('roles')
+        );
+
+        $filtersAvailable = User::getFilterableFields();
+        $sortAvailable = User::getSortableFields();
+
         return Inertia::render('User/Index', [
             'users' => $users,
+            'filtersAvailable' => $filtersAvailable,
+            'sortAvailable' => $sortAvailable,
         ]);
     }
 

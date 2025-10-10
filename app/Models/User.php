@@ -33,6 +33,45 @@ class User extends Authenticatable
     ];
 
     /**
+     * Campos permitidos para filtrado
+     */
+    public static function getFilterableFields(): array
+    {
+        return [
+            'id',
+            'name',
+            'email',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    /**
+     * Campos permitidos para ordenamiento
+     */
+    public static function getSortableFields(): array
+    {
+        return [
+            'id',
+            'name',
+            'email',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    /**
+     * Campos permitidos para búsqueda
+     */
+    public static function getSearchableFields(): array
+    {
+        return [
+            'name',
+            'email',
+        ];
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
