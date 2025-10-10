@@ -33,9 +33,9 @@ const renderImageCell = (params: { row: Item }) => (
 
 type InventoryItem = Item & { stock?: number };
 
-type Props = { products: paginateResponse<InventoryItem> };
+type Props = { products: paginateResponse<InventoryItem>, filtersFields: string[], sortFields: string[] };
 
-export default function InventoryIndex({ products }: Props) {
+export default function InventoryIndex({ products, filtersFields, sortFields }: Props) {
 	const { openModal, closeModal } = useModal();
 	const [inventory, setInventory] = useState(products);
 	console.log("Inventory:", inventory);
@@ -128,8 +128,8 @@ export default function InventoryIndex({ products }: Props) {
 									response={inventory}
 									columns={columns}
 									fill
-									filtersAvailable={["name"]}
-									sortAvailable={["id", "name", "stock"]}
+									filtersAvailable={filtersFields}
+									sortAvailable={sortFields}
 									onEdit={onEditConfig}
 									onShow={onShowConfig}
 								/>
