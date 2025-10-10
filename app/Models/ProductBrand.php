@@ -14,6 +14,32 @@ class ProductBrand extends Model
     use LogsActivity;
 
     protected $fillable = ['product_id', 'brand_id'];
+    protected $primaryKey = 'product_id';
+    public $incrementing = false;
+
+    public static function getFilterableFields(): array
+    {
+        return [
+            'product_id',
+            'brand_id',
+        ];
+    }
+
+    public static function getSortableFields(): array
+    {
+        return [
+            'product_id',
+            'brand_id',
+        ];
+    }
+
+    public static function getSearchableFields(): array
+    {
+        return [
+            'product_id',
+            'brand_id',
+        ];
+    }
 
     public function product(): BelongsTo
     {
