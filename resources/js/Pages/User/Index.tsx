@@ -14,9 +14,15 @@ const DataTable = lazy(() => import("@/Components/DataTable"));
 
 type Props = {
 	users: paginateResponse<User>;
+	filtersAvailable: string[];
+	sortAvailable: string[];
 };
 
-export default function Products({ users }: Props) {
+export default function Products({
+	users,
+	filtersAvailable,
+	sortAvailable,
+}: Props) {
 	console.log(users);
 	const { openModal, closeModal } = useModal();
 
@@ -127,6 +133,8 @@ export default function Products({ users }: Props) {
 								<DataTable
 									columns={columns}
 									response={users}
+									filtersAvailable={filtersAvailable}
+									sortAvailable={sortAvailable}
 									onEdit={{ permissions: ["edit users"], hook: handleEdit }}
 									onDelete={{
 										permissions: ["delete users"],
