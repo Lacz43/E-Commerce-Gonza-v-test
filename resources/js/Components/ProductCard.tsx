@@ -32,28 +32,52 @@ export default function ProductCard({
 		item.average_rating || 0,
 	);
 	const [reviewText, setReviewText] = useState("");
-	const [isPending, startTransition] = useTransition();
+	const [existingReviewId, setExistingReviewId] = useState<number | null>(null);
+	const [_isPending, startTransition] = useTransition();
 	const [optimisticAverage, setOptimisticAverage] = useOptimistic(
 		selectedRating,
-		(state, newValue: number) => newValue,
+		(_state, newValue: number) => newValue,
 	);
 
-	const handleRatingClick = useCallback(() => {
-		if (auth.user) {
-			setReviewDialogOpen(true);
+	const handleRatingClick = useCallback(async () => {
+		if (!auth.user) return;
+		try {
+			const { data: reviews } = await axios.get(
+				`/products/${item.id}/reviews?user_id=${auth.user.id}`,
+			);
+			if (reviews.length > 0) {
+				const userReview = reviews[0];
+				setSelectedRating(userReview.rating);
+				setReviewText(userReview.review || "");
+				setExistingReviewId(userReview.id);
+			} else {
+				setSelectedRating(5);
+				setReviewText("");
+				setExistingReviewId(null);
+			}
+		} catch (error) {
+			console.error("Error fetching reviews:", error);
 		}
-	}, [auth.user]);
+		setReviewDialogOpen(true);
+	}, [auth.user, item.id]);
 
 	const handleSubmitReview = useCallback(async () => {
 		startTransition(() => {
 			setOptimisticAverage(selectedRating);
 		});
 		try {
-			await axios.post(`/products/${item.id}/reviews`, {
-				product_id: item.id,
-				rating: selectedRating,
-				review: reviewText,
-			});
+			if (existingReviewId) {
+				await axios.put(`/products/reviews/${existingReviewId}`, {
+					rating: selectedRating,
+					review: reviewText,
+				});
+			} else {
+				await axios.post(`/products/${item.id}/reviews`, {
+					product_id: item.id,
+					rating: selectedRating,
+					review: reviewText,
+				});
+			}
 			setReviewDialogOpen(false);
 			setReviewText("");
 			// Keep optimistic value
@@ -71,6 +95,7 @@ export default function ProductCard({
 		setOptimisticAverage,
 		startTransition,
 		item.average_rating,
+		existingReviewId,
 	]);
 
 	if (!item?.default_image) return null;
