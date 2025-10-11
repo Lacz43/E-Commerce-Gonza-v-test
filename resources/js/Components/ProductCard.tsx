@@ -1,7 +1,15 @@
+import { usePage } from "@inertiajs/react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StarIcon from "@mui/icons-material/Star";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import axios from "axios";
 import type { HTMLAttributes } from "react";
+import { useCallback, useState } from "react";
 import ProductDetailsModal from "@/Components/Modals/ProductDetailsModal";
 import { useModal } from "@/Context/Modal";
 import { imageUrl } from "@/utils";
@@ -18,6 +26,30 @@ export default function ProductCard({
 	...props
 }: CardProps) {
 	const { openModal } = useModal();
+	const { auth } = usePage().props as any;
+	const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+	const [selectedRating, setSelectedRating] = useState(5);
+	const [reviewText, setReviewText] = useState("");
+
+	const handleRatingClick = useCallback(() => {
+		if (auth.user) {
+			setReviewDialogOpen(true);
+		}
+	}, [auth.user]);
+
+	const handleSubmitReview = useCallback(async () => {
+		try {
+			await axios.post(`/products/${item.id}/reviews`, {
+				product_id: item.id,
+				rating: selectedRating,
+				review: reviewText,
+			});
+			setReviewDialogOpen(false);
+			setReviewText("");
+		} catch (error) {
+			console.error("Error submitting review:", error);
+		}
+	}, [item.id, selectedRating, reviewText]);
 
 	if (!item?.default_image) return null;
 
@@ -62,13 +94,18 @@ export default function ProductCard({
 						</h3>
 						{/* Dynamic rating */}
 						<div
-							className="flex items-center gap-0.5 text-amber-400"
+							className={`flex items-center gap-0.5 text-amber-400 ${auth.user ? "cursor-pointer" : ""}`}
+							onClick={() => handleRatingClick()}
 						>
 							{Array.from({ length: 5 }).map((_, i) => (
 								<StarIcon
 									key={i}
 									fontSize="small"
-									className={i < Math.floor(item.average_rating || 0) ? "text-amber-400" : "text-slate-300"}
+									className={
+										i < Math.floor(item.average_rating || 0)
+											? "text-amber-400"
+											: "text-slate-300"
+									}
 								/>
 							))}
 							{item.average_rating && (
@@ -157,6 +194,43 @@ export default function ProductCard({
 				{/* Decorative subtle gradient bottom bar */}
 				<div className="h-1 w-full bg-gradient-to-r from-orange-200 via-emerald-100 to-green-200" />
 			</div>
+
+			{/* Review Dialog */}
+			<Dialog
+				open={reviewDialogOpen}
+				onClose={() => setReviewDialogOpen(false)}
+			>
+				<DialogTitle>Deja tu reseña para {item.name}</DialogTitle>
+				<DialogContent>
+					<div className="flex items-center gap-1 mb-4">
+						{Array.from({ length: 5 }).map((_, i) => (
+							<StarIcon
+								key={i}
+								fontSize="large"
+								className={`cursor-pointer ${i < selectedRating ? "text-amber-400" : "text-slate-300"}`}
+								onClick={() => setSelectedRating(i + 1)}
+							/>
+						))}
+						<span className="ml-2">
+							{selectedRating} estrella{selectedRating !== 1 ? "s" : ""}
+						</span>
+					</div>
+					<TextField
+						label="Reseña (opcional)"
+						multiline
+						rows={4}
+						fullWidth
+						value={reviewText}
+						onChange={(e) => setReviewText(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setReviewDialogOpen(false)}>Cancelar</Button>
+					<Button onClick={handleSubmitReview} variant="contained">
+						Enviar
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
 	);
 }
