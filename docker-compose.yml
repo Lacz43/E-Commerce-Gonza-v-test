@@ -10,6 +10,7 @@ services:
         volumes:
             - .:/var/www/html
             - ./storage:/var/www/html/storage
+            - /var/www/html/node_modules
         working_dir: /var/www/html
         tty: true # Permite usar la consola interactiva
         depends_on:
