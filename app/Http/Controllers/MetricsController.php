@@ -95,30 +95,8 @@ class MetricsController extends Controller
             ->orderBy('period')
             ->get();
 
-        $topProductsQuery = DB::table('order_items')
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('products.id', '=', 'product_images.product_id')
-                     ->where('product_images.default', '=', 1);
-            })
-            ->whereIn('orders.status', ['completed', 'paid'])
-            ->select(
-                'products.name',
-                DB::raw('SUM(order_items.quantity) as total_sold'),
-                'product_images.image'
-            )
-            ->groupBy('order_items.product_id', 'products.name', 'product_images.image')
-            ->orderBy('total_sold', 'desc')
-            ->limit(10);
-
-        if ($period === 'custom') {
-            $topProductsQuery->whereBetween('orders.created_at', [$start, $end]);
-        } else {
-            $topProductsQuery->where('orders.created_at', '>=', $start);
-        }
-
-        $topProducts = $topProductsQuery->get();
+        $type = $request->query('type', 'sold');
+        $topProducts = $this->buildTopProductsQuery($type, $request)->get();
 
         return response()->json([
             'orders_by_month' => $ordersByMonth,
@@ -183,6 +161,54 @@ class MetricsController extends Controller
         return $now;
     }
 
+    private function buildTopProductsQuery($type, $request)
+    {
+        $period = $request->query('period', 'monthly');
+        $limit = $request->query('limit', 10);
+
+        if ($type === 'sold') {
+            $query = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->join('products', 'order_items.product_id', '=', 'products.id')
+                ->whereIn('orders.status', ['completed', 'paid'])
+                ->select(
+                    'products.name',
+                    DB::raw('SUM(order_items.quantity) as total_sold'),
+                    DB::raw('(SELECT image FROM product_images WHERE product_id = order_items.product_id AND `default` = 1 LIMIT 1) as image')
+                )
+                ->groupBy('order_items.product_id', 'products.name')
+                ->orderBy('total_sold', 'desc')
+                ->limit($limit);
+
+            if ($period === 'custom') {
+                $start = $this->getStartDate($request);
+                $end = $this->getEndDate($request);
+                $query->whereBetween('orders.created_at', [$start, $end]);
+            } else {
+                $start = $this->getStartDate($request);
+                $query->where('orders.created_at', '>=', $start);
+            }
+
+            return $query;
+        } elseif ($type === 'rating') {
+            $query = DB::table('products')
+                ->leftJoin('product_reviews', 'products.id', '=', 'product_reviews.product_id')
+                ->select(
+                    'products.name',
+                    DB::raw('AVG(product_reviews.rating) as average_rating'),
+                    DB::raw('(SELECT image FROM product_images WHERE product_id = products.id AND `default` = 1 LIMIT 1) as image')
+                )
+                ->groupBy('products.id', 'products.name')
+                ->havingRaw('AVG(product_reviews.rating) IS NOT NULL')
+                ->orderBy('average_rating', 'desc')
+                ->limit($limit);
+
+            return $query;
+        }
+
+        throw new \InvalidArgumentException('Invalid type');
+    }
+
     public function dashboard(Request $request)
     {
         $productMetrics = $this->getProductMetrics($request)->getData();
@@ -192,5 +218,17 @@ class MetricsController extends Controller
             'product_metrics' => $productMetrics,
             'order_metrics' => $orderMetrics,
         ]);
+    }
+
+    public function getTopProducts(Request $request)
+    {
+        $type = $request->query('type', 'sold');
+
+        try {
+            $topProducts = $this->buildTopProductsQuery($type, $request)->get();
+            return response()->json($topProducts);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 }
