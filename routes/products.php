@@ -3,6 +3,7 @@
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductInventoryController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ProductsController;
 use App\Models\ProductInventory;
 use Illuminate\Support\Facades\Route;
@@ -56,3 +57,11 @@ Route::middleware('auth', 'permission:edit product_brands')
 Route::get('/products', [ProductsController::class, 'products'])->name('products');
 Route::get('/products/categories', [ProductCategoryController::class, 'categories'])->name('products.categories');
 Route::get('/products/brands', [BrandController::class, 'brands'])->name('products.brands');
+
+// Product Reviews
+Route::middleware('auth')->group(function () {
+    Route::get('/products/{product}/reviews', [ProductReviewController::class, 'index'])->name('products.reviews.index');
+    Route::post('/products/{product}/reviews', [ProductReviewController::class, 'store'])->name('products.reviews.store');
+    Route::put('/products/{product}/reviews/{review}', [ProductReviewController::class, 'update'])->name('products.reviews.update');
+    Route::delete('/products/{product}/reviews/{review}', [ProductReviewController::class, 'destroy'])->name('products.reviews.destroy');
+});
