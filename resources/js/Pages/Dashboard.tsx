@@ -31,7 +31,12 @@ interface MetricsData {
 			Array<{ period: string; total_orders: number; status: string }>
 		>;
 		revenue_by_month: Array<{ period: string; total_revenue: number }>;
-		top_products: Array<{ name: string; total_sold: number; image?: string }>;
+		top_products: Array<{
+			name: string;
+			total_sold?: number;
+			average_rating?: number;
+			image?: string;
+		}>;
 	};
 }
 
@@ -41,6 +46,9 @@ export default function Dashboard() {
 	const [period, setPeriod] = useState("monthly");
 	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
+	const [topProductType, setTopProductType] = useState<"sold" | "rating">(
+		"sold",
+	);
 
 	useEffect(() => {
 		const params: Record<string, string> = {};
@@ -51,6 +59,7 @@ export default function Dashboard() {
 		} else {
 			params.period = period;
 		}
+		params.type = topProductType;
 		axios
 			.get("/metrics/dashboard", { params })
 			.then((response) => {
@@ -62,7 +71,7 @@ export default function Dashboard() {
 				console.error("Error fetching metrics:", error);
 				setLoading(false);
 			});
-	}, [period, startDate, endDate]);
+	}, [period, startDate, endDate, topProductType]);
 
 	if (loading) {
 		return (
@@ -185,6 +194,7 @@ export default function Dashboard() {
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 						<TopProductsTable
 							topProducts={metrics.order_metrics.top_products}
+							onTypeChange={setTopProductType}
 						/>
 						<LowStockTable
 							lowStockProducts={metrics.product_metrics.low_stock_products}
