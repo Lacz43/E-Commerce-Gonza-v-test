@@ -79,11 +79,16 @@ class ProductReviewController extends Controller
     /**
      * Get reviews for a product.
      */
-    public function index(\App\Models\Product $product)
+    public function index(Request $request, \App\Models\Product $product)
     {
         $reviews = ProductReview::with('user:id,name')
-            ->where('product_id', $product->id)
-            ->get();
+            ->where('product_id', $product->id);
+
+        if ($request->has('user_id')) {
+            $reviews->where('user_id', $request->query('user_id'));
+        }
+
+        $reviews = $reviews->get();
 
         return response()->json($reviews);
     }
