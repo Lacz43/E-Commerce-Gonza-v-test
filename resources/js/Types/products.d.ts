@@ -11,6 +11,8 @@ declare interface Item<T = unknown> {
 	price: number;
 	quantity?: number;
 	data?: T;
+	product_reviews?: ProductReview[];
+	average_rating?: number;
 }
 
 declare interface ProductBrand {
@@ -64,4 +66,14 @@ declare interface MovementItem {
 	user: {
 		name: string;
 	};
+}
+
+declare interface ProductReview {
+	id: number;
+	product_id: number;
+	user_id: number;
+	rating: number;
+	comment: string;
+	created_at: string;
+	updated_at: string;
 }
