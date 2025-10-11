@@ -17,7 +17,8 @@ RUN apt-get update \
     curl \
     nano \
     mariadb-client \
-    supervisor
+    supervisor \
+    tzdata
 
 # Instalar extensiones PHP necesarias para Laravel
 RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
@@ -27,6 +28,10 @@ COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
 # Opcional: establece el directorio de trabajo
 WORKDIR /var/www
+
+# Establecer zona horaria
+ENV TZ=America/Caracas
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Configurar supervisord
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
