@@ -1,14 +1,12 @@
 import { TextField } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
-type Item = {
-	product_inventory?: {
-		stock?: number;
-	};
-};
+interface Stock extends Item {
+	stock?: number;
+}
 
 type Props = {
-	productInfo: Item | null;
+	productInfo: Stock | null;
 	name?: string;
 };
 
@@ -32,7 +30,7 @@ export default function QuantityInput({ productInfo, name = "stock" }: Props) {
 						entero: (v) => Number.isInteger(v) || "Solo números enteros",
 						noNegativo: (v) =>
 							(typeof v === "number" &&
-								(productInfo?.product_inventory?.stock ?? 0) + Number(v) >=
+								(productInfo?.stock ?? 0) + Number(v) >=
 									0) ||
 							"No puede quedar stock negativo",
 					},
@@ -53,7 +51,7 @@ export default function QuantityInput({ productInfo, name = "stock" }: Props) {
 				<div className="flex flex-col items-center min-w-[100px] px-2 py-1 rounded border border-blue-200 bg-blue-50">
 					<span className="text-xs text-blue-700 mb-1 font-medium">Actual</span>
 					<span className="text-base font-semibold text-blue-700">
-						{productInfo?.product_inventory?.stock ?? 0}
+						{productInfo?.stock ?? 0}
 					</span>
 				</div>
 				<div className="flex flex-col items-center min-w-[100px] px-2 py-1 rounded border border-green-200 bg-green-50">
@@ -61,7 +59,7 @@ export default function QuantityInput({ productInfo, name = "stock" }: Props) {
 						Después
 					</span>
 					<span className="text-base font-semibold text-green-700">
-						{(productInfo?.product_inventory?.stock ?? 0) +
+						{(productInfo?.stock ?? 0) +
 							(Number(watch(name)) || 0)}
 					</span>
 				</div>
