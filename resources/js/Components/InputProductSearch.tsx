@@ -63,6 +63,7 @@ export default function InputProductSearch({
 							minStock: 1,
 							useImage: true,
 							minAvailableStock: 1,
+							whitReviews: true,
 						},
 					});
 

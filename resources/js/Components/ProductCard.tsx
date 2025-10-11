@@ -60,15 +60,22 @@ export default function ProductCard({
 						<h3 className="text-xl font-semibold tracking-tight text-slate-900">
 							{item.name}
 						</h3>
-						{/* Static rating placeholder */}
+						{/* Dynamic rating */}
 						<div
 							className="flex items-center gap-0.5 text-amber-400"
-							aria-label="Valoración (placeholder)"
 						>
-							{Array.from({ length: 4 }).map((_, i) => (
-								<StarIcon key={i} fontSize="small" />
+							{Array.from({ length: 5 }).map((_, i) => (
+								<StarIcon
+									key={i}
+									fontSize="small"
+									className={i < Math.floor(item.average_rating || 0) ? "text-amber-400" : "text-slate-300"}
+								/>
 							))}
-							<StarIcon fontSize="small" className="text-slate-300" />
+							{item.average_rating && (
+								<span className="ml-1 text-xs text-slate-600">
+									{item.average_rating.toFixed(1)}
+								</span>
+							)}
 						</div>
 					</div>
 
