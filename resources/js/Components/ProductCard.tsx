@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
 import type { HTMLAttributes } from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useOptimistic, useState, useTransition } from "react";
 import ProductDetailsModal from "@/Components/Modals/ProductDetailsModal";
 import { useModal } from "@/Context/Modal";
 import { imageUrl } from "@/utils";
@@ -28,8 +28,15 @@ export default function ProductCard({
 	const { openModal } = useModal();
 	const { auth } = usePage().props as any;
 	const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
-	const [selectedRating, setSelectedRating] = useState(5);
+	const [selectedRating, setSelectedRating] = useState(
+		item.average_rating || 0,
+	);
 	const [reviewText, setReviewText] = useState("");
+	const [isPending, startTransition] = useTransition();
+	const [optimisticAverage, setOptimisticAverage] = useOptimistic(
+		selectedRating,
+		(state, newValue: number) => newValue,
+	);
 
 	const handleRatingClick = useCallback(() => {
 		if (auth.user) {
@@ -38,6 +45,9 @@ export default function ProductCard({
 	}, [auth.user]);
 
 	const handleSubmitReview = useCallback(async () => {
+		startTransition(() => {
+			setOptimisticAverage(selectedRating);
+		});
 		try {
 			await axios.post(`/products/${item.id}/reviews`, {
 				product_id: item.id,
@@ -46,10 +56,22 @@ export default function ProductCard({
 			});
 			setReviewDialogOpen(false);
 			setReviewText("");
+			// Keep optimistic value
 		} catch (error) {
 			console.error("Error submitting review:", error);
+			// On error, revert
+			startTransition(() => {
+				setOptimisticAverage(item.average_rating || 0);
+			});
 		}
-	}, [item.id, selectedRating, reviewText]);
+	}, [
+		item.id,
+		selectedRating,
+		reviewText,
+		setOptimisticAverage,
+		startTransition,
+		item.average_rating,
+	]);
 
 	if (!item?.default_image) return null;
 
@@ -102,15 +124,15 @@ export default function ProductCard({
 									key={i}
 									fontSize="small"
 									className={
-										i < Math.floor(item.average_rating || 0)
+										i < Math.floor(optimisticAverage || 0)
 											? "text-amber-400"
 											: "text-slate-300"
 									}
 								/>
 							))}
-							{item.average_rating && (
+							{optimisticAverage && (
 								<span className="ml-1 text-xs text-slate-600">
-									{item.average_rating.toFixed(1)}
+									{optimisticAverage.toFixed(1)}
 								</span>
 							)}
 						</div>
