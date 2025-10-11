@@ -19,6 +19,8 @@ class Product extends Model
 
     protected $fillable = ['name', 'barcode', 'category_id', 'description', 'price'];
 
+    protected $appends = ['average_rating'];
+
     public static function getFilterableFields(): array
     {
         return ['id', 'name', 'barcode', 'category_id', 'price', 'description'];
@@ -67,6 +69,20 @@ class Product extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function productReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function getAverageRatingAttribute(): ?float
+    {
+        if ($this->relationLoaded('productReviews')) {
+            return $this->productReviews->avg('rating');
+        }
+
+        return $this->productReviews()->avg('rating');
     }
 
     public function getAvailableStockAttribute(): int
