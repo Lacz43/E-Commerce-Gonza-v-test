@@ -62,6 +62,6 @@ Route::get('/products/brands', [BrandController::class, 'brands'])->name('produc
 Route::middleware('auth')->group(function () {
     Route::get('/products/{product}/reviews', [ProductReviewController::class, 'index'])->name('products.reviews.index');
     Route::post('/products/{product}/reviews', [ProductReviewController::class, 'store'])->name('products.reviews.store');
-    Route::put('/products/{product}/reviews/{review}', [ProductReviewController::class, 'update'])->name('products.reviews.update');
-    Route::delete('/products/{product}/reviews/{review}', [ProductReviewController::class, 'destroy'])->name('products.reviews.destroy');
+    Route::put('/products/reviews/{review}', [ProductReviewController::class, 'update'])->name('products.reviews.update');
+    Route::delete('/products/reviews/{review}', [ProductReviewController::class, 'destroy'])->name('products.reviews.destroy');
 });
