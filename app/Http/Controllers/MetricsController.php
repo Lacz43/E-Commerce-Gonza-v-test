@@ -203,6 +203,16 @@ class MetricsController extends Controller
                 ->orderBy('average_rating', 'desc')
                 ->limit($limit);
 
+            if ($period === 'custom') {
+                $start = $this->getStartDate($request);
+                $end = $this->getEndDate($request);
+                $query->whereBetween('product_reviews.created_at', [$start, $end]);
+            } else {
+                $start = $this->getStartDate($request);
+                $query->where('product_reviews.created_at', '>=', $start);
+            }
+
+
             return $query;
         }
 
