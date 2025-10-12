@@ -20,6 +20,7 @@ class InventoryMovement extends Model
         'model_id',
         'user_id',
         'controller_name',
+        'reason',
     ];
 
     public function productInventory(): BelongsTo
