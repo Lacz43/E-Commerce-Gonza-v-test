@@ -8,3 +8,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 require __DIR__.'/backup.php';
+
+require __DIR__.'/order_expiry.php';
