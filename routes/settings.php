@@ -2,12 +2,16 @@
 
 use App\Http\Controllers\BackupAndRestoreController;
 use App\Http\Controllers\GeneralSettingsController;
+use App\Http\Controllers\OrderSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth', 'permission:edit settings')->group(function () {
     Route::get('/settings/general', [GeneralSettingsController::class, 'index'])->name('settings.general');
     Route::post('/settings/general', [GeneralSettingsController::class, 'update'])->name('settings.general.update');
     Route::delete('/settings/general/logo', [GeneralSettingsController::class, 'deleteLogo'])->name('settings.general.logo.delete');
+
+    Route::get('/settings/order', [OrderSettingsController::class, 'index'])->name('settings.order');
+    Route::post('/settings/order', [OrderSettingsController::class, 'update'])->name('settings.order.update');
 });
 
 Route::middleware('auth', 'permission:show backups')->group(function () {
