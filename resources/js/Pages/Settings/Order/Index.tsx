@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
@@ -29,7 +29,7 @@ export default function Index({ settings }: Props) {
 	console.log(settings);
 
 	const {
-		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<OrderSettings>({
@@ -79,29 +79,38 @@ export default function Index({ settings }: Props) {
 								onSubmit={handleSubmit(onSubmit)}
 								sx={{ display: "flex", flexDirection: "column", gap: 3 }}
 							>
-								<TextField
-									select
-									label="Tiempo Máximo (Horas)"
-									defaultValue=""
-									fullWidth
-									{...register("max_payment_wait_time_hours", {
-										required: "Selecciona el tiempo máximo",
-									})}
-									error={!!errors.max_payment_wait_time_hours}
-									helperText={
-										errors.max_payment_wait_time_hours?.message ||
-										"Selecciona null para desactivar la expiración automática"
-									}
-								>
-									<MenuItem value="">
-										<em>Desactivado (null)</em>
-									</MenuItem>
-									{Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
-										<MenuItem key={hour} value={hour}>
-											{hour} hora{hour !== 1 ? "s" : ""}
-										</MenuItem>
-									))}
-								</TextField>
+								<Controller
+									name="max_payment_wait_time_hours"
+									control={control}
+									render={({ field }) => (
+										<TextField
+											select
+											label="Tiempo Máximo (Horas)"
+											fullWidth
+											value={field.value === null ? "" : field.value}
+											onChange={(e) => {
+												const value = e.target.value;
+												field.onChange(value === "" ? null : Number(value));
+											}}
+											error={!!errors.max_payment_wait_time_hours}
+											helperText={
+												errors.max_payment_wait_time_hours?.message ||
+												"Selecciona null para desactivar la expiración automática"
+											}
+										>
+											<MenuItem value="">
+												<em>Desactivado (null)</em>
+											</MenuItem>
+											{Array.from({ length: 24 }, (_, i) => i + 1).map(
+												(hour) => (
+													<MenuItem key={hour} value={hour}>
+														{hour} hora{hour !== 1 ? "s" : ""}
+													</MenuItem>
+												),
+											)}
+										</TextField>
+									)}
+								/>
 
 								<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
 									<Button
