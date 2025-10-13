@@ -110,6 +110,10 @@ export const paths: Record<string, Route> = {
 				path: "settings.general",
 				name: "General",
 			},
+			order: {
+				path: "settings.order",
+				name: "Órdenes",
+			},
 			backup: {
 				path: "backup.index",
 				name: "Respaldo y Restauracion",
