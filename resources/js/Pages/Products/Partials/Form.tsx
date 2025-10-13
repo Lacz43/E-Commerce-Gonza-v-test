@@ -18,6 +18,7 @@ export interface FormStruture
 	image_used: number | null;
 	category: number | string | null | ProductCategory;
 	brand: number | string | null | ProductBrand;
+	reason?: string; // 🆕 Nuevo campo para la razón de ajuste
 }
 
 type Props = {
@@ -48,6 +49,7 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 				...(InitialValues as FormStruture),
 				image_used: InitialValues.images.findIndex((i) => i.default == true),
 				images: [],
+				reason: (InitialValues as any).reason || "", // 🆕 aseguramos valor inicial
 			});
 		}
 	}, []);
@@ -158,6 +160,20 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 								variant="filled"
 								multiline
 								{...register("description")}
+							/>
+						</div>
+
+						{/* 🆕 Campo para ingresar la razón del ajuste */}
+						<div className="mt-3">
+							<TextField
+								className="w-full"
+								id="reason"
+								label="Razón del ajuste de inventario"
+								variant="filled"
+								multiline
+								rows={3}
+								placeholder="Ejemplo: Corrección de stock por conteo físico"
+								{...register("reason")}
 							/>
 						</div>
 					</div>
