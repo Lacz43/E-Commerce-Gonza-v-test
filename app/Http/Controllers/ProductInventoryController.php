@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InventoryReason;
 use App\Models\Product;
 use App\Models\ProductInventory;
 use App\Services\InventoryMovementService;
@@ -57,6 +58,7 @@ class ProductInventoryController extends Controller
 
         try {
             $movements = [];
+            $reason = InventoryReason::firstOrCreate(['name' => $request->reason], ['description' => $request->reason]);
 
             foreach ($request->items as $item) {
                 [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
@@ -65,6 +67,7 @@ class ProductInventoryController extends Controller
                     ProductInventory::class,
                     null,
                     Auth::user()->id,
+                    $reason->id
                 );
                 $movements[] = $inventoryMovement;
             }
@@ -102,12 +105,14 @@ class ProductInventoryController extends Controller
         ]);
 
         try {
+            $reason = InventoryReason::firstOrCreate(['name' => $request->reason], ['description' => $request->reason]);
             [$productInventory, $inventoryMovement] = InventoryMovementService::inventoryMovement(
                 $product->id,
                 $request->stock,
                 get_class($product),
                 $product->id,
-                Auth::user()->id
+                Auth::user()->id,
+                $reason->id
             );
 
             // Adjuntar archivos al movimiento si existen
