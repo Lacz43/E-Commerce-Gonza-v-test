@@ -1,4 +1,12 @@
-import { Button, FormHelperText, TextField } from "@mui/material";
+import { Image, Inventory } from "@mui/icons-material";
+import {
+	Box,
+	Button,
+	FormHelperText,
+	Paper,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { useEffect, useId } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import ImageUpload from "@/Components/ImageUpload";
@@ -85,11 +93,40 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 
 	return (
 		<FormProvider {...methods}>
-			<div className="p-6 text-gray-900">
-				<div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
-					<div className="">
+			<Box sx={{ p: 3 }}>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+						gap: 3,
+					}}
+				>
+					<Paper
+						elevation={2}
+						sx={{
+							p: 3,
+							borderRadius: 3,
+							border: "1px solid rgba(5, 150, 105, 0.15)",
+						}}
+					>
+						<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+							<Box
+								sx={{
+									background:
+										"linear-gradient(135deg, #10b981 0%, #059669 100%)",
+									borderRadius: 2,
+									p: 1,
+									display: "flex",
+								}}
+							>
+								<Inventory sx={{ color: "white", fontSize: 24 }} />
+							</Box>
+							<Typography variant="h6" fontWeight={600}>
+								Información del Producto
+							</Typography>
+						</Box>
 						<TextField
-							className="w-full"
+							fullWidth
 							error={errors.name !== undefined}
 							helperText={errors.name?.message}
 							id={productName}
@@ -99,8 +136,9 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 							{...register("name", {
 								required: "Este campo es obligatorio",
 							})}
+							sx={{ mb: 2 }}
 						/>
-						<div className="mt-3 flex gap-3">
+						<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
 							<TextField
 								className="w-full"
 								error={errors.barcode !== undefined}
@@ -114,9 +152,9 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 									required: "Este campo es obligatorio",
 									validate: validateBarcode,
 								})}
+								fullWidth
 							/>
 							<TextField
-								className="w-full"
 								error={errors.price !== undefined}
 								helperText={errors.price?.message}
 								id={productPrice}
@@ -128,9 +166,10 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 									required: "Este campo es obligatorio",
 									validate: (value) => value > 0 || "Debe ser mayor de 0",
 								})}
+								fullWidth
 							/>
-						</div>
-						<div className="mt-3 flex gap-3">
+						</Box>
+						<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
 							<SelectionTextInput
 								className="w-full"
 								control={control}
@@ -148,37 +187,76 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 								label="Marca"
 								name="brand"
 							/>
-						</div>
-						<div className="mt-3">
-							<TextField
-								className="w-full"
-								error={false}
-								id={productDescription}
-								label="Descripcion"
-								variant="filled"
-								multiline
-								{...register("description")}
-							/>
-						</div>
-					</div>
-					<div className="">
+						</Box>
+						<TextField
+							error={false}
+							id={productDescription}
+							label="Descripcion"
+							variant="filled"
+							multiline
+							rows={4}
+							{...register("description")}
+							fullWidth
+						/>
+					</Paper>
+					<Paper
+						elevation={2}
+						sx={{
+							p: 3,
+							borderRadius: 3,
+							border: "1px solid rgba(5, 150, 105, 0.15)",
+						}}
+					>
+						<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+							<Box
+								sx={{
+									background:
+										"linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+									borderRadius: 2,
+									p: 1,
+									display: "flex",
+								}}
+							>
+								<Image sx={{ color: "white", fontSize: 24 }} />
+							</Box>
+							<Typography variant="h6" fontWeight={600}>
+								Imágenes del Producto
+							</Typography>
+						</Box>
 						{errors.images !== undefined && (
-							<FormHelperText className="red text-center">
-								Es necesario una imagen
+							<FormHelperText
+								error
+								sx={{ textAlign: "center", mb: 2, fontSize: 14 }}
+							>
+								Es necesario agregar al menos una imagen
 							</FormHelperText>
 						)}
 						<ImageUrlInput />
 						<ImageUpload name="images" />
-					</div>
-				</div>
-			</div>
-			<Button
-				variant="contained"
-				onClick={handleSubmit(onSubmit)}
-				disabled={isSubmitting}
-			>
-				<b>{InitialValues ? "Editar" : "Crear"}</b>
-			</Button>
+					</Paper>
+				</Box>
+				<Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+					<Button
+						variant="contained"
+						onClick={handleSubmit(onSubmit)}
+						disabled={isSubmitting}
+						sx={{
+							background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+							px: 4,
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 700,
+							textTransform: "none",
+							fontSize: 16,
+							"&:hover": {
+								background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+							},
+						}}
+					>
+						{InitialValues ? "Actualizar Producto" : "Crear Producto"}
+					</Button>
+				</Box>
+			</Box>
 		</FormProvider>
 	);
 }
