@@ -8,19 +8,41 @@ export default function Authenticated({
 	children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
 	return (
-		<div className="bg-gray-100 h-full max-w-[100vw] ">
+		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-orange-50/20">
 			<SideNav />
-			<div className="md:ml-[20rem]">
+			<div className="md:ml-[20rem] min-h-screen flex flex-col">
 				<Navbar />
-				{/* {header && ( */}
-				{/* 	<header className="bg-white shadow"> */}
-				{/* 		<div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"> */}
-				{/* 			{header} */}
-				{/* 		</div> */}
-				{/* 	</header> */}
-				{/* )} */}
+				
+				{/* Header opcional con diseño moderno */}
+				{/*header && (
+					<header className="bg-white/80 backdrop-blur-md border-b border-emerald-200/50 shadow-sm sticky top-0 z-50">
+						<div className="mx-auto max-w-7xl px-6 py-5">
+							<div className="flex flex-col gap-2">
+								<div className="flex items-center justify-between">
+									<div className="flex flex-col">
+										{header}
+									</div>
+								</div>
+							</div>
+						</div>
+					</header>
+				)*/}
 
-				<main>{children}</main>
+				{/* Main content con mejor padding y animación */}
+				<main className="flex-1 p-6 animate-fadeIn">
+					<div className="mx-auto max-w-7xl">
+						{children}
+					</div>
+				</main>
+
+				{/* Footer opcional */}
+				<footer className="mt-auto py-4 px-6 bg-white/60 backdrop-blur-sm border-t border-emerald-200/50">
+					<div className="mx-auto max-w-7xl">
+						<p className="text-center text-sm text-gray-600">
+							© {new Date().getFullYear()} GonzaGo. Todos los derechos reservados.
+						</p>
+					</div>
+				</footer>
 			</div>
 		</div>
 	);
