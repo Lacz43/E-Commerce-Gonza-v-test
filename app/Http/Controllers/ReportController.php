@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\InventoryMovement;
 use App\Models\Product;
+use App\Models\ProductInventory;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\InventoryMovement as InventoryMovementModel;
 use App\Settings\GeneralSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Mpdf\Mpdf;
 
@@ -287,6 +290,26 @@ class ReportController extends Controller
 
         if ($request->has('model') && $request->model !== '') {
             $query->where('model_type', 'like', '%' . $request->model . '%');
+        }
+
+        return $query;
+    }
+
+    /**
+     * Aplicar filtros opcionales a la query de órdenes/ventas.
+     */
+    private function applySalesFilters($query, Request $request)
+    {
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('date_from') && $request->date_from !== '') {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to') && $request->date_to !== '') {
+            $query->whereDate('created_at', '<=', $request->date_to);
         }
 
         return $query;
