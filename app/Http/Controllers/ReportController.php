@@ -34,6 +34,14 @@ class ReportController extends Controller
     }
 
     /**
+     * Vista de reportes de inventario.
+     */
+    public function inventory(Request $request)
+    {
+        return Inertia::render('Reports/Inventory');
+    }
+
+    /**
      * Generar PDF de un movimiento de inventario.
      */
     public function downloadMovement(InventoryMovement $movement): Response
