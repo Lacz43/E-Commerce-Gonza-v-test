@@ -22,7 +22,7 @@
                 <td>{{ $product->id }}</td>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->barcode }}</td>
-                <td>{{ $product->inventory->stock ?? 0 }}</td>
+                <td>{{ $product->productInventory->stock ?? 0 }}</td>
                 <td>{{ $product->price ?? 'N/A' }}</td>
             </tr>
             @endforeach
