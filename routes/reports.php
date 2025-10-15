@@ -12,6 +12,10 @@ Route::middleware('auth', 'permission:show product_inventory')
     ->name('reports.movements.download');
 
 Route::middleware('auth', 'role:admin')
+    ->get('/reports/movements/all/download', [ReportController::class, 'downloadMovementsAll'])
+    ->name('reports.movements.all');
+
+Route::middleware('auth', 'role:admin')
     ->get('/reports/inventory/status/download', [ReportController::class, 'downloadInventoryStatus'])
     ->name('reports.inventory.status');
 
