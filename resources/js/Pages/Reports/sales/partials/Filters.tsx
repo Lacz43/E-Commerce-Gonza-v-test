@@ -23,7 +23,7 @@ interface SalesFiltersProps {
 		dateTo: string;
 	};
 	handleFilterChange: (field: string, value: string) => void;
-	clearFilters: () => void	;
+	clearFilters: () => void;
 }
 
 export default function Filters({
@@ -208,14 +208,6 @@ export default function Filters({
 											label={`Hasta: ${filters.dateTo}`}
 											size="small"
 											color="success"
-											variant="outlined"
-										/>
-									)}
-									{filters.model && (
-										<Chip
-											label={`Modelo: ${modelsName[filters.model] || filters.model}`}
-											size="small"
-											color="warning"
 											variant="outlined"
 										/>
 									)}
