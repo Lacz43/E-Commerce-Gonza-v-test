@@ -5,7 +5,7 @@ import {
 	MusicNote,
 	PictureAsPdf,
 } from "@mui/icons-material";
-import { Chip } from "@mui/material";
+import { Button, Chip } from "@mui/material";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 
 type MovementData = MovementItem & {
@@ -155,13 +155,22 @@ export default function ModalMovementDetail({
 				</div>
 			}
 			footer={
-				<button
-					type="button"
-					onClick={onClose}
-					className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-				>
-					Cerrar
-				</button>
+				<div className="flex justify-between w-full">
+					<Button
+						variant="outlined"
+						color="primary"
+						onClick={() => window.open(route('reports.movements.download', data.id), '_blank')}
+						startIcon={<PictureAsPdf />}
+					>
+						Descargar PDF
+					</Button>
+					<Button
+						variant="outlined"
+						onClick={onClose}
+					>
+						Cerrar
+					</Button>
+				</div>
 			}
 			onClose={onClose}
 		/>
