@@ -46,7 +46,22 @@ class ReportController extends Controller
      */
     public function movements(Request $request)
     {
-        return Inertia::render('Reports/movements/Movements');
+        $modelsName = [
+            'ProductInventory' => 'Inventario',
+            'Order' => 'Ventas',
+        ];
+
+        return Inertia::render('Reports/movements/Movements', [
+            'modelsName' => $modelsName,
+        ]);
+    }
+
+    /**
+     * Vista de reportes de usuarios.
+     */
+    public function users(Request $request)
+    {
+        return Inertia::render('Reports/Users');
     }
 
     }
@@ -69,7 +84,8 @@ class ReportController extends Controller
             'margin_bottom' => 20,
         ]);
 
-        $html = view('pdf.movements.movement_pdf', compact('movement', 'settings'))->render();
+        $title = 'Movimiento de Inventario #' . $movement->id;
+        $html = view('pdf.movements.movement_pdf', compact('movement', 'settings', 'title'))->render();
 
         $mpdf->WriteHTML($html);
 
@@ -99,7 +115,8 @@ class ReportController extends Controller
             'margin_bottom' => 20,
         ]);
 
-        $html = view('pdf.products.products_report', compact('settings', 'products'))->render();
+        $title = 'Reporte de Productos';
+        $html = view('pdf.products.products_report', compact('settings', 'products', 'title'))->render();
 
         $mpdf->WriteHTML($html);
 
@@ -268,8 +285,8 @@ class ReportController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        if ($request->has('module') && $request->module !== '') {
-            $query->where('controller_name', 'like', '%' . $request->module . '%');
+        if ($request->has('model') && $request->model !== '') {
+            $query->where('model_type', 'like', '%' . $request->model . '%');
         }
 
         return $query;
@@ -281,6 +298,11 @@ class ReportController extends Controller
     public function downloadMovementsAll(Request $request): Response
     {
         $settings = app(GeneralSettings::class);
+
+        $modelsName = [
+            'ProductInventory' => 'Inventario',
+            'Order' => 'Ventas',
+        ];
 
         $query = InventoryMovement::with(['productInventory.product', 'user', 'reason']);
         $query = $this->applyMovementFilters($query, $request);
@@ -296,7 +318,7 @@ class ReportController extends Controller
         ]);
 
         $title = 'Historial Completo de Movimientos';
-        $html = view('pdf.movements.all', compact('settings', 'movements', 'title'))->render();
+        $html = view('pdf.movements.all', compact('settings', 'movements', 'title', 'modelsName'))->render();
 
         $mpdf->WriteHTML($html);
 
@@ -315,15 +337,20 @@ class ReportController extends Controller
     {
         $settings = app(GeneralSettings::class);
 
+        $modelsName = [
+            'ProductInventory' => 'Inventario',
+            'Order' => 'Ventas',
+        ];
+
         $query = InventoryMovement::with(['productInventory.product', 'user', 'reason']);
         $query = $this->applyMovementFilters($query, $request);
         $movements = $query->orderBy('created_at', 'desc')->get();
 
         // Calcular estadísticas
-        $entries = $movements->where('type', 'entry')->count();
-        $exits = $movements->where('type', 'exit')->count();
-        $totalQuantityIn = $movements->where('type', 'entry')->sum('quantity');
-        $totalQuantityOut = $movements->where('type', 'exit')->sum('quantity');
+        $entries = $movements->where('type', 'ingress')->count();
+        $exits = $movements->where('type', 'egress')->count();
+        $totalQuantityIn = $movements->where('type', 'ingress')->sum('quantity');
+        $totalQuantityOut = $movements->where('type', 'egress')->sum('quantity');
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -335,7 +362,7 @@ class ReportController extends Controller
         ]);
 
         $title = 'Análisis de Entradas y Salidas';
-        $html = view('pdf.movements.in-out', compact('settings', 'movements', 'entries', 'exits', 'totalQuantityIn', 'totalQuantityOut', 'title'))->render();
+        $html = view('pdf.movements.in-out', compact('settings', 'movements', 'entries', 'exits', 'totalQuantityIn', 'totalQuantityOut', 'title', 'modelsName'))->render();
 
         $mpdf->WriteHTML($html);
 
