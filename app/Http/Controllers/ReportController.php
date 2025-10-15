@@ -40,6 +40,15 @@ class ReportController extends Controller
     {
         return Inertia::render('Reports/inventory/Inventory');
     }
+
+    /**
+     * Vista de reportes de movimientos.
+     */
+    public function movements(Request $request)
+    {
+        return Inertia::render('Reports/movements/Movements');
+    }
+
     }
 
     /**
