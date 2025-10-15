@@ -21,18 +21,21 @@ interface FiltersProps {
 		movementType: string;
 		dateFrom: string;
 		dateTo: string;
-		module: string;
+		model: string;
 	};
 	handleFilterChange: (field: string, value: string) => void;
 	clearFilters: () => void;
+	modelsName: Record<string, string>;
 }
 
 export default function Filters({
 	filters,
 	handleFilterChange,
 	clearFilters,
+	modelsName,
 }: FiltersProps) {
 	const movementTypeId = useId();
+	const modelId = useId();
 
 	return (
 		<Box sx={{ mt: 4 }}>
@@ -171,7 +174,7 @@ export default function Filters({
 
 						<Divider />
 
-						{/* Módulo */}
+						{/* Modelo */}
 						<Box>
 							<Box
 								sx={{
@@ -183,22 +186,30 @@ export default function Filters({
 							>
 								<Business sx={{ color: "warning.main" }} />
 								<Typography variant="h6" fontWeight="600">
-									Módulo
+									Modelo
 								</Typography>
 							</Box>
-							<TextField
-								fullWidth
-								label="Módulo"
-								size="small"
-								value={filters.module}
-								onChange={(e) => handleFilterChange("module", e.target.value)}
-								placeholder="Ej: Ventas, Compras, Ajustes"
-								sx={{
-									"& .MuiOutlinedInput-root": {
+							<FormControl fullWidth size="small">
+								<InputLabel id={`${modelId}-label`}>Modelo</InputLabel>
+								<Select
+									labelId={`${modelId}-label`}
+									value={filters.model}
+									label="Modelo"
+									onChange={(e) => handleFilterChange("model", e.target.value)}
+									sx={{
 										borderRadius: 2,
-									},
-								}}
-							/>
+									}}
+								>
+									<MenuItem value="">
+										<em>Todos</em>
+									</MenuItem>
+									{Object.entries(modelsName).map(([key, label]) => (
+										<MenuItem key={key} value={key}>
+											{label}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
 						</Box>
 
 						{/* Información de filtros aplicados */}
@@ -240,9 +251,9 @@ export default function Filters({
 											variant="outlined"
 										/>
 									)}
-									{filters.module && (
+									{filters.model && (
 										<Chip
-											label={`Módulo: ${filters.module}`}
+											label={`Modelo: ${modelsName[filters.model] || filters.model}`}
 											size="small"
 											color="warning"
 											variant="outlined"

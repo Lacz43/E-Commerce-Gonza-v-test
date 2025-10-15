@@ -7,12 +7,16 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Filters from "./partials/Filters";
 import ReportsGrid from "./partials/ReportsGrid";
 
-export default function Movements() {
+export default function Movements({
+	modelsName,
+}: {
+	modelsName: Record<string, string>;
+}) {
 	const [filters, setFilters] = useState({
 		movementType: "",
 		dateFrom: "",
 		dateTo: "",
-		module: "",
+		model: "",
 	});
 
 	const handleFilterChange = (field: string, value: string) => {
@@ -27,7 +31,7 @@ export default function Movements() {
 			movementType: "",
 			dateFrom: "",
 			dateTo: "",
-			module: "",
+			model: "",
 		});
 	};
 
@@ -38,7 +42,7 @@ export default function Movements() {
 			params.append("movement_type", filters.movementType);
 		if (filters.dateFrom) params.append("date_from", filters.dateFrom);
 		if (filters.dateTo) params.append("date_to", filters.dateTo);
-		if (filters.module) params.append("module", filters.module);
+		if (filters.model) params.append("model", filters.model);
 
 		const queryString = params.toString();
 		return queryString
@@ -67,6 +71,7 @@ export default function Movements() {
 					filters={filters}
 					handleFilterChange={handleFilterChange}
 					clearFilters={clearFilters}
+					modelsName={modelsName}
 				/>
 
 				<ReportsGrid buildUrlWithFilters={buildUrlWithFilters} />
