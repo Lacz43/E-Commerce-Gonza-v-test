@@ -1,6 +1,5 @@
-import { Head, router } from "@inertiajs/react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { Head } from "@inertiajs/react";
+import { Delete, Business, Image as ImageIcon } from "@mui/icons-material";
 import {
 	Box,
 	Button,
@@ -172,9 +171,26 @@ export default function Index({ settings }: Props) {
 			<Head title="Configuración General" />
 
 			<Box sx={{ p: 3 }}>
-				<Typography variant="h4" component="h1" gutterBottom>
-					Configuración General
-				</Typography>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+					<Box
+						sx={{
+							background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+							borderRadius: 2,
+							p: 1.5,
+							display: "flex",
+						}}
+					>
+						<Business sx={{ color: "white", fontSize: 32 }} />
+					</Box>
+					<Box>
+						<Typography variant="h4" fontWeight={700} color="text.primary">
+							Configuración General
+						</Typography>
+						<Typography variant="body2" color="text.secondary">
+							Gestiona la información de tu empresa
+						</Typography>
+					</Box>
+				</Box>
 
 				<Box
 					sx={{
@@ -185,10 +201,32 @@ export default function Index({ settings }: Props) {
 				>
 					{/* Columna Izquierda: Información de la Empresa */}
 					<Box sx={{ gridColumn: { xs: "span 12", md: "span 8" } }}>
-						<Card>
+						<Card
+							elevation={2}
+							sx={{
+								borderRadius: 3,
+								border: "1px solid rgba(5, 150, 105, 0.15)",
+							}}
+						>
 							<CardHeader
-								title="Información de la Empresa"
-								avatar={<SettingsIcon />}
+								title={
+									<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+										<Box
+											sx={{
+												background:
+													"linear-gradient(135deg, #10b981 0%, #059669 100%)",
+												borderRadius: 2,
+												p: 1,
+												display: "flex",
+											}}
+										>
+											<Business sx={{ color: "white", fontSize: 24 }} />
+										</Box>
+										<Typography variant="h6" fontWeight={600}>
+											Información de la Empresa
+										</Typography>
+									</Box>
+								}
 							/>
 							<CardContent>
 								<Box
@@ -199,6 +237,7 @@ export default function Index({ settings }: Props) {
 									<TextField
 										label="Nombre de la Empresa"
 										fullWidth
+										variant="filled"
 										{...register("company_name", {
 											required: "El nombre de la empresa es requerido",
 										})}
@@ -219,6 +258,7 @@ export default function Index({ settings }: Props) {
 												<TextField
 													label="Teléfono"
 													fullWidth
+													variant="filled"
 													{...register("company_phone", {
 														required: "El teléfono es requerido",
 														pattern: {
@@ -241,6 +281,7 @@ export default function Index({ settings }: Props) {
 													label="Email"
 													type="email"
 													fullWidth
+													variant="filled"
 													{...register("company_email", {
 														required: "El email es requerido",
 														pattern: {
@@ -258,6 +299,7 @@ export default function Index({ settings }: Props) {
 									<TextField
 										label="Dirección"
 										fullWidth
+										variant="filled"
 										multiline
 										rows={3}
 										{...register("company_address", {
@@ -279,6 +321,7 @@ export default function Index({ settings }: Props) {
 												<TextField
 													label="RIF"
 													fullWidth
+													variant="filled"
 													{...register("company_rif", {
 														required: "El RIF es requerido",
 														pattern: {
@@ -306,6 +349,7 @@ export default function Index({ settings }: Props) {
 												select
 												label="Moneda"
 												fullWidth
+												variant="filled"
 												{...register("currency", {
 													required: "La moneda es requerida",
 												})}
@@ -321,6 +365,7 @@ export default function Index({ settings }: Props) {
 												label="Precio de Referencia"
 												type="number"
 												fullWidth
+												variant="filled"
 												{...register("reference_price", {
 													required: "El precio de referencia es requerido",
 													min: {
@@ -341,7 +386,20 @@ export default function Index({ settings }: Props) {
 											type="submit"
 											variant="contained"
 											disabled={isSubmitting}
-											size="large"
+											sx={{
+												background:
+													"linear-gradient(135deg, #10b981 0%, #059669 100%)",
+												px: 4,
+												py: 1.5,
+												borderRadius: 2,
+												fontWeight: 700,
+												textTransform: "none",
+												fontSize: 16,
+												"&:hover": {
+													background:
+														"linear-gradient(135deg, #059669 0%, #047857 100%)",
+												},
+											}}
 										>
 											{isSubmitting ? "Guardando..." : "Guardar Cambios"}
 										</Button>
@@ -353,10 +411,38 @@ export default function Index({ settings }: Props) {
 
 					{/* Columna Derecha: Logo de la Empresa */}
 					<Box sx={{ gridColumn: { xs: "span 12", md: "span 4" } }}>
-						<Card sx={{ height: "fit-content" }}>
+						<Card
+							elevation={2}
+							sx={{
+								height: "fit-content",
+								borderRadius: 3,
+								border: "1px solid rgba(249, 115, 22, 0.15)",
+							}}
+						>
 							<CardHeader
-								title="Logo Corporativo"
-								subheader="Identidad visual de tu empresa"
+								title={
+									<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+										<Box
+											sx={{
+												background:
+													"linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+												borderRadius: 2,
+												p: 1,
+												display: "flex",
+											}}
+										>
+											<ImageIcon sx={{ color: "white", fontSize: 24 }} />
+										</Box>
+										<Box>
+											<Typography variant="h6" fontWeight={600}>
+												Logo Corporativo
+											</Typography>
+											<Typography variant="caption" color="text.secondary">
+												Identidad visual de tu empresa
+											</Typography>
+										</Box>
+									</Box>
+								}
 							/>
 							<CardContent>
 								<Box
@@ -397,7 +483,7 @@ export default function Index({ settings }: Props) {
 												variant="outlined"
 												color="error"
 												size="small"
-												startIcon={<DeleteIcon />}
+												startIcon={<Delete />}
 												onClick={handleLogoDelete}
 												fullWidth
 											>
