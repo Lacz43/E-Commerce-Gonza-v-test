@@ -1,11 +1,15 @@
 import { Head } from "@inertiajs/react";
 import {
+	Box,
+	CircularProgress,
 	FormControl,
 	InputLabel,
 	MenuItem,
 	Select,
 	TextField,
+	Typography,
 } from "@mui/material";
+import { TrendingUp, CalendarMonth, ErrorOutline } from "@mui/icons-material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -77,19 +81,33 @@ export default function Dashboard() {
 		return (
 			<AuthenticatedLayout
 				header={
-					<h2 className="text-xl font-semibold leading-tight text-gray-800">
-						Dashboard
-					</h2>
+					<div className="flex items-center gap-3">
+						<TrendingUp className="text-emerald-600" fontSize="large" />
+						<div>
+							<h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+							<p className="text-sm text-gray-600">
+								Panel de control y métricas
+							</p>
+						</div>
+					</div>
 				}
 			>
 				<Head title="Dashboard" />
-				<div className="py-12">
-					<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-						<div className="bg-white shadow-sm sm:rounded-lg p-6">
-							Loading...
-						</div>
-					</div>
-				</div>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						minHeight: "60vh",
+						flexDirection: "column",
+						gap: 3,
+					}}
+				>
+					<CircularProgress size={60} sx={{ color: "#10b981" }} />
+					<Typography variant="h6" color="text.secondary">
+						Cargando métricas...
+					</Typography>
+				</Box>
 			</AuthenticatedLayout>
 		);
 	}
@@ -98,19 +116,36 @@ export default function Dashboard() {
 		return (
 			<AuthenticatedLayout
 				header={
-					<h2 className="text-xl font-semibold leading-tight text-gray-800">
-						Dashboard
-					</h2>
+					<div className="flex items-center gap-3">
+						<TrendingUp className="text-emerald-600" fontSize="large" />
+						<div>
+							<h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+							<p className="text-sm text-gray-600">
+								Panel de control y métricas
+							</p>
+						</div>
+					</div>
 				}
 			>
 				<Head title="Dashboard" />
-				<div className="py-12">
-					<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-						<div className="bg-white shadow-sm sm:rounded-lg p-6">
-							Error loading metrics.
-						</div>
-					</div>
-				</div>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						minHeight: "60vh",
+						flexDirection: "column",
+						gap: 3,
+					}}
+				>
+					<ErrorOutline sx={{ fontSize: 80, color: "#ef4444" }} />
+					<Typography variant="h6" color="error">
+						Error al cargar las métricas
+					</Typography>
+					<Typography variant="body2" color="text.secondary">
+						Por favor, intenta recargar la página
+					</Typography>
+				</Box>
 			</AuthenticatedLayout>
 		);
 	}
@@ -124,9 +159,13 @@ export default function Dashboard() {
 	return (
 		<AuthenticatedLayout
 			header={
-				<h2 className="text-xl font-semibold leading-tight text-gray-800">
-					Dashboard
-				</h2>
+				<div className="flex items-center gap-3">
+					<TrendingUp className="text-emerald-600" fontSize="large" />
+					<div>
+						<h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+						<p className="text-sm text-gray-600">Panel de control y métricas</p>
+					</div>
+				</div>
 			}
 		>
 			<Head title="Dashboard" />
@@ -135,12 +174,30 @@ export default function Dashboard() {
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
 					{/* Period Selector */}
 					<div className="bg-white shadow-sm sm:rounded-lg p-6">
-						<FormControl fullWidth margin="normal">
-							<InputLabel>Seleccionar Periodo</InputLabel>
+						<div className="flex items-center gap-3 mb-4">
+							<CalendarMonth className="text-emerald-600" />
+							<Typography variant="h6" fontWeight={600} color="text.primary">
+								Seleccionar Período
+							</Typography>
+						</div>
+						<FormControl fullWidth>
+							<InputLabel>Período</InputLabel>
 							<Select
 								value={period}
-								label="Seleccionar Periodo"
+								label="Período"
 								onChange={(e) => setPeriod(e.target.value)}
+								sx={{
+									borderRadius: 2,
+									"& .MuiOutlinedInput-notchedOutline": {
+										borderColor: "rgba(5, 150, 105, 0.3)",
+									},
+									"&:hover .MuiOutlinedInput-notchedOutline": {
+										borderColor: "#10b981",
+									},
+									"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+										borderColor: "#10b981",
+									},
+								}}
 							>
 								<MenuItem value="daily">Diario (último día)</MenuItem>
 								<MenuItem value="weekly">Semanal (última semana)</MenuItem>
@@ -157,6 +214,7 @@ export default function Dashboard() {
 									value={startDate}
 									onChange={(e) => setStartDate(e.target.value)}
 									fullWidth
+									InputLabelProps={{ shrink: true }}
 								/>
 								<TextField
 									label="Fecha Fin"
@@ -164,6 +222,7 @@ export default function Dashboard() {
 									value={endDate}
 									onChange={(e) => setEndDate(e.target.value)}
 									fullWidth
+									InputLabelProps={{ shrink: true }}
 								/>
 							</div>
 						)}
