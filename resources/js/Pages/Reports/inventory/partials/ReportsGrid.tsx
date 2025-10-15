@@ -1,15 +1,15 @@
 import {
+	Assessment,
+	Inventory as InventoryIcon,
+	Warning
+} from "@mui/icons-material";
+import {
 	Box,
 	Button,
 	Card,
 	CardContent,
 	Typography
 } from "@mui/material";
-import {
-	Assessment,
-	Inventory as InventoryIcon,
-	Warning
-} from "@mui/icons-material";
 
 interface ReportsGridProps {
 	buildUrlWithFilters: (baseRoute: string) => string;
