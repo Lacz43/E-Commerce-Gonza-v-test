@@ -276,7 +276,17 @@ export default function DataTable<T>({
 	]);
 
 	return (
-		<Paper sx={{ width: "100%" }}>
+		<Paper 
+			elevation={0}
+			sx={{ 
+				width: "100%",
+				borderRadius: 3,
+				overflow: "hidden",
+				border: "1px solid",
+				borderColor: "rgba(5, 150, 105, 0.15)",
+				boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
+			}}
+		>
 			<DataGrid
 				rows={response.data}
 				columns={processedColumns}
@@ -297,22 +307,109 @@ export default function DataTable<T>({
 				showToolbar
 				sx={{
 					border: 0,
-					"& .MuiDataGrid-topContainer": {
-						background: "#cbffc4",
+					// Toolbar moderno
+					"& .MuiDataGrid-toolbarContainer": {
+						background: "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)",
+						padding: "16px",
+						borderBottom: "2px solid rgba(5, 150, 105, 0.2)",
 					},
+					// Headers con gradiente emerald
 					"& .MuiDataGrid-columnHeaders": {
-						background: "#cbffc4",
-						color: "#0F5132",
+						background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+						color: "#ffffff",
+						fontWeight: 600,
+						borderBottom: "none",
 					},
 					"& .MuiDataGrid-columnHeader": {
 						background: "inherit",
+						"&:focus": {
+							outline: "none",
+						},
+						"&:focus-within": {
+							outline: "none",
+						},
 					},
+					"& .MuiDataGrid-columnHeaderTitle": {
+						fontWeight: 600,
+						color: "#ffffff",
+					},
+					// Separadores de columnas
 					"& .MuiDataGrid-columnSeparator": {
-						color: "#0F5132",
+						color: "rgba(255, 255, 255, 0.3)",
 					},
-					"& .MuiToolbar-root": {
-						background: "#cbffc4",
-						color: "#0F5132",
+					// Iconos en headers
+					"& .MuiDataGrid-iconButtonContainer": {
+						"& .MuiIconButton-root": {
+							color: "#ffffff",
+						},
+					},
+					"& .MuiDataGrid-menuIcon": {
+						color: "#ffffff",
+					},
+					"& .MuiDataGrid-sortIcon": {
+						color: "#ffffff",
+					},
+					// Filas con hover mejorado
+					"& .MuiDataGrid-row": {
+						transition: "all 0.2s ease",
+						"&:hover": {
+							backgroundColor: "rgba(5, 150, 105, 0.05)",
+							cursor: "pointer",
+						},
+						"&.Mui-selected": {
+							backgroundColor: "rgba(5, 150, 105, 0.1)",
+							"&:hover": {
+								backgroundColor: "rgba(5, 150, 105, 0.15)",
+							},
+						},
+					},
+					// Celdas
+					"& .MuiDataGrid-cell": {
+						borderBottom: "1px solid rgba(5, 150, 105, 0.08)",
+						"&:focus": {
+							outline: "2px solid rgba(5, 150, 105, 0.3)",
+							outlineOffset: "-2px",
+						},
+					},
+					// Footer con paginación
+					"& .MuiDataGrid-footerContainer": {
+						background: "linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%)",
+						borderTop: "2px solid rgba(5, 150, 105, 0.2)",
+						padding: "8px 16px",
+					},
+					// Botones de paginación
+					"& .MuiTablePagination-root": {
+						color: "#047857",
+					},
+					"& .MuiIconButton-root": {
+						color: "#10b981",
+						"&:hover": {
+							backgroundColor: "rgba(5, 150, 105, 0.1)",
+						},
+						"&.Mui-disabled": {
+							color: "rgba(5, 150, 105, 0.3)",
+						},
+					},
+					// Loading overlay
+					"& .MuiDataGrid-overlay": {
+						backgroundColor: "rgba(255, 255, 255, 0.9)",
+					},
+					// Scrollbar personalizado
+					"& .MuiDataGrid-virtualScroller": {
+						"&::-webkit-scrollbar": {
+							width: "8px",
+							height: "8px",
+						},
+						"&::-webkit-scrollbar-track": {
+							background: "#f1f1f1",
+						},
+						"&::-webkit-scrollbar-thumb": {
+							background: "#10b981",
+							borderRadius: "4px",
+							"&:hover": {
+								background: "#059669",
+							},
+						},
 					},
 				}}
 			/>
