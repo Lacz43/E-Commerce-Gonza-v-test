@@ -5,22 +5,23 @@ namespace App\Services;
 use App\Models\InventoryMovement;
 use App\Models\ProductInventory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Request; // añadi esto
 
 class InventoryMovementService
 {
     /**
      * Registra un movimiento de inventario.
      *
+     * @param int $productId ID del producto
      * @param int $quantity Cantidad del movimiento
      * @param string $modelType Tipo del modelo donde se ejecutó el movimiento
      * @param int|null $modelId ID del modelo donde se ejecutó el movimiento
      * @param int $userId ID del usuario que realizó el movimiento
      * @return array
      */
-    public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId)
+    public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId, ?int $reasonId = null)
     {
         $productInventory = ProductInventory::firstOrCreate(['product_id' => $productId], ['stock' => 0]);
-        
 
         $controllerName = request()->route()->getAction()['controller'];
 
@@ -33,7 +34,10 @@ class InventoryMovementService
             'model_id' => $modelId,
             'user_id' => $userId,
             'controller_name' => $controllerName,
+            'reason_id' => $reasonId,
         ]);
+
+        // Actualizamos stock
         $productInventory->stock += $quantity;
         $productInventory->save();
 

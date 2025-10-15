@@ -39,6 +39,6 @@ class InventoryMovementController extends Controller
      */
     public function show(InventoryMovement $movement)
     {
-        return response()->json($movement->load(['productInventory.product', 'user', 'attachments']));
+        return response()->json($movement->load(['productInventory.product', 'user', 'attachments', 'reason']));
     }
 }
