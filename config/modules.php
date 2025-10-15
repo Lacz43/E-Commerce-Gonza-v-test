@@ -11,7 +11,8 @@ return [
         'backups',
         'sales',
         'users',
-        'orders'
+        'orders',
+        'reports',
     ],
     'model_names' => [
         'ProductInventory' => 'Inventario',
@@ -26,5 +27,6 @@ return [
         'User' => 'Usuarios',
         'InventoryMovement' => 'Movimientos de Inventario',
         'Attachment' => 'Archivos',
+        'Report' => 'Reportes',
     ],
 ];
