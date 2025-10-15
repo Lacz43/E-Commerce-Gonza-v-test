@@ -1,9 +1,12 @@
 import { Head } from "@inertiajs/react";
 import {
 	Assessment,
-	Clear,
+	CalendarMonth,
+	Clear, 
 	Inventory as InventoryIcon,
-	Warning,
+	TrendingUp,
+	Update,
+	Warning
 } from "@mui/icons-material";
 import {
 	Box,
@@ -11,9 +14,10 @@ import {
 	Card,
 	CardContent,
 	CardHeader,
-	IconButton,
-	TextField,
-	Typography,
+	Chip,
+	Divider,
+	TextField, 
+	Typography
 } from "@mui/material";
 import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -72,28 +76,91 @@ export default function Inventory() {
 		>
 			<Head title="Reportes de Inventario" />
 
-			<Box sx={{ p: 3 }}>
-				<Typography variant="h4" component="h1" gutterBottom>
-					Reportes de Inventario
-				</Typography>
-				<Typography variant="body1" color="textSecondary" gutterBottom>
-					Monitorea y analiza el estado de tu inventario
-				</Typography>
+			<Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
+				{/* Header moderno con gradiente */}
+				<Box
+					sx={{
+						mb: 4,
+						p: 4,
+						borderRadius: 3,
+						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+						color: "white",
+						boxShadow: "0 10px 40px rgba(102, 126, 234, 0.3)",
+					}}
+				>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+						<InventoryIcon sx={{ fontSize: 40 }} />
+						<Typography variant="h3" component="h1" fontWeight="bold">
+							Reportes de Inventario
+						</Typography>
+					</Box>
+					<Typography variant="h6" sx={{ opacity: 0.95, fontWeight: 300 }}>
+						Monitorea y analiza el estado de tu inventario con filtros avanzados
+					</Typography>
+				</Box>
 
 				{/* Filtros Opcionales */}
-				<Box sx={{ mt: 3 }}>
-					<Card sx={{ mb: 3 }}>
+				<Box sx={{ mt: 4 }}>
+					<Card
+						sx={{
+							mb: 4,
+							borderRadius: 3,
+							boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+							border: "1px solid rgba(0,0,0,0.06)",
+							overflow: "visible",
+						}}
+					>
 						<CardHeader
-							title="Filtros Avanzados"
-							subheader="Configura filtros opcionales para los reportes"
+							title={
+								<Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+									<Box
+										sx={{
+											p: 1,
+											borderRadius: 2,
+											bgcolor: "primary.main",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+										}}
+									>
+										<TrendingUp sx={{ color: "white", fontSize: 24 }} />
+									</Box>
+									<Typography variant="h5" fontWeight="600">
+										Filtros Avanzados
+									</Typography>
+								</Box>
+							}
+							action={
+								<Button
+									variant="outlined"
+									startIcon={<Clear />}
+									onClick={clearFilters}
+									size="small"
+									sx={{ borderRadius: 2 }}
+								>
+									Limpiar
+								</Button>
+							}
+							subheader="Personaliza tus reportes con filtros específicos"
+							sx={{ pb: 1 }}
 						/>
 						<CardContent>
-							<Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+							<Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
 								{/* Rango de Stock */}
 								<Box>
-									<Typography variant="h6" gutterBottom>
-										Rango de Stock
-									</Typography>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: 1,
+											mb: 2,
+										}}
+									>
+										<InventoryIcon sx={{ color: "primary.main" }} />
+										<Typography variant="h6" fontWeight="600">
+											Rango de Stock
+										</Typography>
+									</Box>
 									<Box sx={{ display: "flex", gap: 2 }}>
 										<TextField
 											fullWidth
@@ -105,6 +172,11 @@ export default function Inventory() {
 												handleFilterChange("stockMin", e.target.value)
 											}
 											placeholder="Ej: 0"
+											sx={{
+												"& .MuiOutlinedInput-root": {
+													borderRadius: 2,
+												},
+											}}
 										/>
 										<TextField
 											fullWidth
@@ -116,15 +188,32 @@ export default function Inventory() {
 												handleFilterChange("stockMax", e.target.value)
 											}
 											placeholder="Ej: 100"
+											sx={{
+												"& .MuiOutlinedInput-root": {
+													borderRadius: 2,
+												},
+											}}
 										/>
 									</Box>
 								</Box>
 
+								<Divider />
+
 								{/* Fecha de Creación */}
 								<Box>
-									<Typography variant="h6" gutterBottom>
-										Fecha de Creación
-									</Typography>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: 1,
+											mb: 2,
+										}}
+									>
+										<CalendarMonth sx={{ color: "success.main" }} />
+										<Typography variant="h6" fontWeight="600">
+											Fecha de Creación
+										</Typography>
+									</Box>
 									<Box sx={{ display: "flex", gap: 2 }}>
 										<TextField
 											fullWidth
@@ -136,6 +225,11 @@ export default function Inventory() {
 												handleFilterChange("createdFrom", e.target.value)
 											}
 											InputLabelProps={{ shrink: true }}
+											sx={{
+												"& .MuiOutlinedInput-root": {
+													borderRadius: 2,
+												},
+											}}
 										/>
 										<TextField
 											fullWidth
@@ -147,15 +241,32 @@ export default function Inventory() {
 												handleFilterChange("createdTo", e.target.value)
 											}
 											InputLabelProps={{ shrink: true }}
+											sx={{
+												"& .MuiOutlinedInput-root": {
+													borderRadius: 2,
+												},
+											}}
 										/>
 									</Box>
 								</Box>
 
+								<Divider />
+
 								{/* Fecha de Actualización */}
 								<Box>
-									<Typography variant="h6" gutterBottom>
-										Fecha de Actualización
-									</Typography>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: 1,
+											mb: 2,
+										}}
+									>
+										<Update sx={{ color: "warning.main" }} />
+										<Typography variant="h6" fontWeight="600">
+											Fecha de Actualización
+										</Typography>
+									</Box>
 									<Box sx={{ display: "flex", gap: 2 }}>
 										<TextField
 											fullWidth
@@ -167,6 +278,11 @@ export default function Inventory() {
 												handleFilterChange("updatedFrom", e.target.value)
 											}
 											InputLabelProps={{ shrink: true }}
+											sx={{
+												"& .MuiOutlinedInput-root": {
+													borderRadius: 2,
+												},
+											}}
 										/>
 										<TextField
 											fullWidth
@@ -178,39 +294,90 @@ export default function Inventory() {
 												handleFilterChange("updatedTo", e.target.value)
 											}
 											InputLabelProps={{ shrink: true }}
+											sx={{
+												"& .MuiOutlinedInput-root": {
+													borderRadius: 2,
+												},
+											}}
 										/>
 									</Box>
 								</Box>
 
 								{/* Información de filtros aplicados */}
-								<Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
-									<Typography variant="body2" color="textSecondary">
-										<strong>Filtros aplicados:</strong>
-										{Object.values(filters).some((v) => v) ? (
-											<ul style={{ margin: "8px 0 0 16px", padding: 0 }}>
-												{filters.stockMin && (
-													<li>Stock mínimo: {filters.stockMin}</li>
-												)}
-												{filters.stockMax && (
-													<li>Stock máximo: {filters.stockMax}</li>
-												)}
-												{filters.createdFrom && (
-													<li>Creación desde: {filters.createdFrom}</li>
-												)}
-												{filters.createdTo && (
-													<li>Creación hasta: {filters.createdTo}</li>
-												)}
-												{filters.updatedFrom && (
-													<li>Actualización desde: {filters.updatedFrom}</li>
-												)}
-												{filters.updatedTo && (
-													<li>Actualización hasta: {filters.updatedTo}</li>
-												)}
-											</ul>
-										) : (
-											<span style={{ marginLeft: 8 }}>Ninguno</span>
-										)}
+								<Box
+									sx={{
+										p: 3,
+										bgcolor: "grey.50",
+										borderRadius: 2,
+										border: "1px dashed",
+										borderColor: "grey.300",
+									}}
+								>
+									<Typography variant="subtitle1" fontWeight="600" gutterBottom>
+										📋 Filtros Activos
 									</Typography>
+									{Object.values(filters).some((v) => v) ? (
+										<Box
+											sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}
+										>
+											{filters.stockMin && (
+												<Chip
+													label={`Stock min: ${filters.stockMin}`}
+													size="small"
+													color="primary"
+													variant="outlined"
+												/>
+											)}
+											{filters.stockMax && (
+												<Chip
+													label={`Stock max: ${filters.stockMax}`}
+													size="small"
+													color="primary"
+													variant="outlined"
+												/>
+											)}
+											{filters.createdFrom && (
+												<Chip
+													label={`Creado desde: ${filters.createdFrom}`}
+													size="small"
+													color="success"
+													variant="outlined"
+												/>
+											)}
+											{filters.createdTo && (
+												<Chip
+													label={`Creado hasta: ${filters.createdTo}`}
+													size="small"
+													color="success"
+													variant="outlined"
+												/>
+											)}
+											{filters.updatedFrom && (
+												<Chip
+													label={`Actualizado desde: ${filters.updatedFrom}`}
+													size="small"
+													color="warning"
+													variant="outlined"
+												/>
+											)}
+											{filters.updatedTo && (
+												<Chip
+													label={`Actualizado hasta: ${filters.updatedTo}`}
+													size="small"
+													color="warning"
+													variant="outlined"
+												/>
+											)}
+										</Box>
+									) : (
+										<Typography
+											variant="body2"
+											color="textSecondary"
+											sx={{ mt: 1 }}
+										>
+											No hay filtros aplicados
+										</Typography>
+									)}
 								</Box>
 							</Box>
 						</CardContent>
@@ -218,52 +385,205 @@ export default function Inventory() {
 				</Box>
 
 				{/* Reportes Disponibles */}
-				<Box sx={{ mt: 4 }}>
-					<Typography variant="h5" gutterBottom>
-						Reportes Disponibles
+				<Box sx={{ mt: 5 }}>
+					<Typography variant="h5" fontWeight="600" gutterBottom sx={{ mb: 3 }}>
+						📊 Generar Reportes
 					</Typography>
-					<Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-						<Button
-							variant="contained"
-							color="primary"
-							startIcon={<InventoryIcon />}
-							onClick={() =>
-								window.open(
-									buildUrlWithFilters("reports.inventory.status"),
-									"_blank",
-								)
-							}
+					<Box
+						sx={{
+							display: "grid",
+							gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+							gap: 3,
+						}}
+					>
+						{/* Estado General */}
+						<Card
+							sx={{
+								borderRadius: 3,
+								boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+								transition: "all 0.3s ease",
+								cursor: "pointer",
+								border: "1px solid",
+								borderColor: "primary.light",
+								"&:hover": {
+									transform: "translateY(-4px)",
+									boxShadow: "0 8px 24px rgba(102, 126, 234, 0.25)",
+								},
+							}}
 						>
-							Estado General de Inventario
-						</Button>
+							<CardContent sx={{ p: 3 }}>
+								<Box
+									sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+								>
+									<Box
+										sx={{
+											p: 1.5,
+											borderRadius: 2,
+											bgcolor: "primary.main",
+											display: "flex",
+										}}
+									>
+										<InventoryIcon sx={{ color: "white", fontSize: 28 }} />
+									</Box>
+									<Typography variant="h6" fontWeight="600">
+										Estado General
+									</Typography>
+								</Box>
+								<Typography
+									variant="body2"
+									color="textSecondary"
+									sx={{ mb: 3 }}
+								>
+									Reporte completo del estado actual de todo el inventario
+								</Typography>
+								<Button
+									fullWidth
+									variant="contained"
+									color="primary"
+									size="large"
+									onClick={() =>
+										window.open(
+											buildUrlWithFilters("reports.inventory.status"),
+											"_blank",
+										)
+									}
+									sx={{
+										borderRadius: 2,
+										py: 1.5,
+										textTransform: "none",
+										fontWeight: 600,
+									}}
+								>
+									Generar Reporte
+								</Button>
+							</CardContent>
+						</Card>
 
-						<Button
-							variant="contained"
-							color="error"
-							startIcon={<Warning />}
-							onClick={() =>
-								window.open(
-									buildUrlWithFilters("reports.inventory.low-stock"),
-									"_blank",
-								)
-							}
+						{/* Stock Bajo */}
+						<Card
+							sx={{
+								borderRadius: 3,
+								boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+								transition: "all 0.3s ease",
+								cursor: "pointer",
+								border: "1px solid",
+								borderColor: "error.light",
+								"&:hover": {
+									transform: "translateY(-4px)",
+									boxShadow: "0 8px 24px rgba(244, 67, 54, 0.25)",
+								},
+							}}
 						>
-							Productos con Stock Bajo
-						</Button>
+							<CardContent sx={{ p: 3 }}>
+								<Box
+									sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+								>
+									<Box
+										sx={{
+											p: 1.5,
+											borderRadius: 2,
+											bgcolor: "error.main",
+											display: "flex",
+										}}
+									>
+										<Warning sx={{ color: "white", fontSize: 28 }} />
+									</Box>
+									<Typography variant="h6" fontWeight="600">
+										Stock Bajo
+									</Typography>
+								</Box>
+								<Typography
+									variant="body2"
+									color="textSecondary"
+									sx={{ mb: 3 }}
+								>
+									Productos que requieren reabastecimiento urgente
+								</Typography>
+								<Button
+									fullWidth
+									variant="contained"
+									color="error"
+									size="large"
+									onClick={() =>
+										window.open(
+											buildUrlWithFilters("reports.inventory.low-stock"),
+											"_blank",
+										)
+									}
+									sx={{
+										borderRadius: 2,
+										py: 1.5,
+										textTransform: "none",
+										fontWeight: 600,
+									}}
+								>
+									Generar Reporte
+								</Button>
+							</CardContent>
+						</Card>
 
-						<Button
-							variant="contained"
-							color="info"
-							startIcon={<Assessment />}
-							onClick={() =>
-								window.open(
-									buildUrlWithFilters("reports.inventory.valuation"),
-									"_blank",
-								)
-							}
+						{/* Valoración */}
+						<Card
+							sx={{
+								borderRadius: 3,
+								boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+								transition: "all 0.3s ease",
+								cursor: "pointer",
+								border: "1px solid",
+								borderColor: "info.light",
+								"&:hover": {
+									transform: "translateY(-4px)",
+									boxShadow: "0 8px 24px rgba(33, 150, 243, 0.25)",
+								},
+							}}
 						>
-							Valoración de Inventario
-						</Button>
+							<CardContent sx={{ p: 3 }}>
+								<Box
+									sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+								>
+									<Box
+										sx={{
+											p: 1.5,
+											borderRadius: 2,
+											bgcolor: "info.main",
+											display: "flex",
+										}}
+									>
+										<Assessment sx={{ color: "white", fontSize: 28 }} />
+									</Box>
+									<Typography variant="h6" fontWeight="600">
+										Valoración
+									</Typography>
+								</Box>
+								<Typography
+									variant="body2"
+									color="textSecondary"
+									sx={{ mb: 3 }}
+								>
+									Análisis financiero y valoración total del inventario
+								</Typography>
+								<Button
+									fullWidth
+									variant="contained"
+									color="info"
+									size="large"
+									onClick={() =>
+										window.open(
+											buildUrlWithFilters("reports.inventory.valuation"),
+											"_blank",
+										)
+									}
+									sx={{
+										borderRadius: 2,
+										py: 1.5,
+										textTransform: "none",
+										fontWeight: 600,
+									}}
+								>
+									Generar Reporte
+								</Button>
+							</CardContent>
+						</Card>
 					</Box>
 				</Box>
 			</Box>
