@@ -21,6 +21,7 @@ class InventoryMovement extends Model
         'model_id',
         'user_id',
         'controller_name',
+        'reason_id',
     ];
 
     public function productInventory(): BelongsTo
@@ -38,9 +39,9 @@ class InventoryMovement extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function reasons()
+    public function reason()
     {
-        return $this->hasMany(InventoryReason::class);
+        return $this->belongsTo(InventoryReason::class);
     }
 
     public function attachments()

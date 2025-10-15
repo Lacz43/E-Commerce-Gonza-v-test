@@ -10,7 +10,6 @@ class InventoryReason extends Model
     use HasFactory;
 
     protected $fillable = [
-        'movement_id',
         'name',
         'description',
         'active',
@@ -20,8 +19,8 @@ class InventoryReason extends Model
         'active' => 'boolean',
     ];
 
-    public function movement()
+    public function movements()
     {
-        return $this->belongsTo(InventoryMovement::class);
+        return $this->hasMany(InventoryMovement::class);
     }
 }
