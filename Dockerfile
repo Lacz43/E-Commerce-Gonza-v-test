@@ -21,7 +21,7 @@ RUN apt-get update \
     tzdata
 
 # Instalar extensiones PHP necesarias para Laravel
-RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache
+RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache gd
 
 # Instalamos Composer
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
