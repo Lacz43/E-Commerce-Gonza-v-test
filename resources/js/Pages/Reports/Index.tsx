@@ -1,11 +1,12 @@
 import { Head } from "@inertiajs/react";
 import {
 	Category,
+	Download,
 	Inventory,
 	Receipt,
 	ShoppingCart,
 } from "@mui/icons-material";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 type Props = {
@@ -174,6 +175,25 @@ export default function Index({ data }: Props) {
 						</Card>
 					</div>
 				</div>
+
+				{/* Reportes Disponibles */}
+				<Box sx={{ mt: 4 }}>
+					<Typography variant="h5" gutterBottom>
+						Reportes Disponibles
+					</Typography>
+					<Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+						<Button
+							variant="contained"
+							color="primary"
+							startIcon={<Download />}
+							onClick={() =>
+								window.open(route("reports.products.download"), "_blank")
+							}
+						>
+							Descargar Reporte de Productos
+						</Button>
+					</Box>
+				</Box>
 
 				{/* Próximas funcionalidades */}
 				<Box sx={{ mt: 4 }}>
