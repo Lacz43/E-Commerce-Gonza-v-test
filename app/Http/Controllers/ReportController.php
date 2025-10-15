@@ -102,13 +102,47 @@ class ReportController extends Controller
     }
 
     /**
+     * Aplicar filtros opcionales a la query de inventario.
+     */
+    private function applyInventoryFilters($query, Request $request)
+    {
+        if ($request->has('stock_min') && $request->stock_min !== '') {
+            $query->where('stock', '>=', $request->stock_min);
+        }
+
+        if ($request->has('stock_max') && $request->stock_max !== '') {
+            $query->where('stock', '<=', $request->stock_max);
+        }
+
+        if ($request->has('created_from') && $request->created_from !== '') {
+            $query->whereDate('created_at', '>=', $request->created_from);
+        }
+
+        if ($request->has('created_to') && $request->created_to !== '') {
+            $query->whereDate('created_at', '<=', $request->created_to);
+        }
+
+        if ($request->has('updated_from') && $request->updated_from !== '') {
+            $query->whereDate('updated_at', '>=', $request->updated_from);
+        }
+
+        if ($request->has('updated_to') && $request->updated_to !== '') {
+            $query->whereDate('updated_at', '<=', $request->updated_to);
+        }
+
+        return $query;
+    }
+
+    /**
      * Generar PDF del estado general del inventario.
      */
     public function downloadInventoryStatus(Request $request): Response
     {
         $settings = app(GeneralSettings::class);
 
-        $inventory = ProductInventory::with('product')->get();
+        $query = ProductInventory::with('product');
+        $query = $this->applyInventoryFilters($query, $request);
+        $inventory = $query->get();
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -139,9 +173,11 @@ class ReportController extends Controller
     {
         $settings = app(GeneralSettings::class);
 
+        $query = ProductInventory::with('product');
+        $query = $this->applyInventoryFilters($query, $request);
+
         // Consideramos stock bajo cuando es menor o igual a 10 unidades
-        $lowStockProducts = ProductInventory::with('product')
-            ->where('stock', '<=', 10)
+        $lowStockProducts = $query->where('stock', '<=', 10)
             ->where('stock', '>', 0)
             ->get();
 
@@ -174,7 +210,9 @@ class ReportController extends Controller
     {
         $settings = app(GeneralSettings::class);
 
-        $inventory = ProductInventory::with('product')->get();
+        $query = ProductInventory::with('product');
+        $query = $this->applyInventoryFilters($query, $request);
+        $inventory = $query->get();
 
         // Calcular valoración total
         $totalValue = $inventory->sum(function ($item) {
