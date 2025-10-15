@@ -1,4 +1,5 @@
 import {
+	BarChart,
 	Category,
 	Home,
 	Inventory,
@@ -99,6 +100,18 @@ export const paths: Record<string, Route> = {
 		name: "Pedidos",
 		icon: <Receipt />,
 		roles: ["admin", "seller"],
+	},
+	reports: {
+		path: "reports.index",
+		name: "Reportes",
+		icon: <BarChart />,
+		roles: ["admin"],
+		children: {
+			index: {
+				path: "reports.index",
+				name: "Dashboard de Reportes",
+			},
+		},
 	},
 	settings: {
 		path: "backup.index",
