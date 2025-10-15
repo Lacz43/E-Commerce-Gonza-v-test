@@ -329,48 +329,4 @@ class ReportController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
-
-    /**
-     * Generar PDF de análisis de entradas y salidas.
-     */
-    public function downloadMovementsInOut(Request $request): Response
-    {
-        $settings = app(GeneralSettings::class);
-
-        $modelsName = [
-            'ProductInventory' => 'Inventario',
-            'Order' => 'Ventas',
-        ];
-
-        $query = InventoryMovement::with(['productInventory.product', 'user', 'reason']);
-        $query = $this->applyMovementFilters($query, $request);
-        $movements = $query->orderBy('created_at', 'desc')->get();
-
-        // Calcular estadísticas
-        $entries = $movements->where('type', 'ingress')->count();
-        $exits = $movements->where('type', 'egress')->count();
-        $totalQuantityIn = $movements->where('type', 'ingress')->sum('quantity');
-        $totalQuantityOut = $movements->where('type', 'egress')->sum('quantity');
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'margin_left' => 15,
-            'margin_right' => 15,
-            'margin_top' => 20,
-            'margin_bottom' => 20,
-        ]);
-
-        $title = 'Análisis de Entradas y Salidas';
-        $html = view('pdf.movements.in-out', compact('settings', 'movements', 'entries', 'exits', 'totalQuantityIn', 'totalQuantityOut', 'title', 'modelsName'))->render();
-
-        $mpdf->WriteHTML($html);
-
-        $filename = 'entradas_salidas_' . date('Y-m-d') . '.pdf';
-
-        return response($mpdf->Output($filename, 'S'), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
-    }
 }
