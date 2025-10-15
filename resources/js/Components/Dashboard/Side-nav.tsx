@@ -20,45 +20,55 @@ export default function SideNav() {
 	return (
 		<aside
 			id="side-nav"
-			className="w-[20rem] max-sm:w-full fixed top-0 h-screen z-1100 flex flex-col side-nav bg-gradient-to-b from-orange-50 via-white to-emerald-50 text-slate-700 border-r border-orange-100 shadow-xl/40 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md"
+			className="w-[20rem] max-sm:w-full fixed top-0 h-screen z-1100 flex flex-col side-nav bg-gradient-to-br from-emerald-50/80 via-white to-orange-50/80 text-slate-700 border-r border-emerald-200/50 shadow-2xl backdrop-blur-xl supports-[backdrop-filter]:backdrop-blur-xl"
 		>
-			<header className="relative flex items-center gap-3 px-5 py-4 border-b border-orange-100/70 bg-white/70">
+			<header className="relative flex items-center gap-3 px-6 py-5 border-b border-emerald-200/50 bg-gradient-to-r from-white/90 to-emerald-50/50 backdrop-blur-sm">
 				<Link href="/" className="flex items-center gap-3">
 					{settings.company_logo_url ? (
 						<img
 							src={imageUrl(settings.company_logo_url)}
 							alt="Logo de la empresa"
-							className="h-15 w-15 object-contain"
+							className="h-12 w-12 object-contain rounded-lg shadow-sm"
 						/>
 					) : (
 						<ApplicationLogo />
 					)}
-					<b className="font-semibold tracking-tight text-slate-800">
-						{settings.company_name}
-					</b>
+					<div className="flex flex-col">
+						<b className="font-bold text-lg tracking-tight text-slate-800 leading-tight">
+							{settings.company_name}
+						</b>
+						<span className="text-xs text-emerald-600 font-medium">
+							Panel de Control
+						</span>
+					</div>
 				</Link>
 				<IconButton
 					aria-label="Cerrar"
 					size="small"
 					onClick={closeSideNav}
-					className="md:!hidden ml-auto bg-orange-100 text-orange-600 hover:bg-orange-200"
+					className="md:!hidden ml-auto bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
 				>
 					<Close fontSize="small" />
 				</IconButton>
 			</header>
 			<Stack
-				spacing={0.6}
+				spacing={0.5}
 				direction="column"
-				className="px-4 py-5 overflow-y-auto"
+				className="px-4 py-6 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-emerald-300 scrollbar-track-transparent"
 			>
 				<Suspense fallback={<SideSkeleton />}>
 					<SideNavItem />
 				</Suspense>
 			</Stack>
-			<footer className="mt-auto px-5 py-4 border-t border-emerald-100/70 bg-white/60 text-xs text-slate-500">
-				<span className="font-medium text-slate-600">
-					© {new Date().getFullYear()} {settings.company_name}
-				</span>
+			<footer className="mt-auto px-6 py-4 border-t border-emerald-200/50 bg-gradient-to-r from-white/90 to-emerald-50/50 backdrop-blur-sm">
+				<div className="flex flex-col gap-1">
+					<span className="text-xs font-semibold text-emerald-700">
+						{settings.company_name}
+					</span>
+					<span className="text-[10px] text-slate-500">
+						© {new Date().getFullYear()} Todos los derechos reservados
+					</span>
+				</div>
 			</footer>
 		</aside>
 	);

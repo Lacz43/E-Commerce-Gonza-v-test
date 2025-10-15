@@ -9,8 +9,10 @@ import {
 } from "@mui/icons-material";
 import type { JSX } from "react";
 
-interface Route {
-	// mover a otro archivo
+/**
+ * Route configuration interface
+ */
+export interface Route {
 	path: string;
 	name: string;
 	icon?: JSX.Element;
@@ -19,14 +21,20 @@ interface Route {
 	params?: Record<string, string>;
 	permissions?: string[];
 	roles?: string[];
+	group?: string; // Para agrupar rutas visualmente
+	divider?: boolean; // Para agregar un divisor después de esta ruta
 }
 
-// rutas del sitio
+/**
+ * Rutas del sitio
+ * Las rutas se listan automáticamente en el side navigation
+ */
 export const paths: Record<string, Route> = {
 	home: {
 		path: "dashboard",
 		name: "Principal",
 		icon: <Home />,
+		group: "main",
 	},
 	auth: {
 		path: "",
@@ -48,6 +56,7 @@ export const paths: Record<string, Route> = {
 		name: "Productos",
 		icon: <Category />,
 		roles: ["admin"],
+		group: "management",
 		children: {
 			register: {
 				path: "products.index",
@@ -68,6 +77,7 @@ export const paths: Record<string, Route> = {
 		name: "Inventario",
 		icon: <Inventory />,
 		roles: ["admin"],
+		group: "management",
 		children: {
 			index: {
 				path: "inventory.index",
@@ -84,6 +94,7 @@ export const paths: Record<string, Route> = {
 		name: "Usuarios",
 		icon: <Person />,
 		roles: ["admin"],
+		group: "management",
 		children: {
 			index: {
 				path: "users.index",
@@ -100,12 +111,15 @@ export const paths: Record<string, Route> = {
 		name: "Pedidos",
 		icon: <Receipt />,
 		roles: ["admin", "seller"],
+		group: "operations",
+		divider: true,
 	},
 	reports: {
 		path: "reports.sales",
 		name: "Reportes",
 		icon: <BarChart />,
 		roles: ["admin"],
+		group: "analytics",
 		children: {
 			sales: {
 				path: "reports.sales",
@@ -123,9 +137,10 @@ export const paths: Record<string, Route> = {
 	},
 	settings: {
 		path: "backup.index",
-		name: "Configuracion",
+		name: "Configuración",
 		icon: <Settings />,
 		roles: ["admin"],
+		group: "system",
 		children: {
 			general: {
 				path: "settings.general",
