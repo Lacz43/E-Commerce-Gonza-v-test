@@ -1,10 +1,10 @@
-<!-- resources/views/pdf/movement_pdf.blade.php -->
+<!-- resources/views/pdf/movements/movement_pdf.blade.php -->
 @php $title = 'Reporte de Movimiento de Inventario' @endphp
 
 @extends('pdf.base', compact('settings', 'title'))
 
 @section('content')
-    @include('pdf.movement_pdf_body', ['movement' => $movement, 'settings' => $settings])
+    @include('pdf.movements.movement_pdf_body', ['movement' => $movement, 'settings' => $settings])
 @endsection
 
 @push('styles')
