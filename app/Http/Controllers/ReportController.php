@@ -329,4 +329,133 @@ class ReportController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+
+    /**
+     * Generar PDF del reporte general de órdenes.
+     */
+    public function downloadSalesOrders(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        // Usar Order model (asumiendo que existe)
+        $query = \App\Models\Order::query();
+        $query = $this->applySalesFilters($query, $request);
+        $orders = $query->with(['user', 'orderItems.product'])->orderBy('created_at', 'desc')->get();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Reporte General de Órdenes';
+        $html = view('pdf.sales.orders', compact('settings', 'orders', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'reporte_ordenes_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * Generar PDF del análisis de ventas.
+     */
+    public function downloadSalesAnalysis(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        // Usar Order model con filtros aplicados
+        $query = \App\Models\Order::query();
+        $query = $this->applySalesFilters($query, $request);
+        $orders = $query->with('orderItems')->orderBy('created_at', 'desc')->get();
+
+        // Calcular métricas
+        $totalOrders = $orders->count();
+        $completedOrders = $orders->where('status', 'completed');
+        $totalRevenue = $completedOrders->sum(function($order) { 
+            return $order->orderItems->sum(function($item) { 
+                return $item->quantity * $item->price; 
+            }); 
+        });
+        $completedOrdersCount = $completedOrders->count();
+        $pendingOrders = $orders->where('status', 'pending')->count();
+        $cancelledOrders = $orders->where('status', 'cancelled')->count();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Análisis de Ventas';
+        $html = view('pdf.sales.analysis', compact('settings', 'orders', 'title', 'totalOrders', 'totalRevenue', 'completedOrdersCount', 'pendingOrders', 'cancelledOrders'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'analisis_ventas_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * Generar PDF de productos más vendidos.
+     */
+    public function downloadTopProducts(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        // Obtener productos más vendidos con filtros de fecha
+        $query = \App\Models\OrderItem::with(['product', 'order'])
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.status', 'completed');
+
+        if ($request->has('date_from') && $request->date_from !== '') {
+            $query->whereDate('orders.created_at', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to') && $request->date_to !== '') {
+            $query->whereDate('orders.created_at', '<=', $request->date_to);
+        }
+
+        $topProducts = $query->select('product_id', DB::raw('SUM(quantity) as total_quantity'), DB::raw('SUM(price * quantity) as total_revenue'))
+            ->groupBy('product_id')
+            ->orderBy('total_quantity', 'desc')
+            ->with('product')
+            ->take(20)
+            ->get();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Productos Más Vendidos';
+        $html = view('pdf.sales.top-products', compact('settings', 'topProducts', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'productos_mas_vendidos_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
 }

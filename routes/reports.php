@@ -20,5 +20,13 @@ Route::middleware('auth', 'role:admin')
     ->name('reports.inventory.low-stock');
 
 Route::middleware('auth', 'role:admin')
-    ->get('/reports/inventory/valuation/download', [ReportController::class, 'downloadInventoryValuation'])
-    ->name('reports.inventory.valuation');
+    ->get('/reports/sales/orders/download', [ReportController::class, 'downloadSalesOrders'])
+    ->name('reports.sales.orders');
+
+Route::middleware('auth', 'role:admin')
+    ->get('/reports/sales/analysis/download', [ReportController::class, 'downloadSalesAnalysis'])
+    ->name('reports.sales.analysis');
+
+Route::middleware('auth', 'role:admin')
+    ->get('/reports/sales/top-products/download', [ReportController::class, 'downloadTopProducts'])
+    ->name('reports.sales.top-products');
