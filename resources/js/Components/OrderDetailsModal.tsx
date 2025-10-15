@@ -168,7 +168,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 				Cambiar Estado
 			</Typography>
 			<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-				{["cancelled", "expired", "completed", "paid"].map(
+				{["cancelled", "completed", "paid"].map(
 					(status) => (
 						<Button
 							key={status}
