@@ -20,6 +20,7 @@ import {
 	Typography
 } from "@mui/material";
 import { useState } from "react";
+import PageHeader from "@/Components/PageHeader";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function Inventory() {
@@ -78,26 +79,7 @@ export default function Inventory() {
 
 			<Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
 				{/* Header moderno con gradiente */}
-				<Box
-					sx={{
-						mb: 4,
-						p: 4,
-						borderRadius: 3,
-						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-						color: "white",
-						boxShadow: "0 10px 40px rgba(102, 126, 234, 0.3)",
-					}}
-				>
-					<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
-						<InventoryIcon sx={{ fontSize: 40 }} />
-						<Typography variant="h3" component="h1" fontWeight="bold">
-							Reportes de Inventario
-						</Typography>
-					</Box>
-					<Typography variant="h6" sx={{ opacity: 0.95, fontWeight: 300 }}>
-						Monitorea y analiza el estado de tu inventario con filtros avanzados
-					</Typography>
-				</Box>
+				<PageHeader title="Reportes de Inventario" icon={InventoryIcon} subtitle="Reportes de inventario con filtros avanzados"/>
 
 				{/* Filtros Opcionales */}
 				<Box sx={{ mt: 4 }}>
