@@ -11,6 +11,7 @@ import ModalStyled from "@/Components/Modals/ModalStyled";
 type MovementData = MovementItem & {
 	attachments?: Attachment[];
 	product_inventory?: ProductInventory;
+	reason?: { id: number; name: string; description?: string };
 };
 
 type Props = {
@@ -116,6 +117,14 @@ export default function ModalMovementDetail({
 								{modelsName?.[data.model_type.replace("App\\Models\\", "")] ||
 									data.model_type}
 							</p>
+							{data.reason && (
+								<p className="md:col-span-2">
+									<span className="font-medium">Razón:</span>{" "}
+									{data.reason.description && (
+										<span className="text-gray-600">{data.reason.description}</span>
+									)}
+								</p>
+							)}
 						</div>
 					</div>
 
