@@ -131,7 +131,7 @@ function NavItem({ route: routeConfig, active, toggle }: NavItemProps) {
 												<Link href={route(childRoute.path)}>
 													<NavButton
 														startIcon={childRoute.icon ?? null}
-														selected={subPath(childRoute.path)[1] === toggle}
+														selected={active === subPath(childRoute.path)[0] && toggle === subPath(childRoute.path)[1]}
 													>
 														{childRoute.name}
 													</NavButton>
