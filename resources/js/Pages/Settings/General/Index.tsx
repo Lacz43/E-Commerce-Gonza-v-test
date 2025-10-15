@@ -7,7 +7,6 @@ import {
 	CardContent,
 	CardHeader,
 	MenuItem,
-	Select,
 	TextField,
 	Tooltip,
 	Typography,
@@ -167,30 +166,15 @@ export default function Index({ settings }: Props) {
 	}, []);
 
 	return (
-		<AuthenticatedLayout>
+		<AuthenticatedLayout
+			pageTitle="Configuración General"
+			pageSubtitle="Gestiona la información de tu empresa"
+			pageIcon={Business}
+			pageGradientColor="#10b981"
+		>
 			<Head title="Configuración General" />
 
 			<Box sx={{ p: 3 }}>
-				<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-					<Box
-						sx={{
-							background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-							borderRadius: 2,
-							p: 1.5,
-							display: "flex",
-						}}
-					>
-						<Business sx={{ color: "white", fontSize: 32 }} />
-					</Box>
-					<Box>
-						<Typography variant="h4" fontWeight={700} color="text.primary">
-							Configuración General
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							Gestiona la información de tu empresa
-						</Typography>
-					</Box>
-				</Box>
 
 				<Box
 					sx={{

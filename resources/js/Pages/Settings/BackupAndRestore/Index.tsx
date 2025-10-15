@@ -24,6 +24,7 @@ import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import AutoBackup from "./Partials/AutoBackup";
+import PageHeader from "@/Components/PageHeader";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalStyled = lazy(() => import("@/Components/Modals/ModalStyled"));
@@ -283,26 +284,12 @@ export default function BackupAndRestore({ backups }: Props) {
 		<AuthenticatedLayout>
 			<Head title="Backup and Restore" />
 			<Box sx={{ p: 3 }}>
-				<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
-					<Box
-						sx={{
-							background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
-							borderRadius: 2,
-							p: 1.5,
-							display: "flex",
-						}}
-					>
-						<Storage sx={{ color: "white", fontSize: 32 }} />
-					</Box>
-					<Box>
-						<Typography variant="h4" fontWeight={700} color="text.primary">
-							Respaldo y Restauración
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							Gestiona los respaldos de tu base de datos
-						</Typography>
-					</Box>
-				</Box>
+				<PageHeader
+					title="Respaldo y Restauración"
+					subtitle="Gestiona los respaldos de tu base de datos"
+					icon={Storage}
+					gradientColor="#0ea5e9"
+				/>
 				<Box sx={{ maxWidth: "1280px", mx: "auto" }}>
 					<Paper
 						elevation={2}
