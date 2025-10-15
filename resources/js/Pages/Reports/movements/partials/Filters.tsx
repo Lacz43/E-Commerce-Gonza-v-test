@@ -112,8 +112,8 @@ export default function Filters({
 									<MenuItem value="">
 										<em>Todos</em>
 									</MenuItem>
-									<MenuItem value="entry">Entrada</MenuItem>
-									<MenuItem value="exit">Salida</MenuItem>
+									<MenuItem value="ingress">Entrada</MenuItem>
+									<MenuItem value="egress">Salida</MenuItem>
 								</Select>
 							</FormControl>
 						</Box>
