@@ -37,6 +37,14 @@ class ReportController extends Controller
     }
 
     /**
+     * Vista de reportes de ventas.
+     */
+    public function sales(Request $request)
+    {
+        return Inertia::render('Reports/sales/Sales');
+    }
+
+    /**
      * Vista de reportes de inventario.
      */
     public function inventory(Request $request)
@@ -57,16 +65,6 @@ class ReportController extends Controller
         return Inertia::render('Reports/movements/Movements', [
             'modelsName' => $modelsName,
         ]);
-    }
-
-    /**
-     * Vista de reportes de usuarios.
-     */
-    public function users(Request $request)
-    {
-        return Inertia::render('Reports/Users');
-    }
-
     }
 
     /**
