@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import ProductsInCar from "@/Components/ProductsInCar";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import shoppingCart from "@/shoppingCart";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 
 export default function CartModal({ onClose }: Props) {
 	const [items, setItems] = useState<Item[]>([]);
+	const { settings } = useGeneralSettings();
 
 	function emtyCart() {
 		const cart = new shoppingCart();
@@ -26,7 +28,9 @@ export default function CartModal({ onClose }: Props) {
 	}, []);
 
 	const createOrder = useCallback(
-		async (items: { product_id: string | number; quantity: number | string }[]) => {
+		async (
+			items: { product_id: string | number; quantity: number | string }[],
+		) => {
 			const response = await axios.post(route("order.store"), { items });
 			return response.data.order_id;
 		},
@@ -45,7 +49,7 @@ export default function CartModal({ onClose }: Props) {
 		// mover a otro componente
 
 		// construir el mensaje para enviar por whatsapp
-		let url = `https://wa.me/${import.meta.env.VITE_COMPANY_PHONE}`;
+		let url = `https://wa.me/${settings.company_phone}`;
 
 		const cart = new shoppingCart();
 		const items = cart.items.map((item) => ({
@@ -74,7 +78,7 @@ export default function CartModal({ onClose }: Props) {
 				toast.error("Error inesperado");
 			}
 		}
-	}, [createOrder]);
+	}, [createOrder, settings.company_phone]);
 
 	const sendOrder = useCallback(async () => {
 		const cart = new shoppingCart();
@@ -120,17 +124,19 @@ export default function CartModal({ onClose }: Props) {
 			body={items.map((it) => <ProductsInCar item={it} key={it.id} />)}
 			footer={
 				<>
-					<Button
-						size="medium"
-						color="info"
-						variant="contained"
-						endIcon={<WhatsApp />}
-						onClick={() => sendMessage()}
-						className="w-full md:w-auto"
-						disabled={items.length <= 0}
-					>
-						<b>Enviar por WhatsApp</b>
-					</Button>
+					{settings.company_phone && (
+						<Button
+							size="medium"
+							color="info"
+							variant="contained"
+							endIcon={<WhatsApp />}
+							onClick={() => sendMessage()}
+							className="w-full md:w-auto"
+							disabled={items.length <= 0}
+						>
+							<b>Enviar por WhatsApp</b>
+						</Button>
+					)}
 
 					<div className="md:ml-5 max-md:mt-2">
 						<Button
