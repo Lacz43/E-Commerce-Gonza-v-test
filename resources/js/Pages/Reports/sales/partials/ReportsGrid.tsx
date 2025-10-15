@@ -18,16 +18,6 @@ interface ReportsGridProps {
 export default function ReportsGrid({ buildUrlWithFilters }: ReportsGridProps) {
 	const reports = [
 		{
-			id: "general",
-			title: "Estado General de Ventas",
-			description: "Reporte completo del estado actual de todas las ventas",
-			icon: TrendingUp,
-			route: "reports.sales.general",
-			color: "primary" as const,
-			borderColor: "primary.light",
-			hoverShadow: "0 8px 24px rgba(102, 126, 234, 0.25)",
-		},
-		{
 			id: "orders",
 			title: "Órdenes",
 			description: "Listado completo de todas las órdenes con detalles",
@@ -46,6 +36,16 @@ export default function ReportsGrid({ buildUrlWithFilters }: ReportsGridProps) {
 			color: "info" as const,
 			borderColor: "info.light",
 			hoverShadow: "0 8px 24px rgba(33, 150, 243, 0.25)",
+		},
+		{
+			id: "topProducts",
+			title: "Top Productos",
+			description: "Listado de los productos más vendidos",
+			icon: TrendingUp,
+			route: "reports.sales.top-products",
+			color: "success" as const,
+			borderColor: "success.light",
+			hoverShadow: "0 8px 24px rgba(76, 175, 80, 0.25)",
 		},
 	];
 
