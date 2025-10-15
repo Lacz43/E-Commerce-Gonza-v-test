@@ -100,4 +100,106 @@ class ReportController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+
+    /**
+     * Generar PDF del estado general del inventario.
+     */
+    public function downloadInventoryStatus(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        $inventory = ProductInventory::with('product')->get();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Estado General del Inventario';
+        $html = view('pdf.inventory.status', compact('settings', 'inventory', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'estado_inventario_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * Generar PDF de productos con stock bajo.
+     */
+    public function downloadLowStockReport(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        // Consideramos stock bajo cuando es menor o igual a 10 unidades
+        $lowStockProducts = ProductInventory::with('product')
+            ->where('stock', '<=', 10)
+            ->where('stock', '>', 0)
+            ->get();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Productos con Stock Bajo';
+        $html = view('pdf.inventory.low-stock', compact('settings', 'lowStockProducts', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'productos_stock_bajo_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * Generar PDF de valoración del inventario.
+     */
+    public function downloadInventoryValuation(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        $inventory = ProductInventory::with('product')->get();
+
+        // Calcular valoración total
+        $totalValue = $inventory->sum(function ($item) {
+            return $item->stock * ($item->product->price ?? 0);
+        });
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Valoración del Inventario';
+        $html = view('pdf.inventory.valuation', compact('settings', 'inventory', 'totalValue', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'valoracion_inventario_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
 }
