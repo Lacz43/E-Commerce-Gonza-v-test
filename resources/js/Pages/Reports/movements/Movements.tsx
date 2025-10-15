@@ -5,7 +5,7 @@ import { useState } from "react";
 import PageHeader from "@/Components/PageHeader";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Filters from "./partials/Filters";
-import ReportsButtons from "./partials/ReportsButtons";
+import ReportsGrid from "./partials/ReportsGrid";
 
 export default function Movements() {
 	const [filters, setFilters] = useState({
@@ -16,9 +16,9 @@ export default function Movements() {
 	});
 
 	const handleFilterChange = (field: string, value: string) => {
-		setFilters(prev => ({
+		setFilters((prev) => ({
 			...prev,
-			[field]: value
+			[field]: value,
 		}));
 	};
 
@@ -29,6 +29,21 @@ export default function Movements() {
 			dateTo: "",
 			module: "",
 		});
+	};
+
+	const buildUrlWithFilters = (baseRoute: string) => {
+		const params = new URLSearchParams();
+
+		if (filters.movementType)
+			params.append("movement_type", filters.movementType);
+		if (filters.dateFrom) params.append("date_from", filters.dateFrom);
+		if (filters.dateTo) params.append("date_to", filters.dateTo);
+		if (filters.module) params.append("module", filters.module);
+
+		const queryString = params.toString();
+		return queryString
+			? `${route(baseRoute)}?${queryString}`
+			: route(baseRoute);
 	};
 
 	return (
@@ -54,7 +69,7 @@ export default function Movements() {
 					clearFilters={clearFilters}
 				/>
 
-				<ReportsButtons />
+				<ReportsGrid buildUrlWithFilters={buildUrlWithFilters} />
 			</Box>
 		</AuthenticatedLayout>
 	);
