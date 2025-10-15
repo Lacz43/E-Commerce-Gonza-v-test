@@ -19,14 +19,11 @@ class InventoryMovementService
      * @param int $userId ID del usuario que realizó el movimiento
      * @return array
      */
-    public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId)
+    public static function inventoryMovement(int $productId, int $quantity, string $modelType, ?int $modelId, int $userId, ?int $reasonId = null)
     {
         $productInventory = ProductInventory::firstOrCreate(['product_id' => $productId], ['stock' => 0]);
 
         $controllerName = request()->route()->getAction()['controller'];
-
-        // Capturamos la razón manualmente del request (si existe)
-        $reason = Request::input('reason');
 
         $inventoryMovement = InventoryMovement::create([
             'product_inventory_id' => $productInventory->id,
@@ -37,7 +34,7 @@ class InventoryMovementService
             'model_id' => $modelId,
             'user_id' => $userId,
             'controller_name' => $controllerName,
-            'reason' => $reason, // 👈 ahora correcto
+            'reason_id' => $reasonId,
         ]);
 
         // Actualizamos stock
