@@ -107,9 +107,9 @@ export const paths: Record<string, Route> = {
 		icon: <BarChart />,
 		roles: ["admin"],
 		children: {
-			index: {
-				path: "reports.index",
-				name: "Dashboard de Reportes",
+			sales: {
+				path: "reports.sales",
+				name: "Reportes de Ventas",
 			},
 			inventory: {
 				path: "reports.inventory",
