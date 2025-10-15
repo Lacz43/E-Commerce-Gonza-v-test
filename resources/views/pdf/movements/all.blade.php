@@ -12,7 +12,7 @@
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">Tipo</th>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">Cantidad</th>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Usuario</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Módulo</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Origen</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
                         {{ $movement->user->name ?? 'Sistema' }}
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px;">
-                        {{ $movement->controller_name ?? 'N/A' }}
+                        {{ $modelsName[basename(str_replace('\\', '/', $movement->model_type))] ?? 'N/A' }}
                     </td>
                 </tr>
                 @endforeach
