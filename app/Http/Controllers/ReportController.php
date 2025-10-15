@@ -250,4 +250,100 @@ class ReportController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+
+    /**
+     * Aplicar filtros opcionales a la query de movimientos.
+     */
+    private function applyMovementFilters($query, Request $request)
+    {
+        if ($request->has('movement_type') && $request->movement_type !== '') {
+            $query->where('type', $request->movement_type);
+        }
+
+        if ($request->has('date_from') && $request->date_from !== '') {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to') && $request->date_to !== '') {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->has('module') && $request->module !== '') {
+            $query->where('controller_name', 'like', '%' . $request->module . '%');
+        }
+
+        return $query;
+    }
+
+    /**
+     * Generar PDF del historial completo de movimientos.
+     */
+    public function downloadMovementsAll(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        $query = InventoryMovement::with(['productInventory.product', 'user', 'reason']);
+        $query = $this->applyMovementFilters($query, $request);
+        $movements = $query->orderBy('created_at', 'desc')->get();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Historial Completo de Movimientos';
+        $html = view('pdf.movements.all', compact('settings', 'movements', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'historial_movimientos_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * Generar PDF de análisis de entradas y salidas.
+     */
+    public function downloadMovementsInOut(Request $request): Response
+    {
+        $settings = app(GeneralSettings::class);
+
+        $query = InventoryMovement::with(['productInventory.product', 'user', 'reason']);
+        $query = $this->applyMovementFilters($query, $request);
+        $movements = $query->orderBy('created_at', 'desc')->get();
+
+        // Calcular estadísticas
+        $entries = $movements->where('type', 'entry')->count();
+        $exits = $movements->where('type', 'exit')->count();
+        $totalQuantityIn = $movements->where('type', 'entry')->sum('quantity');
+        $totalQuantityOut = $movements->where('type', 'exit')->sum('quantity');
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
+
+        $title = 'Análisis de Entradas y Salidas';
+        $html = view('pdf.movements.in-out', compact('settings', 'movements', 'entries', 'exits', 'totalQuantityIn', 'totalQuantityOut', 'title'))->render();
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'entradas_salidas_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
 }
