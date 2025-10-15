@@ -51,7 +51,7 @@ class ReportController extends Controller
             'margin_bottom' => 20,
         ]);
 
-        $html = $this->generateMovementHtml($movement, $settings);
+        $html = view('pdf.movement_pdf', compact('movement', 'settings'))->render();
 
         $mpdf->WriteHTML($html);
 
@@ -64,121 +64,32 @@ class ReportController extends Controller
     }
 
     /**
-     * Generar HTML para el PDF del movimiento.
+     * Generar PDF de reporte de productos.
      */
-    private function generateMovementHtml(InventoryMovement $movement, GeneralSettings $settings): string
+    public function downloadProductsReport(Request $request): Response
     {
-        $logoHtml = '';
-        if ($settings->company_logo) {
-            $logoPath = storage_path('app/public/' . $settings->company_logo);
-            if (file_exists($logoPath)) {
-                $logoData = base64_encode(file_get_contents($logoPath));
-                $logoHtml = '<img src="data:image/png;base64,' . $logoData . '" style="max-height: 80px; max-width: 200px;" />';
-            }
-        }
+        $settings = app(GeneralSettings::class);
 
-        $reasonText = $movement->reason ? $movement->reason->name : 'Sin especificar';
+        $products = Product::with('inventory')->get();
 
-        return '
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Reporte de Movimiento de Inventario</title>
-            <style>
-                body { font-family: Arial, sans-serif; font-size: 12px; }
-                .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
-                .company-info { margin-bottom: 20px; }
-                .movement-info { margin: 20px 0; }
-                .info-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-                .info-table td { padding: 5px; border: 1px solid #ddd; }
-                .info-table .label { background-color: #f5f5f5; font-weight: bold; width: 30%; }
-                .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                ' . $logoHtml . '
-                <h1>Reporte de Movimiento de Inventario</h1>
-                <h2>' . ($settings->company_name ?: 'Empresa') . '</h2>
-            </div>
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
+        ]);
 
-            <div class="company-info">
-                <table class="info-table">
-                    <tr>
-                        <td class="label">Empresa:</td>
-                        <td>' . ($settings->company_name ?: 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Teléfono:</td>
-                        <td>' . ($settings->company_phone ?: 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Email:</td>
-                        <td>' . ($settings->company_email ?: 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Dirección:</td>
-                        <td>' . ($settings->company_address ?: 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">RIF:</td>
-                        <td>' . ($settings->company_rif ?: 'N/A') . '</td>
-                    </tr>
-                </table>
-            </div>
+        $html = view('pdf.products_report', compact('settings', 'products'))->render();
 
-            <div class="movement-info">
-                <h3>Información del Movimiento</h3>
-                <table class="info-table">
-                    <tr>
-                        <td class="label">ID del Movimiento:</td>
-                        <td>' . $movement->id . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Producto:</td>
-                        <td>' . ($movement->productInventory->product->name ?? 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Código del Producto:</td>
-                        <td>' . ($movement->productInventory->product->barcode ?? 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Tipo de Movimiento:</td>
-                        <td>' . ($movement->type === 'ingress' ? 'Entrada' : 'Salida') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Cantidad:</td>
-                        <td>' . $movement->quantity . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Stock Anterior:</td>
-                        <td>' . $movement->previous_stock . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Stock Posterior:</td>
-                        <td>' . ($movement->previous_stock + $movement->quantity) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Razón:</td>
-                        <td>' . $reasonText . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Usuario:</td>
-                        <td>' . ($movement->user->name ?? 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Fecha:</td>
-                        <td>' . $movement->created_at->format('d/m/Y H:i:s') . '</td>
-                    </tr>
-                </table>
-            </div>
+        $mpdf->WriteHTML($html);
 
-            <div class="footer">
-                <p>Reporte generado el ' . date('d/m/Y H:i:s') . '</p>
-                <p>Sistema de Gestión de Inventario - GonzaGo</p>
-            </div>
-        </body>
-        </html>';
+        $filename = 'reporte_productos_' . date('Y-m-d') . '.pdf';
+
+        return response($mpdf->Output($filename, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 }
