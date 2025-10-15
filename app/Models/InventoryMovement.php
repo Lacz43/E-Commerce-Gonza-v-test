@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\InventoryReason;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -20,7 +21,6 @@ class InventoryMovement extends Model
         'model_id',
         'user_id',
         'controller_name',
-        'reason',
     ];
 
     public function productInventory(): BelongsTo
@@ -36,6 +36,11 @@ class InventoryMovement extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function reasons()
+    {
+        return $this->hasMany(InventoryReason::class);
     }
 
     public function attachments()
