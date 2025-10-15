@@ -1,5 +1,8 @@
+import { Schedule } from "@mui/icons-material";
 import {
+	Box,
 	Chip,
+	CircularProgress,
 	FormControl,
 	FormControlLabel,
 	FormHelperText,
@@ -8,8 +11,8 @@ import {
 	Select,
 	Switch,
 	TextField,
+	Typography,
 } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -104,9 +107,26 @@ export default function AutoBackup() {
 	}, [scheduleVal, timeVal, active, onSubmit]);
 
 	return (
-		<div className="rounded-xl border border-emerald-200 bg-gradient-to-r from-orange-50 to-emerald-50 p-4 shadow-inner">
-			<div className="flex items-start justify-between mb-3">
-				<div className="flex items-center gap-3">
+		<Box
+			sx={{
+				borderRadius: 3,
+				border: "2px solid",
+				borderColor: "rgba(14, 165, 233, 0.2)",
+				background:
+					"linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%)",
+				p: 3,
+				boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)",
+			}}
+		>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "flex-start",
+					justifyContent: "space-between",
+					mb: 2,
+				}}
+			>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 					<Controller
 						name="active"
 						control={control}
@@ -125,9 +145,16 @@ export default function AutoBackup() {
 									/>
 								}
 								label={
-									<span className="font-medium text-emerald-900">
-										Backups automáticos
-									</span>
+									<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+										<Schedule sx={{ fontSize: 20, color: "#0284c7" }} />
+										<Typography
+											variant="body1"
+											fontWeight={600}
+											color="#0284c7"
+										>
+											Backups automáticos
+										</Typography>
+									</Box>
 								}
 								labelPlacement="end"
 							/>
@@ -139,21 +166,23 @@ export default function AutoBackup() {
 						variant={active ? "filled" : "outlined"}
 						size="small"
 					/>
-				</div>
-				<CircularProgress
-					size={20}
-					className="mt-1 ml-2"
-					color="inherit"
-					hidden={!loading}
-				/>
-			</div>
-			<div
-				className="grid grid-cols-2 gap-4 max-sm:grid-cols-1 transition-opacity"
-				style={{ opacity: active ? 1 : 0.5 }}
+				</Box>
+				{loading && (
+					<CircularProgress size={20} sx={{ mt: 0.5, ml: 1 }} color="primary" />
+				)}
+			</Box>
+			<Box
+				sx={{
+					display: "grid",
+					gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+					gap: 2,
+					opacity: active ? 1 : 0.5,
+					transition: "opacity 0.3s ease",
+				}}
 			>
 				<FormControl
-					variant="outlined"
-					className="w-full"
+					variant="filled"
+					fullWidth
 					required
 					disabled={!active || isSubmitting}
 					size="small"
@@ -179,28 +208,29 @@ export default function AutoBackup() {
 						<MenuItem value={"monthly"}>Mensualmente</MenuItem>
 						<MenuItem value={"yearly"}>Anualmente</MenuItem>
 					</Select>
-					<FormHelperText className="text-red-600">
-						{errors?.schedule?.message}
-					</FormHelperText>
+					<FormHelperText error>{errors?.schedule?.message}</FormHelperText>
 				</FormControl>
 				<TextField
-					className="w-full"
+					fullWidth
 					type="time"
 					id={timeId}
 					label="Hora"
 					value={watch("time") ?? ""}
-					variant="outlined"
+					variant="filled"
 					size="small"
 					{...register("time")}
 					disabled={!active || isSubmitting}
-					// se dispara por efecto debounce
 				/>
-			</div>
+			</Box>
 			{!active && (
-				<p className="mt-2 text-xs text-emerald-700">
+				<Typography
+					variant="caption"
+					color="text.secondary"
+					sx={{ mt: 2, display: "block" }}
+				>
 					Activa el interruptor para programar respaldos automáticos.
-				</p>
+				</Typography>
 			)}
-		</div>
+		</Box>
 	);
 }

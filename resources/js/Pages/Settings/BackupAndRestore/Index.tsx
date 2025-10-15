@@ -1,8 +1,20 @@
 import { Head, router } from "@inertiajs/react";
-import BackupIcon from "@mui/icons-material/Backup";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { Button, FormControl, FormHelperText, IconButton } from "@mui/material";
+import {
+	Backup,
+	Delete,
+	FileDownload,
+	Restore,
+	Storage,
+} from "@mui/icons-material";
+import {
+	Box,
+	Button,
+	FormControl,
+	FormHelperText,
+	IconButton,
+	Paper,
+	Typography,
+} from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { AxiosError, toFormData } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useState } from "react";
@@ -163,9 +175,9 @@ export default function BackupAndRestore({ backups }: Props) {
 					<div className="flex">
 						<IconButton
 							color="primary"
-							onClick={() => window.open(params.row.url, "_blank")} // abrimos el archivo en una nueva pestaña para descargar
+							onClick={() => window.open(params.row.url, "_blank")}
 						>
-							<FileDownloadIcon />
+							<FileDownload />
 						</IconButton>
 						<IconButton
 							color="error"
@@ -173,7 +185,7 @@ export default function BackupAndRestore({ backups }: Props) {
 								deleteModal(params.row.name);
 							}}
 						>
-							<DeleteIcon />
+							<Delete />
 						</IconButton>
 					</div>
 				),
@@ -268,95 +280,189 @@ export default function BackupAndRestore({ backups }: Props) {
 	);
 
 	return (
-		<AuthenticatedLayout
-			header={
-				<h2 className="text-xl font-semibold leading-tight text-gray-800">
-					Backup and Restore
-				</h2>
-			}
-		>
+		<AuthenticatedLayout>
 			<Head title="Backup and Restore" />
-			<div className="py-12">
-				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-					<div className="flex justify-end mb-3 mx-3"></div>
-					<div className="bg-white shadow-lg sm:rounded-lg grid grid-cols-2 gap-4 mb-3 p-4 max-md:grid-cols-1">
-						<div className="text-gray-900 space-y-4">
-							<div className="flex gap-2">
-								<Button
-									variant="contained"
-									size="medium"
-									endIcon={<BackupIcon />}
-									onClick={() => backupModal()}
-								>
-									<b>Respaldar</b>
-								</Button>
-								<Button
-									variant="outlined"
-									size="medium"
-									endIcon={<BackupIcon />}
-									onClick={() => restoreModal()}
-								>
-									<b>Restaurar</b>
-								</Button>
-							</div>
-							<FormControl className="w-full" variant="outlined">
-								<div className="flex items-stretch gap-2">
-									<label className="flex flex-1 cursor-pointer rounded-lg border border-emerald-200 bg-gradient-to-r from-emerald-50 to-orange-50 px-3 py-2 text-sm text-emerald-900 shadow-sm hover:from-emerald-100 hover:to-orange-100 focus-within:ring-2 focus-within:ring-emerald-400 transition">
-										<span className="my-auto font-medium">
-											Seleccionar archivo
-										</span>
-										<input
-											{...register("file", {
-												required: "Es requirido un archivo",
-												onChange: (e) => {
-													const file = (e.target as HTMLInputElement)
-														.files?.[0];
-													setSelectedFileName(file?.name || "");
+			<Box sx={{ p: 3 }}>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+					<Box
+						sx={{
+							background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+							borderRadius: 2,
+							p: 1.5,
+							display: "flex",
+						}}
+					>
+						<Storage sx={{ color: "white", fontSize: 32 }} />
+					</Box>
+					<Box>
+						<Typography variant="h4" fontWeight={700} color="text.primary">
+							Respaldo y Restauración
+						</Typography>
+						<Typography variant="body2" color="text.secondary">
+							Gestiona los respaldos de tu base de datos
+						</Typography>
+					</Box>
+				</Box>
+				<Box sx={{ maxWidth: "1280px", mx: "auto" }}>
+					<Paper
+						elevation={2}
+						sx={{
+							borderRadius: 3,
+							border: "1px solid rgba(14, 165, 233, 0.15)",
+							p: 3,
+							mb: 3,
+						}}
+					>
+						<Box
+							sx={{
+								display: "grid",
+								gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+								gap: 3,
+							}}
+						>
+							<Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+								<Box sx={{ display: "flex", gap: 2 }}>
+									<Button
+										variant="contained"
+										endIcon={<Backup />}
+										onClick={() => backupModal()}
+										sx={{
+											background:
+												"linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+											fontWeight: 700,
+											textTransform: "none",
+											"&:hover": {
+												background:
+													"linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+											},
+										}}
+									>
+										Respaldar
+									</Button>
+									<Button
+										variant="outlined"
+										endIcon={<Restore />}
+										onClick={() => restoreModal()}
+										sx={{
+											borderColor: "#0ea5e9",
+											color: "#0ea5e9",
+											fontWeight: 700,
+											textTransform: "none",
+											"&:hover": {
+												borderColor: "#0284c7",
+												backgroundColor: "rgba(14, 165, 233, 0.05)",
+											},
+										}}
+									>
+										Restaurar
+									</Button>
+								</Box>
+								<FormControl fullWidth variant="outlined">
+									<Box sx={{ display: "flex", gap: 2 }}>
+										<Box
+											component="label"
+											sx={{
+												flex: 1,
+												display: "flex",
+												alignItems: "center",
+												cursor: "pointer",
+												borderRadius: 2,
+												border: "2px solid",
+												borderColor: "rgba(14, 165, 233, 0.3)",
+												background:
+													"linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%)",
+												px: 2,
+												py: 1.5,
+												color: "#0284c7",
+												fontWeight: 600,
+												"&:hover": {
+													borderColor: "#0ea5e9",
+													background:
+														"linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%)",
 												},
-											})}
-											accept=".zip,.sql"
-											type="file"
-											className="hidden"
-										/>
-									</label>
-									<div className="flex-1 flex items-center rounded-lg border border-dashed border-emerald-200 px-3 text-xs text-emerald-700 bg-emerald-50/40">
-										<span className="truncate">
-											{selectedFileName || "Ningún archivo seleccionado"}
-										</span>
-									</div>
-								</div>
-								<FormHelperText className="text-center text-red-600">
-									{errors.file?.message}
-								</FormHelperText>
-							</FormControl>
-						</div>
-						<div className="text-gray-900">
-							<AutoBackup />
-						</div>
-					</div>
-					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
-						<div className="p-6 text-gray-900">
-							<Suspense
-								fallback={
-									<DataTableSkeleton
-										columns={Columns.length}
-										rows={10}
-										showToolbar={false}
-									/>
-								}
-							>
-								<DataTable
-									columns={Columns}
-									response={backups}
-									filtersAvailable={false}
-									sortAvailable={["lastModified", "size"]}
-									fill
+											}}
+										>
+											<Typography variant="body2" fontWeight={600}>
+												Seleccionar archivo
+											</Typography>
+											<input
+												{...register("file", {
+													required: "Es requirido un archivo",
+													onChange: (e) => {
+														const file = (e.target as HTMLInputElement)
+															.files?.[0];
+														setSelectedFileName(file?.name || "");
+													},
+												})}
+												accept=".zip,.sql"
+												type="file"
+												style={{ display: "none" }}
+											/>
+										</Box>
+										<Box
+											sx={{
+												flex: 1,
+												display: "flex",
+												alignItems: "center",
+												borderRadius: 2,
+												border: "2px dashed",
+												borderColor: "rgba(14, 165, 233, 0.3)",
+												px: 2,
+												py: 1.5,
+												backgroundColor: "rgba(14, 165, 233, 0.05)",
+											}}
+										>
+											<Typography
+												variant="caption"
+												color="text.secondary"
+												sx={{
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+													whiteSpace: "nowrap",
+												}}
+											>
+												{selectedFileName || "Ningún archivo seleccionado"}
+											</Typography>
+										</Box>
+									</Box>
+									<FormHelperText error sx={{ textAlign: "center" }}>
+										{errors.file?.message}
+									</FormHelperText>
+								</FormControl>
+							</Box>
+							<Box>
+								<AutoBackup />
+							</Box>
+						</Box>
+					</Paper>
+					<Paper
+						elevation={2}
+						sx={{
+							borderRadius: 3,
+							border: "1px solid rgba(14, 165, 233, 0.15)",
+							p: 3,
+						}}
+					>
+						<Suspense
+							fallback={
+								<DataTableSkeleton
+									columns={Columns.length}
+									rows={10}
+									showToolbar={false}
 								/>
-							</Suspense>
-						</div>
-					</div>
-				</div>
-			</div>
+							}
+						>
+							<DataTable
+								columns={Columns}
+								response={backups}
+								filtersAvailable={false}
+								sortAvailable={["lastModified", "size"]}
+								fill
+							/>
+						</Suspense>
+					</Paper>
+				</Box>
+			</Box>
 		</AuthenticatedLayout>
 	);
 }
