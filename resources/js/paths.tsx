@@ -115,6 +115,10 @@ export const paths: Record<string, Route> = {
 				path: "reports.inventory",
 				name: "Reportes de Inventario",
 			},
+			movements: {
+				path: "reports.movements",
+				name: "Reportes de Movimientos",
+			},
 		},
 	},
 	settings: {
