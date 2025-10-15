@@ -10,3 +10,7 @@ Route::middleware('auth', 'role:admin')
 Route::middleware('auth', 'permission:show product_inventory')
     ->get('/reports/movements/{movement}/download', [ReportController::class, 'downloadMovement'])
     ->name('reports.movements.download');
+
+Route::middleware('auth', 'role:admin')
+    ->get('/reports/products/download', [ReportController::class, 'downloadProductsReport'])
+    ->name('reports.products.download');

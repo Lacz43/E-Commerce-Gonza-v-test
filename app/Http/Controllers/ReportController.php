@@ -51,7 +51,7 @@ class ReportController extends Controller
             'margin_bottom' => 20,
         ]);
 
-        $html = view('pdf.movement_pdf', compact('movement', 'settings'))->render();
+        $html = view('pdf.movements.movement_pdf', compact('movement', 'settings'))->render();
 
         $mpdf->WriteHTML($html);
 
@@ -70,7 +70,7 @@ class ReportController extends Controller
     {
         $settings = app(GeneralSettings::class);
 
-        $products = Product::with('inventory')->get();
+        $products = Product::with('productInventory')->get();
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -81,7 +81,7 @@ class ReportController extends Controller
             'margin_bottom' => 20,
         ]);
 
-        $html = view('pdf.products_report', compact('settings', 'products'))->render();
+        $html = view('pdf.products.products_report', compact('settings', 'products'))->render();
 
         $mpdf->WriteHTML($html);
 
