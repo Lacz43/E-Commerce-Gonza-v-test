@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void{
         Schema::create('inventory_reasons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('movement_id')->constrained('inventory_movements')->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('active')->default(true);
