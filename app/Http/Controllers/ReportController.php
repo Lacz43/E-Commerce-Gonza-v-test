@@ -38,7 +38,8 @@ class ReportController extends Controller
      */
     public function inventory(Request $request)
     {
-        return Inertia::render('Reports/Inventory');
+        return Inertia::render('Reports/inventory/Inventory');
+    }
     }
 
     /**
