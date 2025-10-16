@@ -164,9 +164,21 @@ export default function ModalCreate({ onClose }: Props) {
 		<ModalStyled
 			onClose={onClose}
 			header={
-				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						gap: 2,
+						flexDirection: { xs: "column", sm: "row" },
+						textAlign: { xs: "center", sm: "left" },
+					}}
+				>
 					<Box>
-						<Typography variant="h5" fontWeight={700}>
+						<Typography
+							variant="h5"
+							fontWeight={700}
+							sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
+						>
 							Crear Inventario
 						</Typography>
 					</Box>
@@ -177,11 +189,20 @@ export default function ModalCreate({ onClose }: Props) {
 					<Box
 						component="form"
 						onSubmit={handleSubmit(onSubmit)}
-						sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							gap: { xs: 2, sm: 3 },
+							px: { xs: 1, sm: 0 },
+						}}
 					>
 						{/* Productos */}
 						<Box>
-							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+							<Typography
+								variant="h6"
+								fontWeight={700}
+								sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+							>
 								📦 Productos
 							</Typography>
 							<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -208,33 +229,49 @@ export default function ModalCreate({ onClose }: Props) {
 												display: "flex",
 												gap: 2,
 												alignItems: "center",
+												flexDirection: { xs: "column", sm: "row" },
+												width: "100%",
 											}}
 										>
-											<Box sx={{ flex: 1 }}>
+											<Box
+												sx={{
+													flex: { xs: 1, sm: 1 },
+													width: { xs: "100%", sm: "auto" },
+												}}
+											>
 												<ProductSelector<FormData>
 													name={`items.${index}.product`}
 												/>
 											</Box>
-											<Box sx={{ flex: 2 }}>
+											<Box
+												sx={{
+													flex: { xs: 1, sm: 2 },
+													width: { xs: "100%", sm: "auto" },
+												}}
+											>
 												<QuantityInput
 													productInfo={productInfos[index]}
 													name={`items.${index}.stock`}
 												/>
 											</Box>
 											{fields.length > 1 && (
-												<Tooltip title="Eliminar producto">
-													<IconButton
-														color="error"
-														onClick={() => remove(index)}
-														sx={{
-															"&:hover": {
-																background: "rgba(239, 68, 68, 0.1)",
-															},
-														}}
-													>
-														<DeleteIcon />
-													</IconButton>
-												</Tooltip>
+												<Box
+													sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}
+												>
+													<Tooltip title="Eliminar producto">
+														<IconButton
+															color="error"
+															onClick={() => remove(index)}
+															sx={{
+																"&:hover": {
+																	background: "rgba(239, 68, 68, 0.1)",
+																},
+															}}
+														>
+															<DeleteIcon />
+														</IconButton>
+													</Tooltip>
+												</Box>
 											)}
 										</Box>
 									</Paper>
@@ -243,7 +280,14 @@ export default function ModalCreate({ onClose }: Props) {
 						</Box>
 
 						{/* Botones de acción */}
-						<Box sx={{ display: "flex", gap: 2 }}>
+						<Box
+							sx={{
+								display: "flex",
+								gap: 2,
+								flexDirection: { xs: "column", sm: "row" },
+								alignItems: { xs: "stretch", sm: "flex-start" },
+							}}
+						>
 							<Button
 								variant="contained"
 								onClick={addItem}
@@ -256,6 +300,7 @@ export default function ModalCreate({ onClose }: Props) {
 									borderRadius: 2,
 									fontWeight: 600,
 									textTransform: "none",
+									flex: { xs: 1, sm: "auto" },
 									"&:hover": {
 										background:
 											"linear-gradient(135deg, #059669 0%, #047857 100%)",
@@ -278,6 +323,7 @@ export default function ModalCreate({ onClose }: Props) {
 										fontWeight: 600,
 										textTransform: "none",
 										borderWidth: 2,
+										flex: { xs: 1, sm: "auto" },
 										"&:hover": {
 											borderWidth: 2,
 										},
@@ -292,7 +338,11 @@ export default function ModalCreate({ onClose }: Props) {
 
 						{/* Razón de ajuste */}
 						<Box>
-							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+							<Typography
+								variant="h6"
+								fontWeight={700}
+								sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+							>
 								📝 Información Adicional
 							</Typography>
 							<TextField
@@ -316,7 +366,11 @@ export default function ModalCreate({ onClose }: Props) {
 						{/* Archivos adjuntos */}
 						{productInfos.some((p) => p) && (
 							<Box>
-								<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								<Typography
+									variant="h6"
+									fontWeight={700}
+									sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+								>
 									📎 Archivos Adjuntos
 								</Typography>
 								<FileUpload name="files" />
@@ -333,12 +387,13 @@ export default function ModalCreate({ onClose }: Props) {
 					size="large"
 					sx={{
 						background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-						px: 5,
+						px: { xs: 3, sm: 5 },
 						py: 1.5,
 						borderRadius: 2,
 						fontWeight: 700,
 						textTransform: "none",
-						fontSize: 16,
+						fontSize: { xs: 14, sm: 16 },
+						width: { xs: "100%", sm: "auto" },
 						"&:hover": {
 							background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
 						},
