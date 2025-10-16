@@ -30,6 +30,25 @@ class OrdersController extends Controller
         ]);
     }
 
+    public function userOrders(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no autenticado'], 401);
+        }
+
+        // Obtener solo las órdenes del usuario actual
+        $orders = Order::where('user_id', $user->id)
+            ->with(['orderItems.product'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('User/Orders', [
+            'orders' => $orders,
+        ]);
+    }
+
     public function show(Order $order)
     {
         $order->load(['user', 'orderItems.product']);

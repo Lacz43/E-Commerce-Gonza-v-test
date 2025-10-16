@@ -3,6 +3,10 @@
 use App\Http\Controllers\OrdersController;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/orders', [OrdersController::class, 'userOrders'])->name('user.orders');
+});
+
 Route::middleware(['auth', 'role:admin|seller'])->group(function () {
     Route::get('/orders/index', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
