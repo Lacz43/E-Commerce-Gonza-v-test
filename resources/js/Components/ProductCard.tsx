@@ -1,7 +1,6 @@
 import { usePage } from "@inertiajs/react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StarIcon from "@mui/icons-material/Star";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -9,7 +8,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
 import type { HTMLAttributes } from "react";
-import { useCallback, useOptimistic, useState, useTransition } from "react";
+import {
+	useCallback,
+	useId,
+	useOptimistic,
+	useState,
+	useTransition,
+} from "react";
 import ProductDetailsModal from "@/Components/Modals/ProductDetailsModal";
 import { useModal } from "@/Context/Modal";
 import { imageUrl } from "@/utils";
@@ -27,6 +32,7 @@ export default function ProductCard({
 }: CardProps) {
 	const { openModal } = useModal();
 	const { auth } = usePage().props as any;
+	const reviewInputId = useId();
 	const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
 	const [selectedRating, setSelectedRating] = useState(
 		item.average_rating || 0,
@@ -219,36 +225,82 @@ export default function ProductCard({
 			<Dialog
 				open={reviewDialogOpen}
 				onClose={() => setReviewDialogOpen(false)}
+				PaperProps={{
+					className: "rounded-2xl border-2 border-orange-100/50 shadow-2xl",
+				}}
 			>
-				<DialogTitle>Deja tu reseña para {item.name}</DialogTitle>
-				<DialogContent>
-					<div className="flex items-center gap-1 mb-4">
+				<DialogTitle className="text-center pb-2">
+					<h3 className="text-xl font-extrabold bg-gradient-to-r from-orange-600 to-emerald-600 bg-clip-text text-transparent mb-1">
+						Deja tu reseña para
+					</h3>
+					<p className="text-slate-700 font-semibold">{item.name}</p>
+				</DialogTitle>
+				<DialogContent className="px-6 pb-4">
+					<div className="flex items-center justify-center gap-1 mb-6 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/50">
 						{Array.from({ length: 5 }).map((_, i) => (
 							<StarIcon
 								key={i}
 								fontSize="large"
-								className={`cursor-pointer ${i < selectedRating ? "text-amber-400" : "text-slate-300"}`}
+								className={`cursor-pointer transition-colors duration-200 ${i < selectedRating ? "text-amber-500 hover:text-amber-600" : "text-slate-300 hover:text-amber-400"}`}
 								onClick={() => setSelectedRating(i + 1)}
 							/>
 						))}
-						<span className="ml-2">
+						<span className="ml-3 text-sm font-semibold text-slate-700">
 							{selectedRating} estrella{selectedRating !== 1 ? "s" : ""}
 						</span>
 					</div>
-					<TextField
-						label="Reseña (opcional)"
-						multiline
-						rows={4}
-						fullWidth
-						value={reviewText}
-						onChange={(e) => setReviewText(e.target.value)}
-					/>
+					<div className="space-y-3">
+						<label
+							htmlFor={reviewInputId}
+							className="block text-sm font-bold text-slate-600"
+						>
+							📝 Reseña (opcional)
+						</label>
+						<TextField
+							id={reviewInputId}
+							multiline
+							rows={4}
+							fullWidth
+							value={reviewText}
+							onChange={(e) => setReviewText(e.target.value)}
+							placeholder="Comparte tu opinión sobre este producto..."
+							variant="outlined"
+							sx={{
+								"& .MuiOutlinedInput-root": {
+									backgroundColor: "rgb(255 247 237)",
+									borderRadius: "0.75rem",
+									border: "2px solid rgb(253 230 138 / 0.5)",
+									"& fieldset": {
+										border: "none",
+									},
+									"&:hover": {
+										backgroundColor: "rgb(255 237 213)",
+										borderColor: "rgb(253 230 138)",
+									},
+									"&.Mui-focused": {
+										backgroundColor: "rgb(255 237 213)",
+										borderColor: "rgb(249 115 22)",
+									},
+								},
+							}}
+						/>
+					</div>
 				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setReviewDialogOpen(false)}>Cancelar</Button>
-					<Button onClick={handleSubmitReview} variant="contained">
-						Enviar
-					</Button>
+				<DialogActions className="px-6 pb-6 flex gap-3">
+					<button
+						type="button"
+						onClick={() => setReviewDialogOpen(false)}
+						className="flex-1 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-all duration-200"
+					>
+						Cancelar
+					</button>
+					<button
+						type="button"
+						onClick={handleSubmitReview}
+						className="flex-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-emerald-500 hover:from-orange-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+					>
+						Enviar Reseña
+					</button>
 				</DialogActions>
 			</Dialog>
 		</div>
