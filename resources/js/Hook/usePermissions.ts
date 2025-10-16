@@ -13,6 +13,8 @@ export default function usePermissions() {
 			// obtiene si el usuario tiene un rol
 			return permissionService.hasRole(role);
 		},
+		roles: () => permissionService.roles(),
+		permissions: () => permissionService.permissions(),
 		fetchPermissions: () => permissionService.fetchPermissions(),
 		refreshPermissions: () => permissionService.refreshPermissions(),
 		clearPermissions: () => permissionService.clearPermissions(),

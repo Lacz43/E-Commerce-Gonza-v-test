@@ -52,6 +52,16 @@ class PermissionService {
         if (!stored?.roles || !Array.isArray(roles)) return false;
         return roles.some(role => stored.roles.includes(role));
     }
+
+    public roles(): string[] {
+        const stored = this.getStoredPermissions();
+        return stored?.roles || [];
+    }
+
+    public permissions(): string[] {
+        const stored = this.getStoredPermissions();
+        return stored?.permissions || [];
+    }
 }
 
 export default PermissionService;
