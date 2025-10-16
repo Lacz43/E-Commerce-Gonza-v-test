@@ -1,11 +1,25 @@
+import { router } from "@inertiajs/react";
+import { Inventory2 } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, TextField } from "@mui/material";
+import {
+	Box,
+	Button,
+	Divider,
+	Paper,
+	TextField,
+	Typography,
+} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
+import {
+	FormProvider,
+	useFieldArray,
+	useForm,
+	useWatch,
+} from "react-hook-form";
 import toast from "react-hot-toast";
 import FileUpload from "@/Components/FileUpload";
 import ModalStyled from "@/Components/Modals/ModalStyled";
@@ -13,7 +27,6 @@ import { useModal } from "@/Context/Modal";
 import CreateForm from "@/Pages/Products/Partials/Form";
 import ProductSelector from "./ProductSelector";
 import QuantityInput from "./QuantityInput";
-import { router } from "@inertiajs/react";
 
 type Props = {
 	onClose: () => void;
@@ -50,7 +63,9 @@ export default function ModalCreate({ onClose }: Props) {
 	});
 
 	const watchedProducts = useWatch({
-		name: fields.map((_, i) => `items.${i}.product`) as readonly `items.${number}.product`[],
+		name: fields.map(
+			(_, i) => `items.${i}.product`,
+		) as readonly `items.${number}.product`[],
 		control,
 	});
 
@@ -100,8 +115,7 @@ export default function ModalCreate({ onClose }: Props) {
 				(!productInfos[index] || productInfos[index]?.id !== productId)
 			) {
 				fetchProduct(productId, index);
-			}
-			else if (!productId && productInfos[index] !== null) {
+			} else if (!productId && productInfos[index] !== null) {
 				setProductInfos((prev) => {
 					const newInfos = [...prev];
 					newInfos[index] = null;
@@ -116,11 +130,16 @@ export default function ModalCreate({ onClose }: Props) {
 		try {
 			const formData = new FormData();
 			data.items.forEach((item, index) => {
-				formData.append(`items[${index}][product]`, item.product?.toString() || "");
+				formData.append(
+					`items[${index}][product]`,
+					item.product?.toString() || "",
+				);
 				formData.append(`items[${index}][stock]`, item.stock.toString());
 			});
 			if (data.reason) formData.append("reason", data.reason);
-			data.files?.map((file, index) => formData.append(`files[${index}]`, file));
+			data.files?.map((file, index) =>
+				formData.append(`files[${index}]`, file),
+			);
 
 			await axios.post(route("inventory.store"), formData);
 			toast.success("Inventario creado correctamente");
@@ -144,77 +163,190 @@ export default function ModalCreate({ onClose }: Props) {
 	return (
 		<ModalStyled
 			onClose={onClose}
-			header={<h2>Crear Inventario</h2>}
+			header={
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+					<Box>
+						<Typography variant="h5" fontWeight={700}>
+							Crear Inventario
+						</Typography>
+					</Box>
+				</Box>
+			}
 			body={
 				<FormProvider {...methods}>
-					<form
-						className="gap-4 flex flex-col"
+					<Box
+						component="form"
 						onSubmit={handleSubmit(onSubmit)}
+						sx={{ display: "flex", flexDirection: "column", gap: 2 }}
 					>
-						{fields.map((field, index) => (
-							<div
-								key={field.id}
-								className="py-2 px-4 border-b border-gray-100 last:border-b-0"
+						{/* Productos */}
+						<Box>
+							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								📦 Productos
+							</Typography>
+							<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+								{fields.map((field, index) => (
+									<Paper
+										key={field.id}
+										elevation={0}
+										sx={{
+											p: 1.5,
+											borderRadius: 2,
+											border: "1px solid",
+											borderColor: "divider",
+											background:
+												"linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)",
+											transition: "all 0.2s",
+											"&:hover": {
+												borderColor: "#10b981",
+												boxShadow: "0 4px 12px rgba(16, 185, 129, 0.1)",
+											},
+										}}
+									>
+										<Box
+											sx={{
+												display: "flex",
+												gap: 2,
+												alignItems: "center",
+											}}
+										>
+											<Box sx={{ flex: 1 }}>
+												<ProductSelector<FormData>
+													name={`items.${index}.product`}
+												/>
+											</Box>
+											<Box sx={{ flex: 2 }}>
+												<QuantityInput
+													productInfo={productInfos[index]}
+													name={`items.${index}.stock`}
+												/>
+											</Box>
+											{fields.length > 1 && (
+												<Tooltip title="Eliminar producto">
+													<IconButton
+														color="error"
+														onClick={() => remove(index)}
+														sx={{
+															"&:hover": {
+																background: "rgba(239, 68, 68, 0.1)",
+															},
+														}}
+													>
+														<DeleteIcon />
+													</IconButton>
+												</Tooltip>
+											)}
+										</Box>
+									</Paper>
+								))}
+							</Box>
+						</Box>
+
+						{/* Botones de acción */}
+						<Box sx={{ display: "flex", gap: 2 }}>
+							<Button
+								variant="contained"
+								onClick={addItem}
+								startIcon={<AddIcon />}
+								sx={{
+									background:
+										"linear-gradient(135deg, #10b981 0%, #059669 100%)",
+									px: 3,
+									py: 1.5,
+									borderRadius: 2,
+									fontWeight: 600,
+									textTransform: "none",
+									"&:hover": {
+										background:
+											"linear-gradient(135deg, #059669 0%, #047857 100%)",
+									},
+								}}
 							>
-								<div className="flex gap-4 items-end">
-									<div className="flex-1">
-										<ProductSelector<FormData>
-											name={`items.${index}.product`}
-										/>
-									</div>
-									<div className="flex-[2]">
-										<QuantityInput
-											productInfo={productInfos[index]}
-											name={`items.${index}.stock`}
-										/>
-									</div>
-									{fields.length > 1 && (
-										<div className="self-center">
-											<Tooltip title="Eliminar producto">
-												<IconButton
-													color="error"
-													size="small"
-													onClick={() => remove(index)}
-												>
-													<DeleteIcon />
-												</IconButton>
-											</Tooltip>
-										</div>
-									)}
-								</div>
-							</div>
-						))}
-						<div className="flex gap-2">
-							<Button variant="contained" onClick={addItem}>
 								Añadir Producto
 							</Button>
 							<Tooltip title="Crear nuevo producto">
 								<Button
 									variant="outlined"
-									color="primary"
+									color="success"
 									onClick={() =>
 										openModal(() => <CreateForm onSubmit={() => {}} />)
 									}
+									sx={{
+										px: 3,
+										py: 1.5,
+										borderRadius: 2,
+										fontWeight: 600,
+										textTransform: "none",
+										borderWidth: 2,
+										"&:hover": {
+											borderWidth: 2,
+										},
+									}}
 								>
 									<AddIcon />
 								</Button>
 							</Tooltip>
-						</div>
+						</Box>
 
-						<TextField
-							{...register("reason")}
-							label="Razón de ajuste (opcional)"
-							type="text"
-							multiline
-							error={!!errors.reason}
-							helperText={errors.reason?.message}
-							fullWidth
-						/>
-						{productInfos.some((p) => p) && <FileUpload name="files" />}
-					</form>
+						<Divider />
+
+						{/* Razón de ajuste */}
+						<Box>
+							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								📝 Información Adicional
+							</Typography>
+							<TextField
+								{...register("reason")}
+								label="Razón de ajuste (opcional)"
+								type="text"
+								multiline
+								rows={3}
+								variant="filled"
+								error={!!errors.reason}
+								helperText={errors.reason?.message}
+								fullWidth
+								sx={{
+									"& .MuiFilledInput-root": {
+										borderRadius: 2,
+									},
+								}}
+							/>
+						</Box>
+
+						{/* Archivos adjuntos */}
+						{productInfos.some((p) => p) && (
+							<Box>
+								<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+									📎 Archivos Adjuntos
+								</Typography>
+								<FileUpload name="files" />
+							</Box>
+						)}
+					</Box>
 				</FormProvider>
 			}
-			footer={<Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>Crear</Button>}
+			footer={
+				<Button
+					onClick={handleSubmit(onSubmit)}
+					loading={isSubmitting}
+					variant="contained"
+					size="large"
+					sx={{
+						background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+						px: 5,
+						py: 1.5,
+						borderRadius: 2,
+						fontWeight: 700,
+						textTransform: "none",
+						fontSize: 16,
+						"&:hover": {
+							background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+						},
+					}}
+				>
+					Crear Inventario
+				</Button>
+			}
 		/>
 	);
 }
