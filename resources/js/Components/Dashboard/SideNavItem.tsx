@@ -88,6 +88,7 @@ function NavItem({ route: routeConfig, active, toggle }: NavItemProps) {
 		<PermissionGate
 			roles={routeConfig?.roles}
 			permission={routeConfig?.permissions}
+			strict={true}
 		>
 			<div className="relative">
 				{!hasChildren ? (
@@ -127,6 +128,7 @@ function NavItem({ route: routeConfig, active, toggle }: NavItemProps) {
 												key={key}
 												roles={childRoute?.roles}
 												permission={childRoute?.permissions}
+												strict={true}
 											>
 												<Link href={route(childRoute.path)}>
 													<NavButton
