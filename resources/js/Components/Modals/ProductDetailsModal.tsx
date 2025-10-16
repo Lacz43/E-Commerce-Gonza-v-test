@@ -1,5 +1,6 @@
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Button, Skeleton } from "@mui/material";
+import { Skeleton } from "@mui/material";
+import Button from "@mui/material/Button";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -161,7 +162,7 @@ export default function ProductDetailsModal({
 	return (
 		<ModalStyled
 			header={
-				<h2 className="text-lg font-semibold text-gray-800">
+				<h2 className="text-2xl font-extrabold bg-gradient-to-r from-orange-100 to-emerald-100 bg-clip-text text-transparent">
 					Detalles del Producto
 				</h2>
 			}
@@ -174,15 +175,15 @@ export default function ProductDetailsModal({
 							{hasImages && (
 								<div className="space-y-4">
 									{/* Main Image */}
-									<div className="relative aspect-square lg:aspect-video max-h-96 overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+									<div className="relative aspect-square lg:aspect-video max-h-96 overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-emerald-50 shadow-2xl border-2 border-orange-100/50">
 										<img
 											src={imageUrl(images[selectedImageIndex].image)}
 											alt={product.name}
-											className="w-full h-full object-cover transition-all duration-300"
+											className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
 										/>
 										{/* Image counter */}
 										{images.length > 1 && (
-											<div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
+											<div className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
 												{selectedImageIndex + 1} / {images.length}
 											</div>
 										)}
@@ -195,10 +196,10 @@ export default function ProductDetailsModal({
 												<button
 													key={index}
 													onClick={() => setSelectedImageIndex(index)}
-													className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
+													className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 hover:scale-110 ${
 														selectedImageIndex === index
-															? "border-green-500 ring-2 ring-green-200 shadow-md"
-															: "border-gray-200 hover:border-gray-400"
+															? "border-emerald-500 ring-2 ring-emerald-200 shadow-lg"
+															: "border-orange-100 hover:border-orange-300"
 													}`}
 													aria-label={`Ver imagen ${index + 1} de ${product.name}`}
 												>
@@ -220,11 +221,14 @@ export default function ProductDetailsModal({
 						<div className="order-1 lg:order-2 space-y-6">
 							{/* Header with Name and Price */}
 							<div className="text-center lg:text-left">
-								<h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+								<h3 className="text-2xl lg:text-4xl font-extrabold text-slate-800 mb-4 leading-tight">
 									{product.name}
 								</h3>
-								<div className="text-3xl lg:text-4xl font-bold text-green-600 mb-6">
-									{product.price.toFixed(2)} Bs
+								<div className="flex items-baseline gap-2 justify-center lg:justify-start">
+									<span className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-orange-600 to-emerald-600 bg-clip-text text-transparent">
+										{product.price.toFixed(2)}
+									</span>
+									<span className="text-lg font-medium text-slate-500">Bs</span>
 								</div>
 							</div>
 
@@ -232,24 +236,24 @@ export default function ProductDetailsModal({
 							<div className="space-y-4">
 								{/* Barcode */}
 								<div className="flex flex-col sm:flex-row sm:items-center gap-2">
-									<span className="text-sm font-semibold text-gray-600 min-w-fit">
-										Código:
+									<span className="text-sm font-bold text-slate-600 min-w-fit">
+										📦 Código:
 									</span>
-									<code className="px-3 py-2 bg-gray-100 rounded-lg text-sm font-mono text-gray-800 border">
+									<code className="px-4 py-2 bg-gradient-to-r from-orange-50 to-emerald-50 rounded-xl text-sm font-mono text-slate-800 border-2 border-orange-100/50 font-semibold">
 										{product.barcode}
 									</code>
 								</div>
 
 								{/* Stock Status */}
 								<div className="flex flex-col sm:flex-row sm:items-center gap-2">
-									<span className="text-sm font-semibold text-gray-600 min-w-fit">
-										Stock disponible:
+									<span className="text-sm font-bold text-slate-600 min-w-fit">
+										📊 Stock disponible:
 									</span>
 									<span
-										className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium ${
+										className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold shadow-sm ${
 											product.available_stock && product.available_stock > 0
-												? "bg-green-100 text-green-800"
-												: "bg-red-100 text-red-800"
+												? "bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800 border-2 border-emerald-300"
+												: "bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-2 border-red-300"
 										}`}
 									>
 										{product.available_stock ?? 0} unidades
@@ -259,10 +263,10 @@ export default function ProductDetailsModal({
 								{/* Brand */}
 								{product.brand && (
 									<div className="flex flex-col sm:flex-row sm:items-center gap-2">
-										<span className="text-sm font-semibold text-gray-600 min-w-fit">
-											Marca:
+										<span className="text-sm font-bold text-slate-600 min-w-fit">
+											🏷️ Marca:
 										</span>
-										<span className="text-sm text-gray-900 font-medium">
+										<span className="px-3 py-1.5 bg-orange-50 text-orange-700 font-semibold text-sm rounded-lg border border-orange-200">
 											{product.brand.name}
 										</span>
 									</div>
@@ -271,10 +275,10 @@ export default function ProductDetailsModal({
 								{/* Category */}
 								{product.category && (
 									<div className="flex flex-col sm:flex-row sm:items-center gap-2">
-										<span className="text-sm font-semibold text-gray-600 min-w-fit">
-											Categoría:
+										<span className="text-sm font-bold text-slate-600 min-w-fit">
+											📂 Categoría:
 										</span>
-										<span className="text-sm text-gray-900 font-medium">
+										<span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 font-semibold text-sm rounded-lg border border-emerald-200">
 											{product.category.name}
 										</span>
 									</div>
@@ -283,12 +287,12 @@ export default function ProductDetailsModal({
 
 							{/* Description */}
 							{product.description && (
-								<div className="border-t pt-6">
-									<h4 className="text-sm font-semibold text-gray-600 mb-3">
-										Descripción:
+								<div className="border-t-2 border-orange-100 pt-6">
+									<h4 className="text-base font-bold text-slate-700 mb-3 flex items-center gap-2">
+										📝 Descripción:
 									</h4>
-									<div className="bg-gray-50 rounded-lg p-4">
-										<p className="text-gray-700 leading-relaxed whitespace-pre-line">
+									<div className="bg-gradient-to-br from-orange-50/50 to-emerald-50/50 rounded-xl p-5 border-2 border-orange-100/50">
+										<p className="text-slate-700 leading-relaxed whitespace-pre-line">
 											{product.description}
 										</p>
 									</div>
@@ -299,41 +303,22 @@ export default function ProductDetailsModal({
 				</div>
 			}
 			footer={
-				<div className="flex gap-2">
-					<Button
+				<div className="flex flex-col sm:flex-row gap-3 w-full">
+					<button
+						type="button"
 						onClick={addToCart}
-						variant="contained"
-						startIcon={<ShoppingCartIcon />}
-						fullWidth
-						sx={{
-							color: "#FFFFFF",
-							textTransform: "none",
-							fontWeight: 600,
-							letterSpacing: ".5px",
-							borderRadius: "1rem",
-							paddingY: 1.2,
-							whiteSpace: "nowrap",
-							background:
-								"linear-gradient(90deg,rgba(255, 124, 10, 1) 12%, rgba(0, 214, 89, 1) 80%, rgba(237, 221, 83, 1) 100%)",
-							boxShadow: "0 4px 14px 0 rgba(13,148,136,.35)",
-							"&:hover": {
-								background:
-									"linear-gradient(90deg,rgba(199, 95, 4, 1) 12%, rgba(0, 186, 78, 1) 80%, rgba(199, 186, 72, 1) 100%)",
-								boxShadow: "0 6px 20px 0 rgba(13,148,136,.45)",
-							},
-							"& .MuiButton-startIcon": { color: "rgba(255,255,255,0.9)" },
-							"&:active": { transform: "translateY(1px)" },
-							"&:focus-visible": {
-								outline: "2px solid #0d9488",
-								outlineOffset: "2px",
-							},
-						}}
+						className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-emerald-500 hover:from-orange-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
 					>
+						<ShoppingCartIcon fontSize="small" />
 						Añadir al Carrito
-					</Button>
-					<Button onClick={closeModal} variant="outlined" fullWidth>
+					</button>
+					<button
+						type="button"
+						onClick={closeModal}
+						className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-all duration-200"
+					>
 						Cerrar
-					</Button>
+					</button>
 				</div>
 			}
 			onClose={closeModal}
