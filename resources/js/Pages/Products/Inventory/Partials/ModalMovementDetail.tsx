@@ -1,11 +1,17 @@
 import {
 	AttachFile,
+	CalendarToday,
 	Description,
 	Image,
+	Info,
 	MusicNote,
+	Person,
 	PictureAsPdf,
+	ShoppingBag,
+	TrendingDown,
+	TrendingUp,
 } from "@mui/icons-material";
-import { Button, Chip } from "@mui/material";
+import { Box, Button, Chip, Divider, Typography } from "@mui/material";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 
 type MovementData = MovementItem & {
@@ -52,125 +58,372 @@ export default function ModalMovementDetail({
 	return (
 		<ModalStyled
 			header={
-				<h3 className="text-lg font-semibold">Detalles del Movimiento</h3>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+					<Box>
+						<Typography variant="h5" fontWeight={700}>
+							Movimiento #{data.id}
+						</Typography>
+					</Box>
+				</Box>
 			}
 			body={
-				<div className="space-y-4">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<div className="bg-gray-50 p-3 rounded-lg">
-							<h4 className="font-medium text-gray-700 mb-2">
-								Información General
-							</h4>
-							<div className="space-y-1 text-sm">
-								<p>
-									<span className="font-medium">ID:</span> {data.id}
-								</p>
-								<div className="flex items-center">
-									<span className="font-medium">Tipo:</span>
-									<Chip
-										label={data.type === "ingress" ? "Entrada" : "Salida"}
-										size="small"
-										color={data.type === "ingress" ? "success" : "error"}
-										className="ml-2"
-									/>
-								</div>
-								<p>
-									<span className="font-medium">Movimiento:</span> {data.quantity}
-								</p>
-								<p>
-									<span className="font-medium">Antes:</span> {data.previous_stock}
-								</p>
-								<p>
-									<span className="font-medium">Después:</span> {data.previous_stock + data.quantity}
-								</p>
-								<p>
-									<span className="font-medium">Fecha:</span>{" "}
-									{new Date(data.created_at).toLocaleString()}
-								</p>
-							</div>
-						</div>
+				<Box>
+					{/* Tipo de Movimiento */}
+					<Box sx={{ mb: 3, textAlign: "center" }}>
+						<Typography variant="body2" color="text.secondary" mb={1}>
+							Tipo de Movimiento
+						</Typography>
+						<Chip
+							icon={data.type === "ingress" ? <TrendingUp /> : <TrendingDown />}
+							label={data.type === "ingress" ? "Entrada" : "Salida"}
+							color={data.type === "ingress" ? "success" : "error"}
+							sx={{
+								fontWeight: 700,
+								fontSize: 14,
+								px: 2,
+								py: 2.5,
+							}}
+						/>
+					</Box>
 
-						<div className="bg-gray-50 p-3 rounded-lg">
-							<h4 className="font-medium text-gray-700 mb-2">Producto</h4>
-							<div className="space-y-1 text-sm">
-								<p>
-									<span className="font-medium">Nombre:</span>{" "}
-									{data.product_inventory?.product?.name || "N/A"}
-								</p>
-								<p>
-									<span className="font-medium">Código:</span>{" "}
-									{data.product_inventory?.product?.barcode || "N/A"}
-								</p>
-							</div>
-						</div>
-					</div>
+					{/* Información del Movimiento */}
+					<Box
+						sx={{
+							display: "grid",
+							gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+							gap: 2,
+							mb: 3,
+						}}
+					>
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",
+								border: "1px solid #93c5fd",
+							}}
+						>
+							<Box
+								sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+							>
+								<Info sx={{ color: "#1d4ed8", fontSize: 20 }} />
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									fontWeight={600}
+								>
+									CANTIDAD
+								</Typography>
+							</Box>
+							<Typography variant="h6" fontWeight={700} color="#1d4ed8">
+								{data.quantity > 0 ? "+" : ""}
+								{data.quantity}
+							</Typography>
+						</Box>
 
-					<div className="bg-gray-50 p-3 rounded-lg">
-						<h4 className="font-medium text-gray-700 mb-2">Usuario y Origen</h4>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-							<p>
-								<span className="font-medium">Usuario:</span>{" "}
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)",
+								border: "1px solid #d8b4fe",
+							}}
+						>
+							<Box
+								sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+							>
+								<CalendarToday sx={{ color: "#9333ea", fontSize: 20 }} />
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									fontWeight={600}
+								>
+									FECHA
+								</Typography>
+							</Box>
+							<Typography variant="body1" fontWeight={600}>
+								{new Date(data.created_at).toLocaleString()}
+							</Typography>
+						</Box>
+
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+								border: "1px solid #fcd34d",
+							}}
+						>
+							<Box
+								sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+							>
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									fontWeight={600}
+								>
+									STOCK ANTERIOR
+								</Typography>
+							</Box>
+							<Typography variant="h6" fontWeight={700} color="#d97706">
+								{data.previous_stock}
+							</Typography>
+						</Box>
+
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)",
+								border: "1px solid #6ee7b7",
+							}}
+						>
+							<Box
+								sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+							>
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									fontWeight={600}
+								>
+									STOCK ACTUAL
+								</Typography>
+							</Box>
+							<Typography variant="h6" fontWeight={700} color="#059669">
+								{data.previous_stock + data.quantity}
+							</Typography>
+						</Box>
+					</Box>
+
+					<Divider sx={{ my: 3 }} />
+
+					{/* Información del Producto */}
+					<Typography variant="h6" gutterBottom fontWeight={700} sx={{ mb: 2 }}>
+						📦 Producto
+					</Typography>
+					<Box
+						sx={{
+							p: 3,
+							borderRadius: 2,
+							background: "linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)",
+							border: "1px solid #e5e7eb",
+							mb: 3,
+						}}
+					>
+						<Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+							<ShoppingBag sx={{ color: "#059669", fontSize: 24 }} />
+							<Typography variant="body1" fontWeight={700}>
+								{data.product_inventory?.product?.name || "N/A"}
+							</Typography>
+						</Box>
+						<Typography variant="body2" color="text.secondary">
+							<strong>Código:</strong>{" "}
+							{data.product_inventory?.product?.barcode || "N/A"}
+						</Typography>
+					</Box>
+
+					<Divider sx={{ my: 3 }} />
+
+					{/* Usuario y Origen */}
+					<Typography variant="h6" gutterBottom fontWeight={700} sx={{ mb: 2 }}>
+						👤 Usuario y Origen
+					</Typography>
+					<Box
+						sx={{
+							display: "grid",
+							gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+							gap: 2,
+							mb: 3,
+						}}
+					>
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "#f9fafb",
+								border: "1px solid #e5e7eb",
+							}}
+						>
+							<Box
+								sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+							>
+								<Person sx={{ color: "#6b7280", fontSize: 20 }} />
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									fontWeight={600}
+								>
+									USUARIO
+								</Typography>
+							</Box>
+							<Typography variant="body1" fontWeight={600}>
 								{data.user?.name || "N/A"}
-							</p>
-							<p>
-								<span className="font-medium">Origen:</span>{" "}
+							</Typography>
+						</Box>
+
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "#f9fafb",
+								border: "1px solid #e5e7eb",
+							}}
+						>
+							<Box
+								sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+							>
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									fontWeight={600}
+								>
+									ORIGEN
+								</Typography>
+							</Box>
+							<Typography variant="body1" fontWeight={600}>
 								{modelsName?.[data.model_type.replace("App\\Models\\", "")] ||
 									data.model_type}
-							</p>
-							{data.reason && (
-								<p className="md:col-span-2">
-									<span className="font-medium">Razón:</span>{" "}
-									{data.reason.description && (
-										<span className="text-gray-600">{data.reason.description}</span>
-									)}
-								</p>
-							)}
-						</div>
-					</div>
+							</Typography>
+						</Box>
+					</Box>
 
+					{data.reason && (
+						<Box
+							sx={{
+								p: 2,
+								borderRadius: 2,
+								background: "#fef3c7",
+								border: "1px solid #fcd34d",
+								mb: 3,
+							}}
+						>
+							<Typography
+								variant="body2"
+								fontWeight={600}
+								color="#92400e"
+								mb={1}
+							>
+								Razón:
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{data.reason.description}
+							</Typography>
+						</Box>
+					)}
+
+					{/* Adjuntos */}
 					{data.attachments && data.attachments.length > 0 && (
-						<div className="bg-gray-50 p-3 rounded-lg">
-							<h4 className="font-medium text-gray-700 mb-3">Adjuntos</h4>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+						<>
+							<Divider sx={{ my: 3 }} />
+							<Typography
+								variant="h6"
+								gutterBottom
+								fontWeight={700}
+								sx={{ mb: 2 }}
+							>
+								📎 Adjuntos
+							</Typography>
+							<Box
+								sx={{
+									display: "grid",
+									gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+									gap: 2,
+								}}
+							>
 								{data.attachments.map((attachment) => (
-									<a
+									<Box
 										key={attachment.id}
+										component="a"
 										href={route(
 											"attachments.downloadInventoryMovementAttachment",
 											attachment.id,
 										)}
-										className="flex items-center p-2 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors"
 										target="_blank"
 										rel="noopener noreferrer"
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											p: 2,
+											borderRadius: 2,
+											background: "white",
+											border: "1px solid #e5e7eb",
+											textDecoration: "none",
+											transition: "all 0.2s",
+											"&:hover": {
+												background: "#f9fafb",
+												borderColor: "#10b981",
+												transform: "translateY(-2px)",
+												boxShadow: "0 4px 12px rgba(16, 185, 129, 0.2)",
+											},
+										}}
 									>
 										{getFileIcon(attachment.file_name)}
-										<span className="ml-2 text-sm text-gray-700 truncate">
+										<Typography
+											variant="body2"
+											sx={{
+												ml: 2,
+												color: "text.primary",
+												overflow: "hidden",
+												textOverflow: "ellipsis",
+												whiteSpace: "nowrap",
+											}}
+										>
 											{attachment.file_name}
-										</span>
-									</a>
+										</Typography>
+									</Box>
 								))}
-							</div>
-						</div>
+							</Box>
+						</>
 					)}
-				</div>
+				</Box>
 			}
 			footer={
-				<div className="flex justify-between w-full">
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "space-between",
+						width: "100%",
+					}}
+				>
 					<Button
-						variant="outlined"
-						color="primary"
-						onClick={() => window.open(route('reports.movements.download', data.id), '_blank')}
+						variant="contained"
+						color="error"
+						onClick={() =>
+							window.open(
+								route("reports.movements.download", data.id),
+								"_blank",
+							)
+						}
 						startIcon={<PictureAsPdf />}
+						sx={{
+							px: 3,
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 600,
+							textTransform: "none",
+							background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+							"&:hover": {
+								background: "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)",
+							},
+						}}
 					>
 						Descargar PDF
 					</Button>
 					<Button
 						variant="outlined"
 						onClick={onClose}
+						size="large"
+						sx={{
+							px: 4,
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 600,
+							textTransform: "none",
+						}}
 					>
 						Cerrar
 					</Button>
-				</div>
+				</Box>
 			}
 			onClose={onClose}
 		/>
