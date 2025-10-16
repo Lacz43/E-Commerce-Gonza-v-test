@@ -35,6 +35,7 @@ export const paths: Record<string, Route> = {
 		name: "Principal",
 		icon: <Home />,
 		group: "main",
+		roles: ["admin", "seller"],
 	},
 	auth: {
 		path: "",
