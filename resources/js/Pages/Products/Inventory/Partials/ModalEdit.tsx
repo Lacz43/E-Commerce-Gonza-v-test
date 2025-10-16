@@ -1,5 +1,14 @@
 import { router } from "@inertiajs/react";
-import { Button, TextField } from "@mui/material";
+import { Edit } from "@mui/icons-material";
+import {
+	Box,
+	Button,
+	Divider,
+	Paper,
+	Skeleton,
+	TextField,
+	Typography,
+} from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -94,77 +103,192 @@ export default function ModalEdit({ onClose, id }: Props) {
 	return (
 		<ModalStyled
 			onClose={onClose}
-			header={<h2>Inventario {id}</h2>}
+			header={
+				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+					<Box>
+						<Typography variant="h5" fontWeight={700}>
+							Editar Inventario #{id}
+						</Typography>
+					</Box>
+				</Box>
+			}
 			body={
 				<FormProvider {...methods}>
-					<form
-						className="gap-4 flex flex-col"
+					<Box
+						component="form"
 						onSubmit={handleSubmit(onSubmit)}
+						sx={{ display: "flex", flexDirection: "column", gap: 3 }}
 					>
-						<div className="rounded-md border border-gray-200 dark:border-neutral-700 p-3 text-sm flex gap-4 items-start min-h-[88px] max-md:flex-col max-md:items-center">
-							{loadingProduct ? (
-								<div className="flex gap-3 w-full">
-									<div className="w-20 h-20 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-									<div className="flex-1 flex flex-col gap-2">
-										<div className="h-4 w-1/2 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-										<div className="h-3 w-1/3 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-										<div className="h-3 w-2/5 bg-gray-200 dark:bg-neutral-700 animate-pulse rounded" />
-									</div>
-								</div>
-							) : productInfo ? (
-								<>
-									<Image
-										src={imageUrl(productInfo?.default_image?.image ?? "")}
-										alt={productInfo?.name ?? ""}
-										style={{ borderRadius: "0.375rem" }}
-										width={100}
-										height={100}
-										className="object-cover rounded border border-gray-200 dark:border-neutral-600"
-									/>
-									<div className="flex flex-col gap-1 leading-tight">
-										<span className="font-semibold text-gray-800text-sm line-clamp-2">
-											{productInfo?.name}
-										</span>
-										{productInfo?.barcode && (
-											<span className="text-xs">
-												Código: {productInfo.barcode}
-											</span>
-										)}
-										{isProductInfo(productInfo) && productInfo.brand?.name && (
-											<span className="text-xs text-gray-600">
-												Marca: {productInfo.brand.name}
-											</span>
-										)}
-										<span className="text-xs text-gray-600">
-											<b>Descripción:</b> {productInfo?.description}
-										</span>
-									</div>
-								</>
-							) : (
-								<span className="text-xs text-gray-500 italic">
-									Selecciona un producto para ver detalles
-								</span>
-							)}
-						</div>
+						{/* Información del Producto */}
+						<Box>
+							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								📦 Producto
+							</Typography>
+							<Paper
+								elevation={0}
+								sx={{
+									p: 3,
+									borderRadius: 2,
+									border: "1px solid",
+									borderColor: "divider",
+									background:
+										"linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)",
+								}}
+							>
+								{loadingProduct ? (
+									<Box sx={{ display: "flex", gap: 2 }}>
+										<Skeleton
+											variant="rectangular"
+											width={100}
+											height={100}
+											sx={{ borderRadius: 2 }}
+										/>
+										<Box
+											sx={{
+												flex: 1,
+												display: "flex",
+												flexDirection: "column",
+												gap: 1,
+											}}
+										>
+											<Skeleton variant="text" width="60%" height={24} />
+											<Skeleton variant="text" width="40%" height={20} />
+											<Skeleton variant="text" width="50%" height={20} />
+										</Box>
+									</Box>
+								) : productInfo ? (
+									<Box
+										sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}
+									>
+										<Box
+											sx={{
+												width: 100,
+												height: 100,
+												borderRadius: 2,
+												overflow: "hidden",
+												border: "1px solid",
+												borderColor: "divider",
+												flexShrink: 0,
+											}}
+										>
+											<Image
+												src={imageUrl(productInfo?.default_image?.image ?? "")}
+												alt={productInfo?.name ?? ""}
+												width={100}
+												height={100}
+												style={{ objectFit: "cover" }}
+											/>
+										</Box>
+										<Box sx={{ flex: 1 }}>
+											<Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>
+												{productInfo?.name}
+											</Typography>
+											{productInfo?.barcode && (
+												<Typography
+													variant="body2"
+													color="text.secondary"
+													sx={{ mb: 0.5 }}
+												>
+													<strong>Código:</strong> {productInfo.barcode}
+												</Typography>
+											)}
+											{isProductInfo(productInfo) &&
+												productInfo.brand?.name && (
+													<Typography
+														variant="body2"
+														color="text.secondary"
+														sx={{ mb: 0.5 }}
+													>
+														<strong>Marca:</strong> {productInfo.brand.name}
+													</Typography>
+												)}
+											{productInfo?.description && (
+												<Typography variant="body2" color="text.secondary">
+													<strong>Descripción:</strong>{" "}
+													{productInfo.description}
+												</Typography>
+											)}
+										</Box>
+									</Box>
+								) : (
+									<Typography
+										variant="body2"
+										color="text.secondary"
+										fontStyle="italic"
+									>
+										No se pudo cargar la información del producto
+									</Typography>
+								)}
+							</Paper>
+						</Box>
 
-						<QuantityInput productInfo={productInfo} />
+						<Divider />
 
-						<TextField
-							{...register("reason")}
-							label="Razón de ajuste (opcional)"
-							type="text"
-							multiline
-							error={!!errors.reason}
-							helperText={errors.reason?.message}
-							fullWidth
-						/>
-						{productInfo && <FileUpload name="files" />}
-					</form>
+						{/* Ajuste de Stock */}
+						<Box>
+							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								📊 Ajuste de Stock
+							</Typography>
+							<QuantityInput productInfo={productInfo} />
+						</Box>
+
+						<Divider />
+
+						{/* Razón de ajuste */}
+						<Box>
+							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								📝 Información Adicional
+							</Typography>
+							<TextField
+								{...register("reason")}
+								label="Razón de ajuste (opcional)"
+								type="text"
+								multiline
+								rows={3}
+								variant="filled"
+								error={!!errors.reason}
+								helperText={errors.reason?.message}
+								fullWidth
+								sx={{
+									"& .MuiFilledInput-root": {
+										borderRadius: 2,
+									},
+								}}
+							/>
+						</Box>
+
+						{/* Archivos adjuntos */}
+						{productInfo && (
+							<Box>
+								<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+									📎 Archivos Adjuntos
+								</Typography>
+								<FileUpload name="files" />
+							</Box>
+						)}
+					</Box>
 				</FormProvider>
 			}
 			footer={
-				<Button onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-					Guardar
+				<Button
+					onClick={handleSubmit(onSubmit)}
+					loading={isSubmitting}
+					variant="contained"
+					size="large"
+					sx={{
+						background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+						px: 5,
+						py: 1.5,
+						borderRadius: 2,
+						fontWeight: 700,
+						textTransform: "none",
+						fontSize: 16,
+						"&:hover": {
+							background: "linear-gradient(135deg, #d97706 0%, #b45309 100%)",
+						},
+					}}
+				>
+					Guardar Cambios
 				</Button>
 			}
 		/>
