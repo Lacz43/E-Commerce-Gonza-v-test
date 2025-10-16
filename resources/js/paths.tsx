@@ -114,6 +114,13 @@ export const paths: Record<string, Route> = {
 		group: "operations",
 		divider: true,
 	},
+	userOrders: {
+		path: "user.orders",
+		name: "Mis Pedidos",
+		icon: <Receipt />,
+		roles: [], // Solo visible para usuarios sin roles específicos
+		group: "user",
+	},
 	reports: {
 		path: "reports.sales",
 		name: "Reportes",
