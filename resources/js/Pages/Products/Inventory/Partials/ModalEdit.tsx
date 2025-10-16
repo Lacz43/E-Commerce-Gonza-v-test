@@ -104,9 +104,21 @@ export default function ModalEdit({ onClose, id }: Props) {
 		<ModalStyled
 			onClose={onClose}
 			header={
-				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						gap: 2,
+						flexDirection: { xs: "column", sm: "row" },
+						textAlign: { xs: "center", sm: "left" },
+					}}
+				>
 					<Box>
-						<Typography variant="h5" fontWeight={700}>
+						<Typography
+							variant="h5"
+							fontWeight={700}
+							sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
+						>
 							Editar Inventario #{id}
 						</Typography>
 					</Box>
@@ -117,17 +129,26 @@ export default function ModalEdit({ onClose, id }: Props) {
 					<Box
 						component="form"
 						onSubmit={handleSubmit(onSubmit)}
-						sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							gap: { xs: 2, sm: 3 },
+							px: { xs: 1, sm: 0 },
+						}}
 					>
 						{/* Información del Producto */}
 						<Box>
-							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+							<Typography
+								variant="h6"
+								fontWeight={700}
+								sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+							>
 								📦 Producto
 							</Typography>
 							<Paper
 								elevation={0}
 								sx={{
-									p: 3,
+									p: { xs: 2, sm: 3 },
 									borderRadius: 2,
 									border: "1px solid",
 									borderColor: "divider",
@@ -136,12 +157,21 @@ export default function ModalEdit({ onClose, id }: Props) {
 								}}
 							>
 								{loadingProduct ? (
-									<Box sx={{ display: "flex", gap: 2 }}>
+									<Box
+										sx={{
+											display: "flex",
+											gap: 2,
+											flexDirection: { xs: "column", sm: "row" },
+										}}
+									>
 										<Skeleton
 											variant="rectangular"
 											width={100}
 											height={100}
-											sx={{ borderRadius: 2 }}
+											sx={{
+												borderRadius: 2,
+												alignSelf: { xs: "center", sm: "flex-start" },
+											}}
 										/>
 										<Box
 											sx={{
@@ -149,6 +179,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 												display: "flex",
 												flexDirection: "column",
 												gap: 1,
+												textAlign: { xs: "center", sm: "left" },
 											}}
 										>
 											<Skeleton variant="text" width="60%" height={24} />
@@ -158,36 +189,57 @@ export default function ModalEdit({ onClose, id }: Props) {
 									</Box>
 								) : productInfo ? (
 									<Box
-										sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}
+										sx={{
+											display: "flex",
+											gap: 2,
+											alignItems: { xs: "center", sm: "flex-start" },
+											flexDirection: { xs: "column", sm: "row" },
+											textAlign: { xs: "center", sm: "left" },
+										}}
 									>
 										<Box
 											sx={{
-												width: 100,
-												height: 100,
+												width: { xs: 120, sm: 100 },
+												height: { xs: 120, sm: 100 },
 												borderRadius: 2,
 												overflow: "hidden",
 												border: "1px solid",
 												borderColor: "divider",
 												flexShrink: 0,
+												alignSelf: { xs: "center", sm: "flex-start" },
 											}}
 										>
 											<Image
 												src={imageUrl(productInfo?.default_image?.image ?? "")}
 												alt={productInfo?.name ?? ""}
-												width={100}
-												height={100}
-												style={{ objectFit: "cover" }}
+												width={120}
+												height={120}
+												style={{
+													objectFit: "cover",
+													width: "100%",
+													height: "100%",
+												}}
 											/>
 										</Box>
-										<Box sx={{ flex: 1 }}>
-											<Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>
+										<Box sx={{ flex: 1, minWidth: 0 }}>
+											<Typography
+												variant="h6"
+												fontWeight={700}
+												sx={{
+													mb: 1,
+													fontSize: { xs: "1.1rem", sm: "1.25rem" },
+												}}
+											>
 												{productInfo?.name}
 											</Typography>
 											{productInfo?.barcode && (
 												<Typography
 													variant="body2"
 													color="text.secondary"
-													sx={{ mb: 0.5 }}
+													sx={{
+														mb: 0.5,
+														fontSize: { xs: "0.875rem", sm: "0.875rem" },
+													}}
 												>
 													<strong>Código:</strong> {productInfo.barcode}
 												</Typography>
@@ -197,13 +249,27 @@ export default function ModalEdit({ onClose, id }: Props) {
 													<Typography
 														variant="body2"
 														color="text.secondary"
-														sx={{ mb: 0.5 }}
+														sx={{
+															mb: 0.5,
+															fontSize: { xs: "0.875rem", sm: "0.875rem" },
+														}}
 													>
 														<strong>Marca:</strong> {productInfo.brand.name}
 													</Typography>
 												)}
 											{productInfo?.description && (
-												<Typography variant="body2" color="text.secondary">
+												<Typography
+													variant="body2"
+													color="text.secondary"
+													sx={{
+														fontSize: { xs: "0.875rem", sm: "0.875rem" },
+														display: { xs: "-webkit-box", sm: "block" },
+														WebkitLineClamp: { xs: 2, sm: "none" },
+														WebkitBoxOrient: "vertical",
+														overflow: "hidden",
+														textOverflow: "ellipsis",
+													}}
+												>
 													<strong>Descripción:</strong>{" "}
 													{productInfo.description}
 												</Typography>
@@ -215,6 +281,7 @@ export default function ModalEdit({ onClose, id }: Props) {
 										variant="body2"
 										color="text.secondary"
 										fontStyle="italic"
+										textAlign="center"
 									>
 										No se pudo cargar la información del producto
 									</Typography>
@@ -226,7 +293,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 
 						{/* Ajuste de Stock */}
 						<Box>
-							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+							<Typography
+								variant="h6"
+								fontWeight={700}
+								sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+							>
 								📊 Ajuste de Stock
 							</Typography>
 							<QuantityInput productInfo={productInfo} />
@@ -236,7 +307,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 
 						{/* Razón de ajuste */}
 						<Box>
-							<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+							<Typography
+								variant="h6"
+								fontWeight={700}
+								sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+							>
 								📝 Información Adicional
 							</Typography>
 							<TextField
@@ -260,7 +335,11 @@ export default function ModalEdit({ onClose, id }: Props) {
 						{/* Archivos adjuntos */}
 						{productInfo && (
 							<Box>
-								<Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+								<Typography
+									variant="h6"
+									fontWeight={700}
+									sx={{ mb: 2, fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+								>
 									📎 Archivos Adjuntos
 								</Typography>
 								<FileUpload name="files" />
@@ -277,12 +356,13 @@ export default function ModalEdit({ onClose, id }: Props) {
 					size="large"
 					sx={{
 						background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-						px: 5,
+						px: { xs: 3, sm: 5 },
 						py: 1.5,
 						borderRadius: 2,
 						fontWeight: 700,
 						textTransform: "none",
-						fontSize: 16,
+						fontSize: { xs: 14, sm: 16 },
+						width: { xs: "100%", sm: "auto" },
 						"&:hover": {
 							background: "linear-gradient(135deg, #d97706 0%, #b45309 100%)",
 						},
