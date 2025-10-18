@@ -6,6 +6,7 @@ import { lazy, Suspense, useCallback, useMemo } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import OrderDetailsModal from "@/Components/OrderDetailsModal";
 import { useModal } from "@/Context/Modal";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
@@ -25,7 +26,7 @@ export default function OrdersIndex({
 }: Props) {
 	const ordersData = orders;
 	const { openModal } = useModal();
-    console.log(orders.data);
+	const { settings } = useGeneralSettings();
 
 	const handleProcessOrder = useCallback(
 		(orderId: number) => {
@@ -67,7 +68,7 @@ export default function OrdersIndex({
 							Number(sum) + Number(item.price) * Number(item.quantity),
 						0,
 					) ?? 0,
-				valueFormatter: (value: number) => `$ ${value.toFixed(2)}`,
+				valueFormatter: (value: number) => `${value.toFixed(2)} ${settings.currency === "VES" ? "Bs" : "$"}`,
 			},
 			{
 				field: "created_at",
