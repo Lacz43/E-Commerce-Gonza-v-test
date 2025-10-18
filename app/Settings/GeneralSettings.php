@@ -24,7 +24,6 @@ class GeneralSettings extends Settings
     public ?string $company_rif = null;
     public ?string $company_email = null;
     public string $currency = 'VES';
-    public ?float $reference_price = null;
 
     public static function group(): string
     {
