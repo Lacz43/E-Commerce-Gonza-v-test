@@ -6,5 +6,4 @@ declare interface GeneralSettings {
     company_rif: string | null;
     company_email: string | null;
     currency: string;
-    reference_price: number | null;
 }
