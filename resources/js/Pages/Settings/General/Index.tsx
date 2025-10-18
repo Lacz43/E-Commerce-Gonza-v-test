@@ -16,6 +16,7 @@ import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 
 /*
  * INFO: GeneralSettings
@@ -68,6 +69,8 @@ export default function Index({ settings }: Props) {
 	);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const { reload } = useGeneralSettings();
 
 	const {
 		register,
@@ -141,7 +144,7 @@ export default function Index({ settings }: Props) {
 					},
 				},
 			);
-
+			reload();
 			toast.success(response.data.message);
 
 			// Actualizar la vista previa del logo si se subió uno nuevo
