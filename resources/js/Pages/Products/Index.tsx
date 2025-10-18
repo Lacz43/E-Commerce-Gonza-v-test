@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import { useModal } from "@/Context/Modal";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { imageUrl } from "@/utils";
 
@@ -46,6 +47,7 @@ export default function Products({
 	const { openModal, closeModal } = useModal();
 	const [product, setProduct] = useState(products);
 	const [loading, setLoading] = useState(false);
+	const { settings } = useGeneralSettings();
 
 	useEffect(() => {
 		setProduct(products);
@@ -72,7 +74,7 @@ export default function Products({
 				type: "number",
 				width: 100,
 				headerName: "Precio",
-				valueGetter: (_value, row) => `${row.price} $`,
+				valueGetter: (_value, row) => `${row.price} ${settings.currency === "VES" ? "Bs" : "$"}`,
 			},
 			{
 				field: "description",
