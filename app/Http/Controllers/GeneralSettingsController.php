@@ -28,7 +28,6 @@ class GeneralSettingsController extends Controller
                 'company_rif' => $settings->company_rif ?? '',
                 'company_email' => $settings->company_email ?? '',
                 'currency' => $settings->currency ?? 'VES',
-                'reference_price' => $settings->reference_price ?? null,
             ],
         ]);
     }
@@ -47,7 +46,6 @@ class GeneralSettingsController extends Controller
             'company_address' => $settings->company_address ?? '',
             'company_email' => $settings->company_email ?? '',
             'currency' => $settings->currency ?? 'VES',
-            'reference_price' => $settings->reference_price ?? null,
         ]);
     }
 
@@ -64,7 +62,6 @@ class GeneralSettingsController extends Controller
             'company_rif' => 'nullable|string|max:20',
             'company_email' => 'nullable|email|max:255',
             'currency' => 'required|string|in:USD,VES',
-            'reference_price' => 'required|numeric|min:1',
         ]);
 
         $oldSettings = [
@@ -75,7 +72,6 @@ class GeneralSettingsController extends Controller
             'company_rif' => $settings->company_rif,
             'company_email' => $settings->company_email,
             'currency' => $settings->currency,
-            'reference_price' => $settings->reference_price,
         ];
 
         // Handle company logo upload
@@ -97,7 +93,6 @@ class GeneralSettingsController extends Controller
         $settings->company_rif = $request->company_rif ?? null;
         $settings->company_email = $request->company_email ?? null;
         $settings->currency = $request->currency;
-        $settings->reference_price = (float) $request->reference_price;
 
         $settings->save();
 
@@ -108,7 +103,7 @@ class GeneralSettingsController extends Controller
         // Check each field for changes
         $fieldsToCheck = [
             'company_name', 'company_phone', 'company_address',
-            'company_rif', 'company_email', 'currency', 'reference_price'
+            'company_rif', 'company_email', 'currency'
         ];
 
         foreach ($fieldsToCheck as $field) {
@@ -145,7 +140,6 @@ class GeneralSettingsController extends Controller
                     'company_rif' => $settings->company_rif,
                     'company_email' => $settings->company_email,
                     'currency' => $settings->currency,
-                    'reference_price' => $settings->reference_price,
                 ],
                 'user_name' => $user ? $user->name : 'Sistema',
                 'user_email' => $user ? $user->email : 'system@gonzago.com',
@@ -165,7 +159,6 @@ class GeneralSettingsController extends Controller
                 'company_rif' => $settings->company_rif,
                 'company_email' => $settings->company_email,
                 'currency' => $settings->currency,
-                'reference_price' => $settings->reference_price,
             ],
         ]);
     }
