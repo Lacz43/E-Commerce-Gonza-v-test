@@ -5,6 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import shoppingCart from "@/shoppingCart";
 import { imageUrl } from "@/utils";
 
@@ -25,6 +26,7 @@ export default function ProductDetailsModal({
 	const [product, setProduct] = useState<Product | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+	const { settings } = useGeneralSettings();
 
 	useEffect(() => {
 		fetchProductDetails();
@@ -228,7 +230,7 @@ export default function ProductDetailsModal({
 									<span className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-orange-600 to-emerald-600 bg-clip-text text-transparent">
 										{product.price.toFixed(2)}
 									</span>
-									<span className="text-lg font-medium text-slate-500">Bs</span>
+									<span className="text-lg font-medium text-slate-500">{settings.currency === "VES" ? "Bs" : "USD"}</span>
 								</div>
 							</div>
 
