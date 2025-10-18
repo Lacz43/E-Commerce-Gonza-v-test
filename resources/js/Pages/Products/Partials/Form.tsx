@@ -3,6 +3,7 @@ import {
 	Box,
 	Button,
 	FormHelperText,
+	InputAdornment,
 	Paper,
 	TextField,
 	Typography,
@@ -12,6 +13,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import ImageUpload from "@/Components/ImageUpload";
 import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import SelectionTextInput from "@/Components/Products/SelectionTextInput";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import {
 	isValidEAN8,
 	isValidEAN13,
@@ -66,6 +68,8 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 		control,
 		formState: { errors, isSubmitting },
 	} = methods;
+
+	const { settings } = useGeneralSettings();
 
 	const productName = useId();
 	const productBarcode = useId();
@@ -167,13 +171,22 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 									validate: (value) => value > 0 || "Debe ser mayor de 0",
 								})}
 								fullWidth
+								slotProps={{
+									input: {
+										endAdornment: (
+											<InputAdornment position="end">
+												{settings.currency === "VES" ? "Bs" : "USD"}
+											</InputAdornment>
+										),
+									},
+								}}
 							/>
 						</Box>
 						<Box sx={{ display: "flex", gap: 2, mb: 2 }}>
 							<SelectionTextInput
 								className="w-full"
 								control={control}
-								//permissions={["create product_categories"]}
+								permissions={["create product_categories"]}
 								url={route("products.categories")}
 								label="Categoria"
 								name="category"
