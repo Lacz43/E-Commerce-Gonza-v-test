@@ -18,6 +18,7 @@ import {
 import ProductDetailsModal from "@/Components/Modals/ProductDetailsModal";
 import { useModal } from "@/Context/Modal";
 import { imageUrl } from "@/utils";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
 	item: Item;
@@ -44,6 +45,7 @@ export default function ProductCard({
 		selectedRating,
 		(_state, newValue: number) => newValue,
 	);
+	const { settings } = useGeneralSettings();
 
 	const handleRatingClick = useCallback(async () => {
 		if (!auth.user) return;
@@ -174,7 +176,7 @@ export default function ProductCard({
 						<span className="text-3xl font-black bg-gradient-to-r from-orange-600 to-emerald-600 bg-clip-text text-transparent">
 							{priceFormatted}
 						</span>
-						<span className="text-sm font-medium text-slate-500">Bs</span>
+						<span className="text-sm font-medium text-slate-500">{settings.currency === "VES" ? "Bs" : "USD"}</span>
 					</div>
 
 					{item.description && (
