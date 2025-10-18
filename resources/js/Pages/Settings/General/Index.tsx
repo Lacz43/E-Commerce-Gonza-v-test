@@ -315,15 +315,6 @@ export default function Index({ settings }: Props) {
 												/>
 											</Tooltip>
 										</Box>
-									</Box>
-
-									<Box
-										sx={{
-											display: "grid",
-											gap: 2,
-											gridTemplateColumns: "repeat(12, 1fr)",
-										}}
-									>
 										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
 											<TextField
 												select
