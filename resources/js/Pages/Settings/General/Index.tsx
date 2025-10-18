@@ -36,7 +36,6 @@ type GeneralSettings = {
 	company_rif: string;
 	company_email: string;
 	currency: string;
-	reference_price: number;
 };
 
 /*
@@ -56,7 +55,6 @@ type FormStructure = {
 	company_rif: string;
 	company_email: string;
 	currency: string;
-	reference_price: string;
 };
 
 // INFO: Props: propiedades que recibe el componente
@@ -86,7 +84,6 @@ export default function Index({ settings }: Props) {
 			company_rif: settings.company_rif,
 			company_email: settings.company_email,
 			currency: settings.currency || "VES",
-			reference_price: settings.reference_price?.toString() || "",
 		},
 	});
 
@@ -133,7 +130,6 @@ export default function Index({ settings }: Props) {
 				company_rif: data.company_rif,
 				company_email: data.company_email,
 				currency: data.currency,
-				reference_price: data.reference_price,
 			});
 
 			const response = await axios.post(
@@ -333,6 +329,7 @@ export default function Index({ settings }: Props) {
 												select
 												label="Moneda"
 												fullWidth
+												value={watch("currency")}
 												variant="filled"
 												{...register("currency", {
 													required: "La moneda es requerida",
@@ -343,23 +340,6 @@ export default function Index({ settings }: Props) {
 												<MenuItem value="USD">Dólares (USD)</MenuItem>
 												<MenuItem value="VES">Bolívares (VES)</MenuItem>
 											</TextField>
-										</Box>
-										<Box sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}>
-											<TextField
-												label="Precio de Referencia"
-												type="number"
-												fullWidth
-												variant="filled"
-												{...register("reference_price", {
-													required: "El precio de referencia es requerido",
-													min: {
-														value: 1,
-														message: "El precio debe ser mayor o igual a 1",
-													},
-												})}
-												error={!!errors.reference_price}
-												helperText={errors.reference_price?.message}
-											/>
 										</Box>
 									</Box>
 
