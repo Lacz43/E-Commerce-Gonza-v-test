@@ -27,7 +27,7 @@ class GeneralSettingsController extends Controller
                 'company_address' => $settings->company_address ?? '',
                 'company_rif' => $settings->company_rif ?? '',
                 'company_email' => $settings->company_email ?? '',
-                'currency' => $settings->currency ?? 'VES',
+                'currency' => $settings->currency ?? 'USD',
             ],
         ]);
     }
@@ -45,7 +45,7 @@ class GeneralSettingsController extends Controller
             'company_phone' => $settings->company_phone ?? '',
             'company_address' => $settings->company_address ?? '',
             'company_email' => $settings->company_email ?? '',
-            'currency' => $settings->currency ?? 'VES',
+            'currency' => $settings->currency ?? 'USD',
         ]);
     }
 
