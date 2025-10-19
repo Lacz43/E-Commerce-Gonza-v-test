@@ -6,6 +6,7 @@ import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
@@ -15,6 +16,7 @@ type Props = {
 
 export default function UserOrders({ orders }: Props) {
 	const { openModal } = useModal();
+	const { settings } = useGeneralSettings();
 
 	const handleProcessOrder = useCallback(
 		(orderId: number) => {
@@ -78,7 +80,8 @@ export default function UserOrders({ orders }: Props) {
 							Number(sum) + Number(item.price) * Number(item.quantity),
 						0,
 					) ?? 0,
-				valueFormatter: (value: number) => `$ ${value.toFixed(2)}`,
+				valueFormatter: (value: number) =>
+					`${settings.currency === "VES" ? "Bs" : "$"} ${value.toFixed(2)}`,
 			},
 			{
 				field: "created_at",
