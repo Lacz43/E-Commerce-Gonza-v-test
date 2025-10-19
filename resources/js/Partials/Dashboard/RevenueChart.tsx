@@ -1,3 +1,5 @@
+import { AttachMoney } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
 import {
 	BarElement,
 	CategoryScale,
@@ -11,9 +13,8 @@ import {
 } from "chart.js";
 import type React from "react";
 import { Line } from "react-chartjs-2";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import { getPeriodLabel } from "@/utils";
-import { Box, Typography } from "@mui/material";
-import { AttachMoney } from "@mui/icons-material";
 
 ChartJS.register(
 	CategoryScale,
@@ -35,6 +36,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
 	revenueByMonth,
 	period,
 }) => {
+	const { settings } = useGeneralSettings();
 	const labels = revenueByMonth.map((item) => item.period);
 	const dataValues = revenueByMonth.map((item) => item.total_revenue);
 
@@ -115,7 +117,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
 							},
 							ticks: {
 								callback: (value) => {
-									return '$' + value.toLocaleString();
+									return `${settings.currency === "VES" ? "Bs" : "$"} ${value.toLocaleString()}`;
 								},
 							},
 						},

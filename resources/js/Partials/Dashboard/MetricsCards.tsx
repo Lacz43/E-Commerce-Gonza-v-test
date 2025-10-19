@@ -1,6 +1,7 @@
 import { Inventory, TrendingUp, Warning } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import type React from "react";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 
 interface MetricsCardsProps {
 	totalStock: number;
@@ -13,6 +14,7 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({
 	lowStockProducts,
 	totalRevenue,
 }) => {
+	const { settings } = useGeneralSettings();
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 			{/* Stock Total Card */}
@@ -137,7 +139,7 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({
 					</Typography>
 				</Box>
 				<Typography variant="h3" fontWeight={700} color="#ea580c">
-					$
+					{settings.currency === "VES" ? "Bs " : "$ "}
 					{totalRevenue.toLocaleString("es-ES", {
 						minimumFractionDigits: 2,
 						maximumFractionDigits: 2,
