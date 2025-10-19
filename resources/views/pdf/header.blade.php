@@ -4,8 +4,16 @@
         <tr>
             <td style="width: 60%; vertical-align: top;">
                 @if($settings->company_logo && file_exists(storage_path('app/public/' . $settings->company_logo)))
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(storage_path('app/public/' . $settings->company_logo))) }}"
-                    style="max-height: 60px; max-width: 150px; vertical-align: top;" />
+                @php
+                    $logoPath = storage_path('app/public/' . $settings->company_logo);
+                    $logoData = @file_get_contents($logoPath);
+                    if ($logoData !== false) {
+                        $logoBase64 = base64_encode($logoData);
+                @endphp
+                <img src="data:image/png;base64,{{ $logoBase64 }}" style="max-height: 60px; max-width: 150px; vertical-align: top;" />
+                @php
+                    }
+                @endphp
                 @endif
                 <h2 style="margin: 5px 0; font-size: 14px;">{{ $settings->company_name ?: 'Empresa' }}</h2>
             </td>
