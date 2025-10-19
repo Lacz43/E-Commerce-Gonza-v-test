@@ -1,5 +1,5 @@
 <!-- resources/views/pdf/inventory/valuation.blade.php -->
-@extends('pdf.base')
+@extends('pdf.base', compact('settings', 'title'))
 
 @section('content')
 <div class="inventory-valuation">
@@ -8,7 +8,7 @@
         <h3 style="margin: 0 0 15px 0; color: #495057; text-align: center;">💰 Valoración Total del Inventario</h3>
         <div style="text-align: center;">
             <span style="font-size: 24px; font-weight: bold; color: #28a745;">
-                ${{ number_format($totalValue, 2) }}
+                {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($totalValue, 2) }}
             </span>
             <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 14px;">
                 Valor total basado en precios de venta
@@ -47,10 +47,10 @@
                     {{ $item->stock }}
                 </td>
                 <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">
-                    ${{ number_format($item->product->price ?? 0, 2) }}
+                    {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($item->product->price ?? 0, 2) }}
                 </td>
                 <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center; font-weight: bold;">
-                    ${{ number_format($itemValue, 2) }}
+                    {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($itemValue, 2) }}
                 </td>
                 <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">
                     {{ number_format($percentage, 2) }}%
@@ -64,7 +64,7 @@
                     TOTAL DEL INVENTARIO:
                 </td>
                 <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center; font-size: 16px; color: #28a745;">
-                    ${{ number_format($totalValue, 2) }}
+                    {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($totalValue, 2) }}
                 </td>
                 <td style="border: 1px solid #dee2e6; padding: 12px; text-align: center;">
                     100.00%

@@ -52,7 +52,7 @@
                         </span>
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                        ${{ number_format($order->orderItems->sum(function($item) { return $item->quantity * $item->price; }), 2) }}
+                        {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($order->orderItems->sum(function($item) { return $item->quantity * $item->price; }), 2) }}
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px;">
                         @if($order->orderItems && $order->orderItems->count() > 0)
@@ -76,7 +76,7 @@
                     <strong>Total de órdenes:</strong> {{ $orders->count() }}
                 </div>
                 <div>
-                    <strong>Valor total:</strong> ${{ number_format($orders->sum(function($order) { return $order->orderItems->sum(function($item) { return $item->quantity * $item->price; }); }), 2) }}
+                    <strong>Valor total:</strong> {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($orders->sum(function($order) { return $order->orderItems->sum(function($item) { return $item->quantity * $item->price; }); }), 2) }}
                 </div>
                 <div>
                     <strong>Órdenes completadas:</strong> {{ $orders->where('status', 'completed')->count() }}
