@@ -12,7 +12,7 @@
 
         <div style="padding: 20px; background-color: #e3f2fd; border-radius: 8px; border-left: 4px solid #1976d2;">
             <h3 style="margin: 0 0 10px 0; color: #1976d2; font-size: 14px;">Ingresos Totales</h3>
-            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #1976d2;">${{ number_format($totalRevenue, 2) }}</p>
+            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #1976d2;">{{ $settings->currency === "VES" ? "Bs" : "$" }} {{ number_format($totalRevenue, 2) }}</p>
         </div>
 
         <div style="padding: 20px; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid #f57c00;">
@@ -37,7 +37,7 @@
                 </div>
                 <div>
                     <strong>Ticket promedio:</strong><br>
-                    ${{ $completedOrdersCount > 0 ? number_format($totalRevenue / $completedOrdersCount, 2) : '0.00' }}
+                    {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ $completedOrdersCount > 0 ? number_format($totalRevenue / $completedOrdersCount, 2) : '0.00' }}
                 </div>
                 <div>
                     <strong>Órdenes canceladas:</strong><br>
@@ -45,7 +45,7 @@
                 </div>
                 <div>
                     <strong>Valor promedio por orden:</strong><br>
-                    ${{ $totalOrders > 0 ? number_format($orders->sum(function($order) { return $order->orderItems->sum(function($item) { return $item->quantity * $item->price; }); }) / $totalOrders, 2) : '0.00' }}
+                    {{ $settings->currency === "VES" ? "Bs" : "$" }} {{ $totalOrders > 0 ? number_format($orders->sum(function($order) { return $order->orderItems->sum(function($item) { return $item->quantity * $item->price; }); }) / $totalOrders, 2) : '0.00' }}
                 </div>
             </div>
         </div>
