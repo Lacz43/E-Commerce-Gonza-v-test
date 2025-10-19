@@ -1,26 +1,44 @@
 import { Head } from "@inertiajs/react";
 import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
-import { lazy, Suspense, useCallback, useMemo } from "react";
+import axios from "axios";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+
+import ModalOrderDetail from "./Partials/ModalOrderDetail";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
 type Props = {
-	orders: Order[];
+	orders: paginateResponse<Order>;
 };
 
 export default function UserOrders({ orders }: Props) {
 	const { openModal } = useModal();
 	const { settings } = useGeneralSettings();
 
+	const [ordersData, setOrdersData] = useState(orders);
+	useEffect(() => {
+		setOrdersData(orders);
+	}, [orders]);
+
 	const handleProcessOrder = useCallback(
-		(orderId: number) => {
-			openModal(() => <>{orderId}</>);
+		async (orderId: number) => {
+			try {
+				const { data } = await axios.get(`/orders/${orderId}`);
+				openModal(({ closeModal }) => (
+					<ModalOrderDetail
+						data={data}
+						onClose={closeModal}
+					/>
+				));
+			} catch (error) {
+				console.error("Error al cargar los detalles del pedido", error);
+			}
 		},
 		[openModal],
 	);
@@ -88,20 +106,15 @@ export default function UserOrders({ orders }: Props) {
 				headerName: "Fecha",
 				valueGetter: (_v, r) => new Date(r.created_at),
 			},
-			{
-				field: "actions",
-				headerName: "Acciones",
-				renderCell: (params) => (
-					<button
-						type="button"
-						onClick={() => handleProcessOrder(params.row.id)}
-						className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-full transition-colors"
-					>
-						Ver Detalles
-					</button>
-				),
-			},
 		],
+		[settings],
+	);
+
+	const onViewConfig = useMemo(
+		() => ({
+			permissions: [],
+			hook: (id: number) => handleProcessOrder(id),
+		}),
 		[handleProcessOrder],
 	);
 
@@ -124,7 +137,7 @@ export default function UserOrders({ orders }: Props) {
 									Total de pedidos
 								</p>
 								<p className="text-2xl font-bold text-gray-900">
-									{orders.length}
+									{ordersData.total}
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -153,7 +166,7 @@ export default function UserOrders({ orders }: Props) {
 								<p className="text-sm font-medium text-gray-600">Pendientes</p>
 								<p className="text-2xl font-bold text-yellow-600">
 									{
-										orders.filter(
+										ordersData.data?.filter(
 											(order) => order.status?.toLowerCase() === "pending",
 										).length
 									}
@@ -185,8 +198,8 @@ export default function UserOrders({ orders }: Props) {
 								<p className="text-sm font-medium text-gray-600">Entregados</p>
 								<p className="text-2xl font-bold text-green-600">
 									{
-										orders.filter(
-											(order) => order.status?.toLowerCase() === "delivered",
+										ordersData.data?.filter(
+											(order) => order.status?.toLowerCase() === "completed",
 										).length
 									}
 								</p>
@@ -226,17 +239,12 @@ export default function UserOrders({ orders }: Props) {
 								}
 							>
 								<DataTable
-									response={{
-										data: orders,
-										current_page: 1,
-										last_page: 1,
-										per_page: orders.length,
-										total: orders.length,
-									}}
+									response={ordersData}
 									columns={columns}
 									fill
 									filtersAvailable={[]}
 									sortAvailable={[]}
+									onShow={onViewConfig}
 								/>
 							</Suspense>
 						</div>
