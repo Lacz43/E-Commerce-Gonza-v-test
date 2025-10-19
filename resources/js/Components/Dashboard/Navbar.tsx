@@ -27,14 +27,33 @@ export default function Navbar() {
 						<div className="relative ms-3">
 							<Dropdown>
 								<Dropdown.Trigger>
-									<IconButton>
+									<button
+										type="button"
+										className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+									>
 										<Avatar>{user.name}</Avatar>
-									</IconButton>
+										<div className="hidden md:flex flex-col items-start">
+											<span className="text-sm font-semibold text-gray-900">
+												{user.name}
+											</span>
+											<span className="text-xs text-gray-500">
+												{user.email}
+											</span>
+										</div>
+									</button>
 								</Dropdown.Trigger>
 
 								<Dropdown.Content>
+									<div className="px-4 py-3 border-b border-gray-100">
+										<p className="text-sm font-medium text-gray-900">
+											{user.name}
+										</p>
+										<p className="text-xs text-gray-500 truncate">
+											{user.email}
+										</p>
+									</div>
 									<Dropdown.Link href={route("profile.edit")}>
-										Profile
+										Perfil
 									</Dropdown.Link>
 									<Dropdown.Link
 										href={route("logout")}
@@ -42,7 +61,7 @@ export default function Navbar() {
 										as="button"
 										onClick={() => clearPermissions()}
 									>
-										Log Out
+										Cerrar Sesión
 									</Dropdown.Link>
 								</Dropdown.Content>
 							</Dropdown>
