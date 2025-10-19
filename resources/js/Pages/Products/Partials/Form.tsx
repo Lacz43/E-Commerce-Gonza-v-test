@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import { Image, Inventory } from "@mui/icons-material";
 import {
 	Box,
@@ -8,8 +9,10 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
+import axios, {AxiosError, type AxiosResponse, toFormData } from "axios";
 import { useEffect, useId } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import ImageUpload from "@/Components/ImageUpload";
 import ImageUrlInput from "@/Components/Products/ImageUrlInput";
 import SelectionTextInput from "@/Components/Products/SelectionTextInput";
@@ -32,10 +35,9 @@ export interface FormStruture
 
 type Props = {
 	InitialValues?: Item;
-	onSubmit: (data: FormStruture) => void;
 };
 
-export default function Products({ InitialValues, onSubmit }: Props) {
+export default function Products({ InitialValues }: Props) {
 	const methods = useForm<FormStruture>({
 		defaultValues: (): Promise<FormStruture> => {
 			return new Promise<FormStruture>((resolve) => {
@@ -70,6 +72,32 @@ export default function Products({ InitialValues, onSubmit }: Props) {
 	} = methods;
 
 	const { settings } = useGeneralSettings();
+
+	const onSubmit = async (data: FormStruture) => {
+		try {
+			const formData = toFormData(data, new FormData());
+			let response: AxiosResponse;
+			if (data.id) {
+				formData.append("_method", "PATCH");
+				response = await axios.post(
+					route("products.update", data.id),
+					formData,
+				);
+				toast.success(response.data.message, { duration: 5000 });
+			} else {
+				response = await axios.post(route("products.storage"), formData);
+				toast.success(response.data.message, { duration: 5000 });
+			}
+			router.visit(route("products.index"));
+		} catch (e) {
+			console.log(e);
+			const errorMessage =
+				e instanceof AxiosError ? e.response?.data.message : "";
+			toast.error(
+				`Error al ${data.id ? "editar" : "registrar"} producto: ${errorMessage}`,
+			);
+		}
+	};
 
 	const productName = useId();
 	const productBarcode = useId();
