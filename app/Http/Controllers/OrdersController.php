@@ -17,11 +17,11 @@ class OrdersController extends Controller
     public function index(Request $request)
     {
         $orders = (new QueryFilters($request))->apply(Order::query()->with(['user', 'orderItems.product']));
-        
+
         $filters = Order::getFilterableFields();
         $sortables = Order::getSortableFields();
         $statuses = Order::getStatus();
-        
+
         return Inertia::render('Orders/Index', [
             'orders' => $orders,
             'filters' => $filters,
@@ -38,11 +38,9 @@ class OrdersController extends Controller
             return response()->json(['message' => 'Usuario no autenticado'], 401);
         }
 
-        // Obtener solo las órdenes del usuario actual
-        $orders = Order::where('user_id', $user->id)
-            ->with(['orderItems.product'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $orders = (new QueryFilters($request))->apply(Order::query()
+            ->where('user_id', $user->id)
+            ->with(['user', 'orderItems.product']));
 
         return Inertia::render('User/Orders', [
             'orders' => $orders,
@@ -63,7 +61,7 @@ class OrdersController extends Controller
 
         $order->update(['status' => $request->status]);
 
-        if($request->status === 'completed') {
+        if ($request->status === 'completed') {
             $order->orderItems->each(function ($orderItem) {
                 InventoryMovementService::inventoryMovement($orderItem->product_id, -$orderItem->quantity, Order::class, $orderItem->order_id, Auth::id());
             });
@@ -71,7 +69,7 @@ class OrdersController extends Controller
 
         return response()->json(['message' => 'Estado actualizado exitosamente']);
     }
-    
+
     public function store(Request $request)
     {
         $request->validate([
