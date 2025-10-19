@@ -212,19 +212,19 @@ export default function DataTable<T>({
 			headerName: "Acciones",
 			renderCell: (params) => (
 				<div className="flex">
-					{onShow?.hook && hasPermission(onShow.permissions ?? []) && (
+					{onShow?.hook && (onShow.permissions?.length === 0 || hasPermission(onShow.permissions ?? [])) && (
 						<CrudButton
 							type="show"
 							onClick={() => onShow.hook(params.row.id)}
 						/>
 					)}
-					{onEdit?.hook && hasPermission(onEdit.permissions ?? []) && (
+					{onEdit?.hook && (onEdit.permissions?.length === 0 || hasPermission(onEdit.permissions ?? [])) && (
 						<CrudButton
 							type="edit"
 							onClick={() => onEdit.hook(params.row.id)}
 						/>
 					)}
-					{onDelete?.hook && hasPermission(onDelete.permissions ?? []) && (
+					{onDelete?.hook && (onDelete.permissions?.length === 0 || hasPermission(onDelete.permissions ?? [])) && (
 						<CrudButton
 							type="delete"
 							onClick={() => onDelete.hook(params.row.id)}
