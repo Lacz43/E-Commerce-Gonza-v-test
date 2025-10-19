@@ -126,7 +126,8 @@ export default function CartModal({ onClose }: Props) {
 							Total a pagar
 						</p>
 						<p className="text-3xl font-black bg-gradient-to-r from-orange-100 to-emerald-200 bg-clip-text text-transparent">
-							${items
+							{settings.currency === "VES" ? "Bs " : "$ "}
+							{items
 								.reduce(
 									(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
 									0,

@@ -2,6 +2,7 @@ import { Add, Delete, Remove } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { type HTMLAttributes, useMemo, useState } from "react";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import shoppingCart from "@/shoppingCart";
 import { imageUrl } from "@/utils";
 
@@ -10,6 +11,8 @@ type Props = HTMLAttributes<HTMLDivElement> & { item: Item };
 export default function ProductsInCar({ item }: Props) {
 	const cart = new shoppingCart();
 	const [line, setLine] = useState<number | null>(null);
+
+	const { settings } = useGeneralSettings();
 
 	function showCart(id: number | string | null) {
 		const remInPx = Number.parseFloat(
@@ -52,7 +55,8 @@ export default function ProductsInCar({ item }: Props) {
 					</p>
 					<div className="flex items-center gap-2 mt-1">
 						<span className="text-sm font-semibold text-emerald-600">
-							${item.price}
+							{settings.currency === "VES" ? "Bs " : "$ "}
+							{item.price}
 						</span>
 						<span className="text-xs text-slate-400">•</span>
 						<span className="md:hidden text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
@@ -67,7 +71,8 @@ export default function ProductsInCar({ item }: Props) {
 						Total
 					</p>
 					<p className="text-lg font-bold bg-gradient-to-r from-orange-600 to-emerald-600 bg-clip-text text-transparent">
-						${totalFormatted}
+						{settings.currency === "VES" ? "Bs " : "$ "}
+						{totalFormatted}
 					</p>
 				</div>
 			</button>
