@@ -42,7 +42,6 @@ class PermissionService {
     }
 
     public hasPermission(permissions: string[]): boolean {
-        if(permissions.length === 0) return true;
         const stored = this.getStoredPermissions();
         if (!stored?.permissions || !Array.isArray(permissions)) return false;
         return permissions.some(permission => stored.permissions.includes(permission));
