@@ -104,6 +104,7 @@ export default function UserOrders({ orders }: Props) {
 			{
 				field: "created_at",
 				headerName: "Fecha",
+				type: "dateTime",
 				valueGetter: (_v, r) => new Date(r.created_at),
 			},
 		],
