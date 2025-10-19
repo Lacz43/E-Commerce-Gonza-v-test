@@ -1,6 +1,4 @@
-import { Head, router } from "@inertiajs/react";
-import axios, { AxiosError, toFormData } from "axios";
-import toast from "react-hot-toast";
+import { Head } from "@inertiajs/react";
 import BackButtom from "@/Components/BackButtom";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Form, { type FormStruture } from "./Partials/Form";
@@ -13,25 +11,6 @@ export default function Products({ product }: Props) {
 	console.log(product);
 
 	const initialValues = product;
-
-	async function onSubmit(data: FormStruture) {
-		try {
-			const formData = toFormData(data, new FormData());
-
-			formData.append("_method", "PATCH");
-			const response = await axios.post(
-				route("products.update", data.id),
-				formData,
-			);
-			toast.success(response.data.message, { duration: 5000 });
-			router.visit(route("products.index"));
-		} catch (e) {
-			console.log(e);
-			toast.error(
-				`Error al editar producto: ${e instanceof AxiosError ? e.response?.data.message : ""}`,
-			);
-		}
-	}
 
 	return (
 		<AuthenticatedLayout
@@ -49,7 +28,7 @@ export default function Products({ product }: Props) {
 						<BackButtom />
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
-						<Form onSubmit={onSubmit} InitialValues={initialValues} />
+						<Form InitialValues={initialValues} />
 					</div>
 				</div>
 			</div>

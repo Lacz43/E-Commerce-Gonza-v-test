@@ -1,22 +1,9 @@
-import { Head, router } from "@inertiajs/react";
-import axios, { AxiosError, toFormData } from "axios";
-import toast from "react-hot-toast";
+import { Head } from "@inertiajs/react";
 import BackButtom from "@/Components/BackButtom";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import Form, { type FormStruture } from "./Partials/Form";
+import Form from "./Partials/Form";
 
 export default function Products() {
-	async function onSubmit(data: FormStruture) {
-		try {
-			const formData = toFormData(data, new FormData());
-			const response = await axios.post(route("products.storage"), formData);
-			toast.success(response.data.message, { duration: 5000 });
-			router.visit(route("products.index"));
-		} catch (e) {
-			console.log(e);
-			toast.error(`Error al registrar producto: ${e instanceof AxiosError ? e.response?.data.message : ""}`);
-		}
-	}
 
 	return (
 		<AuthenticatedLayout
@@ -34,7 +21,7 @@ export default function Products() {
 						<BackButtom />
 					</div>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
-						<Form onSubmit={onSubmit} />
+						<Form />
 					</div>
 				</div>
 			</div>
