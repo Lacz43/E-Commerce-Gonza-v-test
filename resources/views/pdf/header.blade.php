@@ -13,7 +13,8 @@
                 <strong>Teléfono:</strong> {{ $settings->company_phone ?: 'N/A' }}<br>
                 <strong>Email:</strong> {{ $settings->company_email ?: 'N/A' }}<br>
                 <strong>RIF:</strong> {{ $settings->company_rif ?: 'N/A' }}<br>
-                <strong>Dirección:</strong> {{ $settings->company_address ?: 'N/A' }}
+                <strong>Dirección:</strong> {{ $settings->company_address ?: 'N/A' }}<br>
+                <strong>Generado por:</strong> {{ Auth::user()->name }}
             </td>
         </tr>
     </table>
