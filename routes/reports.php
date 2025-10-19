@@ -32,6 +32,9 @@ Route::middleware('auth', 'permission:show reports')->group(function () {
 
     Route::get('/reports/sales/top-products/download', [ReportController::class, 'downloadTopProducts'])
         ->name('reports.sales.top-products');
+
+    Route::get('/reports/inventory/valuation/download', [ReportController::class, 'downloadInventoryValuation'])
+        ->name('reports.inventory.valuation');
 });
 
 Route::middleware('auth', 'permission:show product_inventory')
