@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import { useModal } from "@/Context/Modal";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 
 type Order = {
 	id: number;
@@ -50,6 +51,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 	const [order, setOrder] = useState<Order | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [updating, setUpdating] = useState(false);
+	const { settings } = useGeneralSettings();
 
 	useEffect(() => {
 		axios.get(`/orders/${orderId}`).then((response) => {
@@ -243,7 +245,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 						</Typography>
 					</Box>
 					<Typography variant="h6" fontWeight={700} color="#059669">
-						${total.toFixed(2)}
+						{settings.currency === "VES" ? "Bs" : "$"} {total.toFixed(2)}
 					</Typography>
 				</Box>
 			</Box>
@@ -329,10 +331,11 @@ export default function OrderDetailsModal({ orderId }: Props) {
 									/>
 								</TableCell>
 								<TableCell align="right" sx={{ color: "text.secondary" }}>
-									${item.price}
+									{settings.currency === "VES" ? "Bs" : "$"} {item.price}
 								</TableCell>
 								<TableCell align="right" sx={{ fontWeight: 700 }}>
-									${(item.price * item.quantity).toFixed(2)}
+									{settings.currency === "VES" ? "Bs" : "$"}{" "}
+									{(item.price * item.quantity).toFixed(2)}
 								</TableCell>
 							</TableRow>
 						))}
@@ -348,7 +351,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 								align="right"
 								sx={{ fontWeight: 700, fontSize: 18, color: "#059669" }}
 							>
-								${total.toFixed(2)}
+								{settings.currency === "VES" ? "Bs" : "$"} {total.toFixed(2)}
 							</TableCell>
 						</TableRow>
 					</TableBody>
