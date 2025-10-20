@@ -1,10 +1,10 @@
 import { Head } from "@inertiajs/react";
 import BackButtom from "@/Components/BackButtom";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import Form, { type FormStruture } from "./Partials/Form";
+import Form from "./Partials/Form";
 
 type Props = {
-	product: FormStruture;
+	product: Item;
 };
 
 export default function Products({ product }: Props) {
