@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+import { Timeline } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import {
@@ -10,6 +11,7 @@ import {
 	useState,
 } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ModalMovementDetail from "./Partials/ModalMovementDetail";
@@ -147,6 +149,12 @@ export default function MovementsIndex({
 			<Head title="Historial de Movimientos" />
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Historial de Movimientos"
+						icon={Timeline}
+						subtitle="Registro completo de entradas y salidas de inventario"
+						gradientColor="#f59e0b"
+					/>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
 							<Suspense

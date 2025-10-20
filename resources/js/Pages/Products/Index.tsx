@@ -1,4 +1,5 @@
 import { Head, router } from "@inertiajs/react";
+import { Inventory } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import {
@@ -12,6 +13,7 @@ import {
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -74,7 +76,8 @@ export default function Products({
 				type: "number",
 				width: 100,
 				headerName: "Precio",
-				valueGetter: (_value, row) => `${row.price} ${settings.currency === "VES" ? "Bs" : "$"}`,
+				valueGetter: (_value, row) =>
+					`${row.price} ${settings.currency === "VES" ? "Bs" : "$"}`,
 			},
 			{
 				field: "description",
@@ -154,6 +157,12 @@ export default function Products({
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Productos"
+						icon={Inventory}
+						subtitle="Gestión completa de productos, inventario y precios"
+						gradientColor="#8b5cf6"
+					/>
 					<div className="flex justify-end mb-3 mx-3">
 						<CreateButton
 							permissions={["create products"]}

@@ -1,10 +1,12 @@
 import { Head, router } from "@inertiajs/react";
+import { BrandingWatermark } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { AxiosError } from "axios";
 import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Modal, { type ModalType } from "./Partials/Modal";
@@ -110,6 +112,12 @@ export default function Brands({ brands, filtersFields, sortFields }: Props) {
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Marcas de Productos"
+						icon={BrandingWatermark}
+						subtitle="Gestión de marcas y proveedores"
+						gradientColor="#db2777"
+					/>
 					<div className="flex justify-end mb-3 mx-3">
 						<CreateButton
 							permissions={["create product_brands"]}

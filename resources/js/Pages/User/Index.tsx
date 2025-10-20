@@ -1,4 +1,5 @@
 import { Head, router } from "@inertiajs/react";
+import { People } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios, { AxiosError } from "axios";
 import { lazy, Suspense, useCallback, useMemo } from "react";
@@ -6,6 +7,7 @@ import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import ModalDelete from "@/Components/Modals/ModalDelete";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CreateOrEdit from "./CreateOrEdit";
@@ -113,6 +115,12 @@ export default function Products({
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Gestión de Usuarios"
+						icon={People}
+						subtitle="Administra usuarios, roles y permisos del sistema"
+						gradientColor="#8b5cf6"
+					/>
 					<div className="flex justify-end mb-3 mx-3">
 						<CreateButton
 							permissions={["create users"]}

@@ -65,6 +65,7 @@ export default function Movements({
 					title="Reportes de Movimientos de Inventario"
 					icon={SwapHoriz}
 					subtitle="Historial completo de entradas, salidas y ajustes de inventario"
+					gradientColor="#f59e0b"
 				/>
 
 				<Filters

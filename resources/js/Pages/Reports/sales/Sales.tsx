@@ -57,6 +57,7 @@ export default function Sales() {
 					title="Reportes de Ventas"
 					icon={TrendingUp}
 					subtitle="Análisis completo de ventas, órdenes y rendimiento comercial"
+					gradientColor="#ef4444"
 				/>
 
 				<Filters

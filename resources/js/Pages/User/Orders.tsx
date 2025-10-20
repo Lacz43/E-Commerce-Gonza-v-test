@@ -2,7 +2,14 @@ import { Head } from "@inertiajs/react";
 import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	lazy,
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
@@ -31,10 +38,7 @@ export default function UserOrders({ orders }: Props) {
 			try {
 				const { data } = await axios.get(`/orders/${orderId}`);
 				openModal(({ closeModal }) => (
-					<ModalOrderDetail
-						data={data}
-						onClose={closeModal}
-					/>
+					<ModalOrderDetail data={data} onClose={closeModal} />
 				));
 			} catch (error) {
 				console.error("Error al cargar los detalles del pedido", error);
@@ -126,6 +130,7 @@ export default function UserOrders({ orders }: Props) {
 				title="Mis Pedidos"
 				icon={ReceiptIcon}
 				subtitle="Seguimiento completo de tus órdenes y estado de entregas"
+				gradientColor="#2563eb"
 			/>
 			<div className="flex flex-col gap-6">
 				{/* Estadísticas de pedidos */}

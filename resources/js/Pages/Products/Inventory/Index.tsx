@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+import { Inventory } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import {
 	lazy,
@@ -10,6 +11,7 @@ import {
 } from "react";
 import CreateButton from "@/Components/CreateButton";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { imageUrl } from "@/utils";
@@ -33,9 +35,17 @@ const renderImageCell = (params: { row: Item }) => (
 
 type InventoryItem = Item & { stock?: number };
 
-type Props = { products: paginateResponse<InventoryItem>, filtersFields: string[], sortFields: string[] };
+type Props = {
+	products: paginateResponse<InventoryItem>;
+	filtersFields: string[];
+	sortFields: string[];
+};
 
-export default function InventoryIndex({ products, filtersFields, sortFields }: Props) {
+export default function InventoryIndex({
+	products,
+	filtersFields,
+	sortFields,
+}: Props) {
 	const { openModal, closeModal } = useModal();
 	const [inventory, setInventory] = useState(products);
 	console.log("Inventory:", inventory);
@@ -107,6 +117,12 @@ export default function InventoryIndex({ products, filtersFields, sortFields }: 
 			<Head title="Inventario" />
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Inventario de Productos"
+						icon={Inventory}
+						subtitle="Control y gestión de stock de productos"
+						gradientColor="#059669"
+					/>
 					<div className="flex justify-end mb-3 mx-3">
 						<CreateButton
 							permissions={["create products"]}

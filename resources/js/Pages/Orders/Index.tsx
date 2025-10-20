@@ -1,10 +1,12 @@
 import { Head } from "@inertiajs/react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import { IconButton, Tooltip } from "@mui/material";
 import type { GridColDef } from "@mui/x-data-grid";
 import { lazy, Suspense, useCallback, useMemo } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import OrderDetailsModal from "@/Components/OrderDetailsModal";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -68,7 +70,8 @@ export default function OrdersIndex({
 							Number(sum) + Number(item.price) * Number(item.quantity),
 						0,
 					) ?? 0,
-				valueFormatter: (value: number) => `${value.toFixed(2)} ${settings.currency === "VES" ? "Bs" : "$"}`,
+				valueFormatter: (value: number) =>
+					`${value.toFixed(2)} ${settings.currency === "VES" ? "Bs" : "$"}`,
 			},
 			{
 				field: "created_at",
@@ -110,6 +113,12 @@ export default function OrdersIndex({
 			<Head title="Pedidos" />
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Pedidos"
+						icon={ReceiptIcon}
+						subtitle="Gestión completa de pedidos y órdenes de compra"
+						gradientColor="#dc2626"
+					/>
 					<div className="overflow-hidden bg-white shadow-lg sm:rounded-lg">
 						<div className="p-6 text-gray-900">
 							<Suspense

@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+import { CalendarMonth, ErrorOutline, TrendingUp } from "@mui/icons-material";
 import {
 	Box,
 	CircularProgress,
@@ -9,9 +10,9 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { TrendingUp, CalendarMonth, ErrorOutline } from "@mui/icons-material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import PageHeader from "@/Components/PageHeader";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import LowStockTable from "@/Partials/Dashboard/LowStockTable";
 import MetricsCards from "@/Partials/Dashboard/MetricsCards";
@@ -172,6 +173,12 @@ export default function Dashboard() {
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+					<PageHeader
+						title="Dashboard"
+						icon={TrendingUp}
+						subtitle="Panel de control y métricas del negocio"
+						gradientColor="#10b981"
+					/>
 					{/* Period Selector */}
 					<div className="bg-white shadow-sm sm:rounded-lg p-6">
 						<div className="flex items-center gap-3 mb-4">

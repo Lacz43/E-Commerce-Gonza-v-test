@@ -1,7 +1,5 @@
 import { Head } from "@inertiajs/react";
-import {
-	Inventory as InventoryIcon,
-} from "@mui/icons-material";
+import { Inventory as InventoryIcon } from "@mui/icons-material";
 import { Box } from "@mui/material";
 import { useState } from "react";
 import PageHeader from "@/Components/PageHeader";
@@ -65,9 +63,18 @@ export default function Inventory() {
 
 			<Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
 				{/* Header moderno con gradiente */}
-				<PageHeader title="Reportes de Inventario" icon={InventoryIcon} subtitle="Reportes de inventario con filtros avanzados"/>
+				<PageHeader
+					title="Reportes de Inventario"
+					icon={InventoryIcon}
+					subtitle="Reportes de inventario con filtros avanzados"
+					gradientColor="#10b981"
+				/>
 
-				<Filters filters={filters} handleFilterChange={handleFilterChange} clearFilters={clearFilters} />
+				<Filters
+					filters={filters}
+					handleFilterChange={handleFilterChange}
+					clearFilters={clearFilters}
+				/>
 
 				<ReportsGrid buildUrlWithFilters={buildUrlWithFilters} />
 			</Box>

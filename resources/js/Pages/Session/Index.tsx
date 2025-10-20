@@ -1,7 +1,9 @@
 import { Head } from "@inertiajs/react";
+import { Computer } from "@mui/icons-material";
 import type { GridColDef } from "@mui/x-data-grid";
 import { lazy, Suspense, useMemo } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
+import PageHeader from "@/Components/PageHeader";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
@@ -73,6 +75,12 @@ export default function Index({
 
 			<div className="py-12">
 				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+					<PageHeader
+						title="Sesiones Activas"
+						icon={Computer}
+						subtitle="Monitorea las sesiones activas de usuarios en el sistema"
+						gradientColor="#06b6d4"
+					/>
 					<div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
 						<div className="p-6 text-gray-900">
 							<Suspense
