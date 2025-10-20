@@ -1,6 +1,6 @@
 import { router } from "@inertiajs/react";
 import { Button, TextField } from "@mui/material";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -60,7 +60,7 @@ export default function Modal({ openModal, name, onClose }: Props) {
 		} catch (e) {
 			console.log(e);
 			toast.error(
-				`Error al ${openModal?.type === "create" ? "Nueva" : "Editar"}: ${e.response.data.message}`,
+				`Error al ${openModal?.type === "create" ? "Nueva" : "Editar"}: ${e instanceof AxiosError ? e.response?.data.message : "Error al guardar"}`,
 			);
 		}
 	};
