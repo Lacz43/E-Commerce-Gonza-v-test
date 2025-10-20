@@ -314,7 +314,7 @@ export default function ModalCreate({ onClose }: Props) {
 									variant="outlined"
 									color="success"
 									onClick={() =>
-										openModal(() => <CreateForm onSubmit={() => {}} />)
+										openModal(() => <CreateForm />)
 									}
 									sx={{
 										px: 3,
