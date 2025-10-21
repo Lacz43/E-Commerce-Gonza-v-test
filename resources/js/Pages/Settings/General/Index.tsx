@@ -505,7 +505,7 @@ export default function Index({ settings }: Props) {
 
 											{/* Input de archivo */}
 											<Tooltip
-												title="Formatos aceptados: JPG, PNG, GIF, SVG - Tamaño máximo: 2MB"
+												title="Formatos aceptados: JPG, PNG, JPEG, SVG - Tamaño máximo: 2MB"
 												placement="top"
 											>
 												<Button
@@ -533,7 +533,7 @@ export default function Index({ settings }: Props) {
 															color="text.secondary"
 															display="block"
 														>
-															JPG, PNG, GIF, SVG - Máx. 2MB
+															JPG, PNG, JPEG, SVG - Máx. 2MB
 														</Typography>
 													</Box>
 													<input
