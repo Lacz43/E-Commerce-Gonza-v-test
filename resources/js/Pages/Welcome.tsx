@@ -155,9 +155,9 @@ export default function Welcome() {
 					</div>
 
 					{/* Barra de búsqueda mejorada */}
-					<div className="mb-12">
+					<div className="mb-12 flex justify-center">
 						<InputProductSearch
-							className="mx-auto bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl border border-orange-100/50 hover:shadow-2xl hover:border-emerald-300/50 transition-all"
+							className="w-full max-w-4xl px-4"
 							onSearchChange={setSearchParams}
 						/>
 					</div>
