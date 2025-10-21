@@ -50,6 +50,5 @@
         "react-dropzone": "^14.3.8",
         "react-hook-form": "^7.62.0",
         "react-hot-toast": "^2.6.0"
-    },
-    "packageManager": "pnpm@10.15.0"
+    }
 }
