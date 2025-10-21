@@ -57,7 +57,7 @@ class GeneralSettingsController extends Controller
     {
         $request->validate([
             'company_name' => 'nullable|string|max:255',
-            'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB max
+            'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048', // 2MB max
             'company_phone' => 'nullable|string|max:20',
             'company_address' => 'nullable|string|max:500',
             'company_rif' => 'nullable|string|max:20',
