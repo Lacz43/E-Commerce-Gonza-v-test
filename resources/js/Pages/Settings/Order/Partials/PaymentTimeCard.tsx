@@ -1,7 +1,6 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
 	Box,
-	Button,
 	Card,
 	CardContent,
 	CardHeader,
@@ -9,7 +8,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { Control, Controller, type FieldErrors } from "react-hook-form";
+import { type Control, Controller, type FieldErrors } from "react-hook-form";
 
 type OrderSettings = {
 	max_payment_wait_time_hours: number | null;

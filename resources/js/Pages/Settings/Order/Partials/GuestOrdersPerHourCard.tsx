@@ -7,7 +7,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { Control, Controller, FieldErrors } from "react-hook-form";
+import { type Control, Controller, type FieldErrors } from "react-hook-form";
 
 type OrderSettings = {
 	max_payment_wait_time_hours: number | null;
@@ -28,7 +28,6 @@ export default function GuestOrdersPerHourCard({ control, errors }: Props) {
 			sx={{
 				borderRadius: 3,
 				border: "1px solid rgba(102, 126, 234, 0.15)",
-				mt: 3,
 			}}
 		>
 			<CardHeader
@@ -36,8 +35,7 @@ export default function GuestOrdersPerHourCard({ control, errors }: Props) {
 					<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 						<Box
 							sx={{
-								background:
-									"linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+								background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
 								borderRadius: 2,
 								p: 1,
 								display: "flex",
@@ -46,7 +44,7 @@ export default function GuestOrdersPerHourCard({ control, errors }: Props) {
 							<SettingsIcon sx={{ color: "white", fontSize: 24 }} />
 						</Box>
 						<Typography variant="h6" fontWeight={600}>
-							Límite de Órdenes para Usuarios No Registrados
+							Límite de Órdenes (Usuarios No Registrados)
 						</Typography>
 					</Box>
 				}
@@ -78,7 +76,7 @@ export default function GuestOrdersPerHourCard({ control, errors }: Props) {
 							variant="filled"
 							value={field.value}
 							onChange={(e) => {
-								const value = parseInt(e.target.value);
+								const value = parseInt(e.target.value, 10);
 								field.onChange(Number.isNaN(value) ? "" : value);
 							}}
 							inputProps={{
