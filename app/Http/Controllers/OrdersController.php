@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\QueryFilters;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Cache;
 
 class OrdersController extends Controller
 {
@@ -72,6 +73,20 @@ class OrdersController extends Controller
 
     public function store(Request $request)
     {
+        // Rate limiting for guest users
+        if (!Auth::check()) {
+            $ip = $request->ip();
+            $cacheKey = "guest_orders_{$ip}";
+            $orderCount = Cache::get($cacheKey, 0);
+
+            // Allow maximum 3 orders per hour per IP for guests
+            if ($orderCount >= 3) {
+                return response()->json([
+                    'message' => 'Demasiados pedidos desde esta dirección IP. Por favor, regístrese para continuar.'
+                ], 429);
+            }
+        }
+        
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer|exists:products,id',
@@ -109,6 +124,13 @@ class OrdersController extends Controller
 
                 return $order;
             });
+
+            // Increment order counter for guest users
+            if (!Auth::check()) {
+                $ip = $request->ip();
+                $cacheKey = "guest_orders_{$ip}";
+                Cache::put($cacheKey, Cache::get($cacheKey, 0) + 1, now()->addHour()); // Expire in 1 hour
+            }
 
             return response()->json(['order_id' => $order->id, 'message' => 'Orden creada exitosamente'], 201);
         } catch (\Exception $e) {
