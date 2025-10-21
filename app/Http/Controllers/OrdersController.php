@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\QueryFilters;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Cache;
+use App\Settings\OrderSettings;
 
 class OrdersController extends Controller
 {
@@ -77,10 +78,11 @@ class OrdersController extends Controller
         if (!Auth::check()) {
             $ip = $request->ip();
             $cacheKey = "guest_orders_{$ip}";
+            $maxOrders = app(OrderSettings::class)->max_guest_orders_per_hour ?? 3; // Default to 3 if not set
             $orderCount = Cache::get($cacheKey, 0);
 
-            // Allow maximum 3 orders per hour per IP for guests
-            if ($orderCount >= 3) {
+            // Allow maximum orders per hour per IP for guests
+            if ($orderCount >= $maxOrders) {
                 return response()->json([
                     'message' => 'Demasiados pedidos desde esta dirección IP. Por favor, regístrese para continuar.'
                 ], 429);
@@ -95,12 +97,37 @@ class OrdersController extends Controller
 
         $items = $request->items;
 
-        // Check availability for each product
+        // Calculate order total and validate guest limits
+        $orderTotal = 0;
+        $totalItems = 0;
+
         foreach ($items as $item) {
             $product = Product::find($item['product_id']);
+            $orderTotal += $product->price * $item['quantity'];
+            $totalItems += $item['quantity'];
+
             if ($product->available_stock < $item['quantity']) {
                 return response()->json([
                     'message' => "Stock insuficiente para el producto {$product->name}. Disponible: {$product->available_stock}, Solicitado: {$item['quantity']}"
+                ], 400);
+            }
+        }
+
+        // Additional validations for guest users
+        if (!Auth::check()) {
+            $settings = app(OrderSettings::class);
+
+            // Check order amount limit (only if set)
+            if ($settings->max_guest_order_amount !== null && $orderTotal > $settings->max_guest_order_amount) {
+                return response()->json([
+                    'message' => "El monto total de la orden supera el límite máximo de $" . number_format($settings->max_guest_order_amount, 2) . " para usuarios no registrados."
+                ], 400);
+            }
+
+            // Check total items limit (only if set)
+            if ($settings->max_guest_order_items !== null && $totalItems > $settings->max_guest_order_items) {
+                return response()->json([
+                    'message' => "La cantidad total de productos supera el límite máximo de {$settings->max_guest_order_items} items por orden para usuarios no registrados."
                 ], 400);
             }
         }
