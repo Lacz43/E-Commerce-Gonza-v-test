@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\ImageService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,8 +25,12 @@ class ProductImage extends Model
     public static function saveImages(int $product_id, array $images, ?int $default)
     {
         foreach ($images as $index => $image) {
-            $filename = Str::uuid() . '.' . $image->getClientOriginalExtension(); // Nombre único
-            $path = $image->storeAs('products/' . $product_id, $filename, 'public'); // Almacenar en storage/app/public/products/{id_producto}
+            // Convertir y optimizar la imagen a PNG usando ImageService
+            $optimizedResult = ImageService::convertToOptimizedPng($image, 90, 'public');
+            $path = 'products/' . $product_id . '/' . basename($optimizedResult['file_path']);
+
+            // Mover el archivo optimizado a la ubicación correcta
+            \Illuminate\Support\Facades\Storage::disk('public')->move($optimizedResult['file_path'], $path);
 
             // Función para determinar si es la imagen por defecto
             $defaultImage = function ($index, $default) use ($images) {
