@@ -56,6 +56,16 @@ class ProductsController extends Controller
             $query->whereHas('defaultImage');
         }
 
+        if($request->query('category')) {
+            $query->where('products.category_id', $request->query('category'));
+        }
+
+        if($request->query('brand')) {
+            $query->whereHas('productBrand', function ($query) use ($request) {
+                $query->where('brand_id', $request->query('brand'));
+            });
+        }
+
         // Parámetros opcionales de búsqueda:
         // 1) ?id=XXXXXXXX (coincidencia exacta)
         // 2) ?barcode=XXXXXXXX (coincidencia exacta)
