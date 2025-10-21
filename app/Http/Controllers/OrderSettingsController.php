@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Settings\OrderSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class OrderSettingsController extends Controller
@@ -32,11 +33,40 @@ class OrderSettingsController extends Controller
         ]);
 
         $settings = app(OrderSettings::class);
+
+        // Capture old values for logging
+        $oldValues = [
+            'max_payment_wait_time_hours' => $settings->max_payment_wait_time_hours,
+            'max_guest_orders_per_hour' => $settings->max_guest_orders_per_hour,
+            'max_guest_order_amount' => $settings->max_guest_order_amount,
+            'max_guest_order_items' => $settings->max_guest_order_items,
+        ];
+
+        // Update settings
         $settings->max_payment_wait_time_hours = $request->max_payment_wait_time_hours;
         $settings->max_guest_orders_per_hour = $request->max_guest_orders_per_hour;
         $settings->max_guest_order_amount = $request->max_guest_order_amount;
         $settings->max_guest_order_items = $request->max_guest_order_items;
         $settings->save();
+
+        // Capture new values for logging
+        $newValues = [
+            'max_payment_wait_time_hours' => $settings->max_payment_wait_time_hours,
+            'max_guest_orders_per_hour' => $settings->max_guest_orders_per_hour,
+            'max_guest_order_amount' => $settings->max_guest_order_amount,
+            'max_guest_order_items' => $settings->max_guest_order_items,
+        ];
+
+        // Log the activity
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties([
+                'old' => $oldValues,
+                'new' => $newValues,
+                'changes' => array_diff_assoc($newValues, $oldValues),
+                'settings_type' => 'order_settings',
+            ])
+            ->log('Configuración de órdenes actualizada');
 
         return back()->with('success', 'Configuración de órdenes actualizada correctamente.');
     }
