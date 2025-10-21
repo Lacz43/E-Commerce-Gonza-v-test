@@ -13,6 +13,10 @@ RUN apt-get update \
     libzip-dev \
     zlib1g-dev \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype-dev \
+    libwebp-dev \
+    libxpm-dev \
     libonig-dev \
     curl \
     nano \
@@ -21,7 +25,8 @@ RUN apt-get update \
     tzdata
 
 # Instalar extensiones PHP necesarias para Laravel
-RUN docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache gd
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp --with-xpm \
+    && docker-php-ext-install pdo pdo_mysql zip exif mbstring pcntl bcmath opcache gd
 
 # Instalamos Composer
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
