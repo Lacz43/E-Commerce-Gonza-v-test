@@ -9,9 +9,10 @@ import shoppingCart from "@/shoppingCart";
 
 type Props = {
 	onClose: () => void;
+	user: User | null;
 };
 
-export default function CartModal({ onClose }: Props) {
+export default function CartModal({ onClose, user }: Props) {
 	const [items, setItems] = useState<Item[]>([]);
 	const { settings } = useGeneralSettings();
 
@@ -80,6 +81,11 @@ export default function CartModal({ onClose }: Props) {
 	}, [createOrder, settings.company_phone]);
 
 	const sendOrder = useCallback(async () => {
+		if (!user) {
+			toast.error("Debes iniciar sesión para realizar una compra");
+			return;
+		}
+
 		const cart = new shoppingCart();
 		const items = cart.items.map((item) => ({
 			product_id: item.id,
@@ -101,7 +107,7 @@ export default function CartModal({ onClose }: Props) {
 				toast.error("Error inesperado");
 			}
 		}
-	}, [onClose, createOrder]);
+	}, [onClose, createOrder, user]);
 
 	return (
 		<ModalStyled

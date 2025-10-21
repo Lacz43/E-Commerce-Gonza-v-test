@@ -33,7 +33,7 @@ export default function Navbar({ ref }: { ref?: React.Ref<HTMLDivElement> }) {
 		setTotal(cart.items.reduce((cur, sum) => cur + (sum.quantity ?? 1), 0));
 	}
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	useEffect(() => {
 		updateQuantity();
 		addEventListener("addCart", () => {
@@ -70,7 +70,7 @@ export default function Navbar({ ref }: { ref?: React.Ref<HTMLDivElement> }) {
 					<IconButton
 						id="shopping-cart"
 						onClick={() =>
-							openModal(({ closeModal }) => <CartModal onClose={closeModal} />)
+							openModal(({ closeModal }) => <CartModal onClose={closeModal} user={user} />)
 						}
 						size="small"
 						className="relative group"
