@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ImageService;
 use App\Settings\GeneralSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -81,9 +82,9 @@ class GeneralSettingsController extends Controller
                 Storage::disk('public')->delete($settings->company_logo);
             }
 
-            // Store new logo
-            $logoPath = $request->file('company_logo')->store('logos', 'public');
-            $settings->company_logo = $logoPath;
+            // Convert and optimize logo to PNG using ImageService
+            $logoResult = ImageService::convertToOptimizedPng($request->file('company_logo'), 90, 'public');
+            $settings->company_logo = $logoResult['file_path'];
         }
 
         // Update company fields
