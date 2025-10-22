@@ -14,10 +14,12 @@ type ActivityDetail = {
 	id: number;
 	description: string;
 	event: string;
+	event_translated?: string;
 	causer?: {
 		name: string;
 	};
 	subject_type?: string;
+	subject_type_translated?: string;
 	properties?: Record<string, unknown>;
 	changes?: Record<string, unknown>;
 	created_at: string;
@@ -34,7 +36,13 @@ const ModalShowActivity: React.FC<ModalShowActivityProps> = ({
 		try {
 			setLoading(true);
 			const response = await axios.get(route("activities.show", activityId));
-			setActivity(response.data);
+			console.log(response.data);
+			const data = response.data;
+			setActivity({
+				...data.activity,
+				event_translated: data.translations.event,
+				subject_type_translated: data.translations.subject_type,
+			});
 		} catch (error) {
 			console.error("Error fetching activity details:", error);
 			toast.error("Error al cargar los detalles de la actividad");
@@ -109,7 +117,7 @@ const ModalShowActivity: React.FC<ModalShowActivityProps> = ({
 		<ModalStyled
 			header={
 				<h2 className="text-2xl font-extrabold bg-clip-text">
-					Detalles de Actividad - {activity.event}
+					Detalles de Actividad - {activity.event_translated || activity.event}
 				</h2>
 			}
 			body={
@@ -127,7 +135,7 @@ const ModalShowActivity: React.FC<ModalShowActivityProps> = ({
 								</div>
 								<div>
 									<p className="text-sm font-semibold text-slate-600">Evento</p>
-									<p className="text-slate-800">{activity.event}</p>
+									<p className="text-slate-800">{activity.event_translated || activity.event}</p>
 								</div>
 								<div>
 									<p className="text-sm font-semibold text-slate-600">
@@ -140,7 +148,9 @@ const ModalShowActivity: React.FC<ModalShowActivityProps> = ({
 								<div>
 									<p className="text-sm font-semibold text-slate-600">Módulo</p>
 									<p className="text-slate-800">
-										{activity.subject_type ?? "N/A"}
+										{activity.subject_type_translated ||
+											activity.subject_type ||
+											"N/A"}
 									</p>
 								</div>
 								<div className="md:col-span-2">
