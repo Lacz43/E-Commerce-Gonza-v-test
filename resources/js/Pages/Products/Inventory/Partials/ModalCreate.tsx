@@ -314,7 +314,18 @@ export default function ModalCreate({ onClose }: Props) {
 									variant="outlined"
 									color="success"
 									onClick={() =>
-										openModal(() => <CreateForm />)
+										openModal(({ closeModal }) => (
+											<ModalStyled
+												header={
+													<h2 className="text-lg font-semibold">
+														Crear Nuevo Producto
+													</h2>
+												}
+												body={<CreateForm />}
+												footer={<></>}
+												onClose={closeModal}
+											/>
+										))
 									}
 									sx={{
 										px: 3,
