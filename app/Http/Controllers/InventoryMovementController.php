@@ -41,4 +41,20 @@ class InventoryMovementController extends Controller
     {
         return response()->json($movement->load(['productInventory.product', 'user', 'attachments', 'reason']));
     }
+
+    /**
+     * Obtener movimientos por producto.
+     */
+    public function getByProduct($productId)
+    {
+        $movements = InventoryMovement::whereHas('productInventory', function ($query) use ($productId) {
+            $query->where('product_id', $productId);
+        })
+        ->with(['productInventory.product', 'user'])
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
+        return response()->json($movements);
+    }
 }
