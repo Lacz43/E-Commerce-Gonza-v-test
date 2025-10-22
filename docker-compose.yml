@@ -24,27 +24,35 @@ services:
             context: .
             target: prod
         container_name: gonzaplus_prod
-        ports:
-            - "80:80"
         volumes:
             - .:/var/www/html
         working_dir: /var/www/html
         tty: true # Permite usar la consola interactiva
         depends_on:
             - db
-            - web
         networks:
             - network # 👈 Asegúrate de que el app esté en la misma red que db
+        expose:
+            - "9000"
 
     web:
-        image: nginx:1.27.5
+        build:
+            context: .
+            dockerfile: docker/nginx/Dockerfile
+        container_name: gonzaplus_web
         volumes:
-            - ./templates:/etc/nginx/templates
+            - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
         ports:
             - "80:80"
+        depends_on:
+            - prod
+        networks:
+            - network
         environment:
-            - NGINX_HOST=foobar.com
+            - NGINX_HOST=gonzaplus.local
             - NGINX_PORT=80
+        restart: unless-stopped
 
     db:
         image: mariadb:11.7.2
