@@ -42,6 +42,22 @@ class ActivityController extends Controller
      */
     public function show(ActivityLog $activity)
     {
-        return response()->json($activity->load(['causer', 'subject']));
+        $events = [
+            'created' => 'Creado',
+            'updated' => 'Actualizado',
+            'deleted' => 'Eliminado',
+        ];
+
+        $modelsName = config('modules.model_names');
+
+        $activityData = $activity->load(['causer', 'subject'])->toArray();
+
+        return response()->json([
+            'activity' => $activityData,
+            'translations' => [
+                'event' => $events[$activity->event] ?? $activity->event,
+                'subject_type' => $modelsName[class_basename($activity->subject_type)] ?? $activity->subject_type,
+            ],
+        ]);
     }
 }
