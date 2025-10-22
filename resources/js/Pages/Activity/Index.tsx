@@ -4,7 +4,9 @@ import type { GridColDef } from "@mui/x-data-grid";
 import { lazy, Suspense, useMemo } from "react";
 import DataTableSkeleton from "@/Components/DataTableSkeleton";
 import PageHeader from "@/Components/PageHeader";
+import { useModal } from "@/Context/Modal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import ModalShowActivity from "./Partials/ModalShowActivity";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
@@ -34,6 +36,7 @@ export default function Index({
 	modelsName,
 	events,
 }: Props) {
+	const { openModal } = useModal();
 	const columns = useMemo<GridColDef[]>(
 		() => [
 			{ field: "id", headerName: "ID", width: 80 },
@@ -78,6 +81,17 @@ export default function Index({
 		[modelsName, events],
 	);
 
+	const onShowConfig = useMemo(
+		() => ({
+			permissions: ["show settings"],
+			hook: (id: number) =>
+				openModal(({ closeModal }) => (
+					<ModalShowActivity closeModal={closeModal} activityId={id} />
+				)),
+		}),
+		[openModal],
+	);
+
 	return (
 		<AuthenticatedLayout
 			header={
@@ -113,6 +127,7 @@ export default function Index({
 									fill
 									filtersAvailable={filtersAvailable}
 									sortAvailable={sortAvailable}
+									onShow={onShowConfig}
 								/>
 							</Suspense>
 						</div>
