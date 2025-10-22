@@ -29,7 +29,7 @@ class ProductsController extends Controller
 
     public function products(Request $request)
     {
-        $query = Product::with(['defaultImage:product_id,image', 'brand:id,name']);
+        $query = Product::with(['defaultImage:product_id,image', 'brand:id,name', 'category:id,name']);
 
         $query->leftJoin('product_inventories', 'products.id', '=', 'product_inventories.product_id')
             ->select('products.*', 'product_inventories.stock');
