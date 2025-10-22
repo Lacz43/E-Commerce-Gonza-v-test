@@ -5,6 +5,7 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
+	type SelectChangeEvent,
 	TextField,
 } from "@mui/material";
 import axios from "axios";
@@ -191,45 +192,47 @@ export default function InputProductSearch({
 		}
 	};
 
-	const handleCategoryChange = (
-		event: React.ChangeEvent<{ value: unknown }>,
-	) => {
-		setSelectedCategory(event.target.value as string);
+	const handleCategoryChange = (event: SelectChangeEvent<string>) => {
+		setSelectedCategory(event.target.value);
 	};
 
-	const handleBrandChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-		setSelectedBrand(event.target.value as string);
+	const handleBrandChange = (event: SelectChangeEvent<string>) => {
+		setSelectedBrand(event.target.value);
 	};
 
 	return (
 		<Box
 			className={className}
-			sx={{ 
-				display: "flex", 
-				flexDirection: "column", 
+			sx={{
+				display: "flex",
+				flexDirection: "column",
 				gap: 2,
 				alignItems: "center",
-				width: "100%"
+				width: "100%",
 			}}
 		>
 			{/* Filter selects */}
-			<Box sx={{ 
-				display: "flex", 
-				gap: 2, 
-				flexWrap: "wrap",
-				justifyContent: "center",
-				width: "100%",
-				maxWidth: 800
-			}}>
-				<FormControl 
-					size="small" 
-					sx={{ 
+			<Box
+				sx={{
+					display: "flex",
+					gap: 2,
+					flexWrap: "wrap",
+					justifyContent: "center",
+					width: "100%",
+					maxWidth: 800,
+				}}
+			>
+				<FormControl
+					size="small"
+					sx={{
 						minWidth: 200,
 						flex: 1,
-						maxWidth: 300
+						maxWidth: 300,
 					}}
 				>
-					<InputLabel sx={{ backgroundColor: "transparent" }}>Categoría</InputLabel>
+					<InputLabel sx={{ backgroundColor: "transparent" }}>
+						Categoría
+					</InputLabel>
 					<Select
 						value={selectedCategory}
 						label="Categoría"
@@ -263,12 +266,12 @@ export default function InputProductSearch({
 					</Select>
 				</FormControl>
 
-				<FormControl 
-					size="small" 
-					sx={{ 
+				<FormControl
+					size="small"
+					sx={{
 						minWidth: 200,
 						flex: 1,
-						maxWidth: 300
+						maxWidth: 300,
 					}}
 				>
 					<InputLabel sx={{ backgroundColor: "transparent" }}>Marca</InputLabel>
