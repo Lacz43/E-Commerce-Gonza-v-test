@@ -290,25 +290,8 @@ export default function ModalShowProduct({
 															<span className="text-lg font-semibold text-slate-800">
 																Calificación promedio:
 															</span>
-															<div className="flex items-center gap-1">
-																{[1, 2, 3, 4, 5].map((star) => (
-																	<StarIcon
-																		key={star}
-																		className={`w-5 h-5 ${
-																			star <=
-																			(
-																				reviews.reduce(
-																					(acc, review) => acc + review.rating,
-																					0,
-																				) / reviews.length
-																			)
-																				? "text-yellow-400 fill-current"
-																				: "text-gray-300"
-																		}`}
-																	/>
-																))}
-															</div>
-															<span className="text-lg font-bold text-slate-800">
+															<span className="inline-flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-lg font-black rounded-full">
+																<StarIcon className="w-5 h-5 fill-current" />
 																{(
 																	reviews.reduce(
 																		(acc, review) => acc + review.rating,
@@ -356,18 +339,9 @@ export default function ModalShowProduct({
 																</div>
 															</div>
 															<div className="flex items-center gap-1">
-																{[1, 2, 3, 4, 5].map((star) => (
-																	<StarIcon
-																		key={star}
-																		className={`w-5 h-5 ${
-																			star <= review.rating
-																				? "text-yellow-400 fill-current"
-																				: "text-gray-300"
-																		}`}
-																	/>
-																))}
-																<span className="ml-2 text-sm font-medium text-slate-600">
-																	{review.rating}/5
+																<span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-sm font-bold rounded-full">
+																	<StarIcon className="w-4 h-4 fill-current" />
+																	{review.rating}
 																</span>
 															</div>
 														</div>
