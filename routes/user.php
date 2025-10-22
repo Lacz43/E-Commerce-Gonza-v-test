@@ -9,6 +9,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/users/index', [UserController::class, 'index'])->name('users.index');
     Route::get('/roles', [UserController::class, 'roles'])->name('roles');
     Route::get('/settings/activities', [ActivityController::class, 'index'])->name('settings.activities');
+    Route::get('/settings/activities/{activity}', [ActivityController::class, 'show'])->name('activities.show');
     Route::get('/users/sessions', [SessionController::class, 'index'])->name('users.sessions');
 });
 

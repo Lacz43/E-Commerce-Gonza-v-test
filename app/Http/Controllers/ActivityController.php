@@ -36,4 +36,12 @@ class ActivityController extends Controller
             'events' => $events,
         ]);
     }
+
+    /**
+     * Display the specified activity log.
+     */
+    public function show(ActivityLog $activity)
+    {
+        return response()->json($activity->load(['causer', 'subject']));
+    }
 }
