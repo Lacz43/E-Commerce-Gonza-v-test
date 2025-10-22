@@ -1,3 +1,4 @@
+import StarIcon from "@mui/icons-material/Star";
 import { Skeleton } from "@mui/material";
 import Button from "@mui/material/Button";
 import axios from "axios";
@@ -17,13 +18,27 @@ type Product = Item & {
 	available_stock: number;
 };
 
+type Review = {
+	id: number;
+	review: string;
+	rating: number;
+	user: {
+		id: number;
+		name: string;
+	};
+	created_at: string;
+};
+
 export default function ModalShowProduct({
 	closeModal,
 	productId,
 }: ModalShowProductProps) {
 	const [product, setProduct] = useState<Product | null>(null);
+	const [reviews, setReviews] = useState<Review[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+	const [reviewsExpanded, setReviewsExpanded] = useState(false);
+	const [reviewsLoading, setReviewsLoading] = useState(false);
 	const { settings } = useGeneralSettings();
 
 	const fetchProductDetails = useCallback(async () => {
@@ -42,6 +57,21 @@ export default function ModalShowProduct({
 			setLoading(false);
 		}
 	}, [productId, closeModal]);
+
+	const fetchReviews = useCallback(async () => {
+		try {
+			setReviewsLoading(true);
+			const response = await axios.get(
+				route("products.reviews.index", productId),
+			);
+			setReviews(response.data);
+		} catch (error) {
+			console.error("Error fetching reviews:", error);
+			// Don't show error toast for reviews, just log it
+		} finally {
+			setReviewsLoading(false);
+		}
+	}, [productId]);
 
 	useEffect(() => {
 		fetchProductDetails();
@@ -117,8 +147,8 @@ export default function ModalShowProduct({
 								stroke="currentColor"
 								viewBox="0 0 24 24"
 								role="img"
+								aria-label="Producto no encontrado"
 							>
-								<title>Producto no encontrado</title>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -224,6 +254,140 @@ export default function ModalShowProduct({
 									</div>
 								</div>
 							)}
+							{/* Reviews Section */}
+							<div className="border-t-2 border-blue-100 pt-6 mt-4">
+								<div className="flex items-center justify-between mb-4">
+									<h4 className="text-base font-bold text-slate-700 flex items-center gap-2">
+										⭐ Reseñas
+									</h4>
+									<Button
+										onClick={() => {
+											setReviewsExpanded(!reviewsExpanded);
+											if (!reviewsExpanded && reviews.length === 0) {
+												fetchReviews();
+											}
+										}}
+										variant="outlined"
+										size="small"
+									>
+										{reviewsExpanded ? "Ocultar reseñas" : "Ver reseñas"}
+									</Button>
+								</div>
+
+								{reviewsExpanded && (
+									<div className="max-h-96 overflow-y-auto">
+										{reviewsLoading ? (
+											<div className="space-y-3">
+												<Skeleton variant="rectangular" height={80} />
+												<Skeleton variant="rectangular" height={80} />
+											</div>
+										) : reviews.length > 0 ? (
+											<div className="space-y-3">
+												{/* Average rating */}
+												<div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+													<div className="flex items-center justify-between">
+														<div className="flex items-center gap-2">
+															<span className="text-lg font-semibold text-slate-800">
+																Calificación promedio:
+															</span>
+															<div className="flex items-center gap-1">
+																{[1, 2, 3, 4, 5].map((star) => (
+																	<StarIcon
+																		key={star}
+																		className={`w-5 h-5 ${
+																			star <=
+																			(
+																				reviews.reduce(
+																					(acc, review) => acc + review.rating,
+																					0,
+																				) / reviews.length
+																			)
+																				? "text-yellow-400 fill-current"
+																				: "text-gray-300"
+																		}`}
+																	/>
+																))}
+															</div>
+															<span className="text-lg font-bold text-slate-800">
+																{(
+																	reviews.reduce(
+																		(acc, review) => acc + review.rating,
+																		0,
+																	) / reviews.length
+																).toFixed(1)}
+															</span>
+														</div>
+														<div className="text-right">
+															<p className="text-sm text-slate-600">
+																Total de reseñas:{" "}
+																<span className="font-semibold">
+																	{reviews.length}
+																</span>
+															</p>
+														</div>
+													</div>
+												</div>
+
+												{reviews.map((review) => (
+													<div
+														key={review.id}
+														className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow"
+													>
+														<div className="flex items-start justify-between mb-3">
+															<div className="flex items-center gap-3">
+																<div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+																	{review.user.name.charAt(0).toUpperCase()}
+																</div>
+																<div>
+																	<h4 className="font-semibold text-slate-800">
+																		{review.user.name}
+																	</h4>
+																	<p className="text-xs text-slate-500">
+																		{new Date(
+																			review.created_at,
+																		).toLocaleDateString("es-ES", {
+																			year: "numeric",
+																			month: "long",
+																			day: "numeric",
+																			hour: "2-digit",
+																			minute: "2-digit",
+																		})}
+																	</p>
+																</div>
+															</div>
+															<div className="flex items-center gap-1">
+																{[1, 2, 3, 4, 5].map((star) => (
+																	<StarIcon
+																		key={star}
+																		className={`w-5 h-5 ${
+																			star <= review.rating
+																				? "text-yellow-400 fill-current"
+																				: "text-gray-300"
+																		}`}
+																	/>
+																))}
+																<span className="ml-2 text-sm font-medium text-slate-600">
+																	{review.rating}/5
+																</span>
+															</div>
+														</div>
+
+														<div className="border-t border-gray-100 pt-3">
+															<p className="text-slate-700 leading-relaxed whitespace-pre-line">
+																{review.review}
+															</p>
+														</div>
+													</div>
+												))}
+											</div>
+										) : (
+											<div className="text-center py-8 text-slate-500">
+												<p>Aún no hay reseñas para este producto.</p>
+											</div>
+										)}
+									</div>
+								)}
+							</div>
 						</div>
 
 						{/* Right Column: Product Details */}
