@@ -21,6 +21,7 @@ import { imageUrl } from "@/utils";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 const ModalDelete = lazy(() => import("@/Components/Modals/ModalDelete"));
+const ModalShowProduct = lazy(() => import("./Partials/ModalShowProduct"));
 
 const renderImageCell = (params: { row: Item }) => (
 	<img
@@ -132,9 +133,15 @@ export default function Products({
 	const onShowConfig = useMemo(
 		() => ({
 			permissions: ["show products"],
-			hook: (id: number) => console.log("Show:", id),
+			hook: (id: number) =>
+				openModal(({ closeModal }) => (
+					<ModalShowProduct
+						closeModal={closeModal}
+						productId={id}
+					/>
+				)),
 		}),
-		[],
+		[openModal],
 	);
 
 	const onDeleteConfig = useMemo(
