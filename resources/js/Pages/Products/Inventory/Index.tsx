@@ -17,6 +17,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { imageUrl } from "@/utils";
 import ModalCreate from "./Partials/ModalCreate";
 import ModalEdit from "./Partials/ModalEdit";
+import ModalShowInventoryProduct from "./Partials/ModalShowInventoryProduct";
 
 const DataTable = lazy(() => import("@/Components/DataTable"));
 
@@ -101,9 +102,16 @@ export default function InventoryIndex({
 	const onShowConfig = useMemo(
 		() => ({
 			permissions: ["show products"],
-			hook: (id: number) => console.log("Show inventory product", id),
+			hook: (id: number) => {
+				openModal(({ closeModal }) => (
+					<ModalShowInventoryProduct
+						productId={id}
+						closeModal={closeModal}
+					/>
+				));
+			},
 		}),
-		[],
+		[openModal],
 	);
 
 	return (
