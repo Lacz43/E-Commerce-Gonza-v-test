@@ -70,13 +70,13 @@ class QueryFilters
         $this->builder->where(function ($query) use ($value, $searchableFields) {
             foreach ($searchableFields as $field) {
                 if (strpos($field, '.') !== false) {
-                    // Es una relación
+                    // Es una relación, posiblemente anidada
                     $parts = explode('.', $field);
                     $relation = $parts[0];
-                    $relationField = $parts[1];
+                    $relationField = implode('.', array_slice($parts, 1));
                     $relationMethod = $this->snakeToCamel($relation);
                     $query->orWhereHas($relationMethod, function ($subQuery) use ($relationField, $value) {
-                        $subQuery->where($relationField, 'LIKE', "%$value%");
+                        $this->applySearchFilter($subQuery, $relationField, $value);
                     });
                 } else {
                     $query->orWhere($field, 'LIKE', "%$value%");
@@ -86,8 +86,23 @@ class QueryFilters
     }
 
     /**
-     * Verifica si un campo es permitido para filtrar.
+     * Aplica filtro de búsqueda recursivamente para relaciones anidadas.
      */
+    protected function applySearchFilter($query, $field, $value)
+    {
+        if (strpos($field, '.') !== false) {
+            $parts = explode('.', $field);
+            $relation = $parts[0];
+            $nestedField = implode('.', array_slice($parts, 1));
+            $relationMethod = $this->snakeToCamel($relation);
+            $query->whereHas($relationMethod, function ($subQuery) use ($nestedField, $value) {
+                $this->applySearchFilter($subQuery, $nestedField, $value);
+            });
+        } else {
+            $query->where($field, 'LIKE', "%$value%");
+        }
+    }
+
     protected function isFieldAllowed($model, $field): bool
     {
         // Si es una relación, verificar el prefijo de la relación
