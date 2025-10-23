@@ -1,11 +1,12 @@
-import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link } from "@inertiajs/react";
-import { TextField, Button } from "@mui/material";
-import PasswordInput from "@/Components/Register/PasswordInput";
-import PasswordConfirmInput from "@/Components/Register/PasswordConfirmInput";
-import { useForm } from "react-hook-form";
-import routerAsync from "@/Hook/routerAsync";
+import { Button, TextField } from "@mui/material";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import PasswordConfirmInput from "@/Components/Register/PasswordConfirmInput";
+import PasswordInput from "@/Components/Register/PasswordInput";
+import routerAsync from "@/Hook/routerAsync";
+import usePermissions from "@/Hook/usePermissions";
+import GuestLayout from "@/Layouts/GuestLayout";
 
 type FormStruture = {
 	name: string;
@@ -22,11 +23,14 @@ export default function Register() {
 		formState: { errors, isSubmitting },
 	} = useForm<FormStruture>();
 
-    const [password, setPassword] = useState("");
+	const [password, setPassword] = useState("");
+
+	const { fetchPermissions } = usePermissions();
 
 	async function onSubmit(data: FormStruture) {
 		try {
 			await routerAsync("post", route("register"), data);
+			await fetchPermissions();
 		} catch (e) {
 			console.log(e);
 		}
@@ -47,7 +51,10 @@ export default function Register() {
 						size="small"
 						{...register("name", {
 							required: "Necesitas proporcionar un nombre.",
-							minLength: { value: 3, message: "El nombre debe tener al menos 3 letras." },
+							minLength: {
+								value: 3,
+								message: "El nombre debe tener al menos 3 letras.",
+							},
 						})}
 						error={!!errors.name}
 						helperText={errors.name?.message}
@@ -73,7 +80,7 @@ export default function Register() {
 									"icloud.com",
 									"protonmail.com",
 									"aol.com",
-									"protonmail.com"
+									"protonmail.com",
 								];
 								const domain = value.split("@")[1];
 								if (!domain || !allowedDomains.includes(domain)) {
@@ -91,7 +98,7 @@ export default function Register() {
 					className="mt-4"
 					control={control}
 					name="password"
-                    changePassword={(pass) => setPassword(pass)}
+					changePassword={(pass) => setPassword(pass)}
 				/>
 				<PasswordConfirmInput<FormStruture>
 					className="mt-4"
