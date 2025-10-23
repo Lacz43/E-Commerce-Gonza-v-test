@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import { useModal } from "@/Context/Modal";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
+import PermissionService from "@/Services/PermissionService";
 
 type Order = {
 	id: number;
@@ -61,6 +62,14 @@ export default function OrderDetailsModal({ orderId }: Props) {
 	}, [orderId]);
 
 	const updateStatus = async (status: string) => {
+		if (
+			order?.status === "completed" &&
+			PermissionService.getInstance().hasRole(["seller"])
+		) {
+			toast.error("No puedes cambiar el estado de una orden completada");
+			return;
+		}
+
 		setUpdating(true);
 		try {
 			await axios.put(`/orders/${orderId}`, { status });
