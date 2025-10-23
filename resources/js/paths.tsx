@@ -48,7 +48,7 @@ export const paths: Record<string, Route> = {
 			},
 			register: {
 				path: "register",
-				name: "Regitrar",
+				name: "Registrar",
 			},
 		},
 	},
