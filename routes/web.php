@@ -18,6 +18,11 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
+    // Si el usuario tiene el rol 'seller', redirigir a pedidos
+    if ($user->hasRole('seller')) {
+        return redirect()->route('orders.index');
+    }
+
     // Si el usuario no tiene roles específicos, redirigir a sus pedidos
     if ($user->roles->isEmpty()) {
         return redirect()->route('user.orders');
