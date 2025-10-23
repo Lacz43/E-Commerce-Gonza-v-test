@@ -47,6 +47,7 @@ export default function Register() {
 						size="small"
 						{...register("name", {
 							required: "Necesitas proporcionar un nombre.",
+							minLength: { value: 3, message: "El nombre debe tener al menos 3 letras." },
 						})}
 						error={!!errors.name}
 						helperText={errors.name?.message}
@@ -63,6 +64,23 @@ export default function Register() {
 						size="small"
 						{...register("email", {
 							required: "Necesitas proporcionar un Correo Eletronico",
+							validate: (value: string) => {
+								const allowedDomains = [
+									"gmail.com",
+									"yahoo.com",
+									"outlook.com",
+									"hotmail.com",
+									"icloud.com",
+									"protonmail.com",
+									"aol.com",
+									"protonmail.com"
+								];
+								const domain = value.split("@")[1];
+								if (!domain || !allowedDomains.includes(domain)) {
+									return "Solo se permiten correos de proveedores reconocidos.";
+								}
+								return true;
+							},
 						})}
 						error={!!errors.email}
 						helperText={errors.email?.message}
