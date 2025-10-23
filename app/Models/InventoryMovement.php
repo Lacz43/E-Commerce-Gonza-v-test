@@ -97,6 +97,11 @@ class InventoryMovement extends Model
         ];
     }
 
+    public static function getSearchableFields(): array
+    {
+        return ['productInventory.product.name' ];
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
