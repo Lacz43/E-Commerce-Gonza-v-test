@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { Menu } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import Avatar from "@/Components/Avatar";
@@ -13,6 +13,11 @@ export default function Navbar() {
 		const sideNav = document.getElementById("side-nav");
 		if (sideNav) sideNav.classList.add("show-sideNav");
 	}
+
+	const handleLogout = () => {
+		clearPermissions();
+		router.post(route("logout"));
+	};
 
 	return (
 		<nav className="border-b border-gray-300 bg-white sticky top-0 z-1000">
@@ -55,14 +60,13 @@ export default function Navbar() {
 									<Dropdown.Link href={route("profile.edit")}>
 										Perfil
 									</Dropdown.Link>
-									<Dropdown.Link
-										href={route("logout")}
-										method="post"
-										as="button"
-										onClick={() => clearPermissions()}
+									<button
+										type="button"
+										onClick={handleLogout}
+										className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
 									>
 										Cerrar Sesión
-									</Dropdown.Link>
+									</button>
 								</Dropdown.Content>
 							</Dropdown>
 						</div>
