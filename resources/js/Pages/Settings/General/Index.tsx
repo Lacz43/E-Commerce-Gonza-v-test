@@ -343,7 +343,7 @@ export default function Index({ settings }: Props) {
 												<Box
 													sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}
 												>
-													<TextField
+													{/* <TextField
 														select
 														label="Moneda"
 														fullWidth
@@ -357,7 +357,7 @@ export default function Index({ settings }: Props) {
 													>
 														<MenuItem value="USD">Dólares (USD)</MenuItem>
 														<MenuItem value="VES">Bolívares (VES)</MenuItem>
-													</TextField>
+													</TextField> */}
 												</Box>
 											</Box>
 
