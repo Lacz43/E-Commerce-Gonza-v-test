@@ -1,8 +1,13 @@
+import { router } from "@inertiajs/react";
 import { AttachMoney, CalendarToday } from "@mui/icons-material";
 import {
 	Box,
 	Button,
 	Chip,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	Divider,
 	Paper,
 	Table,
@@ -13,6 +18,9 @@ import {
 	TableRow,
 	Typography,
 } from "@mui/material";
+import axios from "axios";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import { useModal } from "@/Context/Modal";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
@@ -40,6 +48,8 @@ type Props = {
 export default function ModalOrderDetail({ data: order, onClose }: Props) {
 	const { closeModal } = useModal();
 	const { settings } = useGeneralSettings();
+	const [updating, setUpdating] = useState(false);
+	const [showConfirmCancel, setShowConfirmCancel] = useState(false);
 
 	const total =
 		order?.order_items?.reduce(
@@ -74,6 +84,21 @@ export default function ModalOrderDetail({ data: order, onClose }: Props) {
 				return "Pendiente";
 			default:
 				return status;
+		}
+	};
+
+	const updateStatus = async (status: string) => {
+		setUpdating(true);
+		try {
+			await axios.put(route('orders.update', order.id), { status });
+			toast.success("Pedido cancelado exitosamente");
+			router.reload();
+			closeModal();
+		} catch (error) {
+			toast.error("Error al cancelar el pedido");
+			console.error(error);
+		} finally {
+			setUpdating(false);
 		}
 	};
 
@@ -252,6 +277,27 @@ export default function ModalOrderDetail({ data: order, onClose }: Props) {
 					</TableBody>
 				</Table>
 			</TableContainer>
+			<Divider sx={{ my: 3 }} />
+			{order.status !== "completed" &&
+				order.status !== "cancelled" &&
+				order.status !== "paid" && (
+					<Box sx={{ textAlign: "center" }}>
+						<Button
+							variant="contained"
+							color="error"
+							onClick={() => setShowConfirmCancel(true)}
+							disabled={updating}
+							sx={{
+								py: 1.5,
+								borderRadius: 2,
+								fontWeight: 600,
+								textTransform: "none",
+							}}
+						>
+							Cancelar Pedido
+						</Button>
+					</Box>
+				)}
 		</>
 	);
 
@@ -273,11 +319,55 @@ export default function ModalOrderDetail({ data: order, onClose }: Props) {
 	);
 
 	return (
-		<ModalStyled
-			header={header}
-			body={body}
-			footer={footer}
-			onClose={() => closeModal()}
-		/>
+		<>
+			<ModalStyled
+				header={header}
+				body={body}
+				footer={footer}
+				onClose={() => closeModal()}
+			/>
+			<Dialog
+				open={showConfirmCancel}
+				onClose={() => setShowConfirmCancel(false)}
+			>
+				<DialogTitle>Confirmar Cancelación</DialogTitle>
+				<DialogContent>
+					<Typography>
+						¿Estás seguro de que deseas cancelar este pedido?
+					</Typography>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => setShowConfirmCancel(false)}
+						variant="outlined"
+						sx={{
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 600,
+							textTransform: "none",
+						}}
+					>
+						Cancelar
+					</Button>
+					<Button
+						onClick={() => {
+							setShowConfirmCancel(false);
+							updateStatus("cancelled");
+						}}
+						variant="contained"
+						color="error"
+						disabled={updating}
+						sx={{
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 600,
+							textTransform: "none",
+						}}
+					>
+						Confirmar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</>
 	);
 }
