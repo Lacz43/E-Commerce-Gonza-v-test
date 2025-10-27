@@ -250,7 +250,7 @@ export default function Index({ settings }: Props) {
 													sx={{ gridColumn: { xs: "span 12", sm: "span 6" } }}
 												>
 													<Tooltip
-														title="Ejemplo: 0412-1234567"
+														title="Ejemplo: +58 412-1234567 o 0412-1234567"
 														placement="top"
 													>
 														<TextField
@@ -260,9 +260,9 @@ export default function Index({ settings }: Props) {
 															{...register("company_phone", {
 																required: "El teléfono es requerido",
 																pattern: {
-																	value: /^0[24][0-9]{2}-?[0-9]{7}$/,
+																	value: /^(\+58|0)[24][0-9]{2}-?[0-9]{7}$/,
 																	message:
-																		"Formato de teléfono inválido (ej: 0412-1234567)",
+																		"Formato de teléfono inválido (ej: +58 412-1234567 o 0412-1234567)",
 																},
 															})}
 															error={!!errors.company_phone}
