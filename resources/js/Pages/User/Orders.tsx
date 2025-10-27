@@ -22,9 +22,12 @@ const DataTable = lazy(() => import("@/Components/DataTable"));
 
 type Props = {
 	orders: paginateResponse<Order>;
+	count: number;
+	pending: number;
+	completed: number;
 };
 
-export default function UserOrders({ orders }: Props) {
+export default function UserOrders({ orders, count, pending, completed }: Props) {
 	const { openModal } = useModal();
 	const { settings } = useGeneralSettings();
 
@@ -143,7 +146,7 @@ export default function UserOrders({ orders }: Props) {
 									Total de pedidos
 								</p>
 								<p className="text-2xl font-bold text-gray-900">
-									{ordersData.total}
+									{count}
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -171,11 +174,7 @@ export default function UserOrders({ orders }: Props) {
 							<div>
 								<p className="text-sm font-medium text-gray-600">Pendientes</p>
 								<p className="text-2xl font-bold text-yellow-600">
-									{
-										ordersData.data?.filter(
-											(order) => order.status?.toLowerCase() === "pending",
-										).length
-									}
+									{pending}
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -203,11 +202,7 @@ export default function UserOrders({ orders }: Props) {
 							<div>
 								<p className="text-sm font-medium text-gray-600">Entregados</p>
 								<p className="text-2xl font-bold text-green-600">
-									{
-										ordersData.data?.filter(
-											(order) => order.status?.toLowerCase() === "completed",
-										).length
-									}
+									{completed}
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
