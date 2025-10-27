@@ -44,8 +44,16 @@ class OrdersController extends Controller
             ->where('user_id', $user->id)
             ->with(['user', 'orderItems.product']));
 
+        $count = Order::where('user_id', $user->id)->count();
+        $pending = Order::where('user_id', $user->id)->where('status', 'pending')->count();
+        $completed = Order::where('user_id', $user->id)->where('status', 'completed')->count();
+        
+
         return Inertia::render('User/Orders', [
             'orders' => $orders,
+            'count' => $count,
+            'pending' => $pending,
+            'completed' => $completed,
         ]);
     }
 
@@ -62,7 +70,7 @@ class OrdersController extends Controller
         ]);
 
         if (!Auth::user()->role) {
-            if($request->status !== 'cancelled') {
+            if ($request->status !== 'cancelled') {
                 return response()->json(['message' => 'No tienes permisos para cambiar el estado del pedido'], 403);
             }
         }
@@ -94,7 +102,7 @@ class OrdersController extends Controller
                 ], 429);
             }
         }
-        
+
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer|exists:products,id',
