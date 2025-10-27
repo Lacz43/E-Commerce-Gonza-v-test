@@ -10,6 +10,10 @@ import {
 	Box,
 	Button,
 	Chip,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	Divider,
 	Paper,
 	Table,
@@ -52,6 +56,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 	const [order, setOrder] = useState<Order | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [updating, setUpdating] = useState(false);
+	const [showConfirmComplete, setShowConfirmComplete] = useState(false);
 	const { settings } = useGeneralSettings();
 
 	useEffect(() => {
@@ -394,7 +399,7 @@ export default function OrderDetailsModal({ orderId }: Props) {
 				<Button
 					variant={order.status === "completed" ? "contained" : "outlined"}
 					color="success"
-					onClick={() => updateStatus("completed")}
+					onClick={() => setShowConfirmComplete(true)}
 					disabled={updating || order.status === "completed"}
 					sx={{
 						py: 1.5,
@@ -441,11 +446,55 @@ export default function OrderDetailsModal({ orderId }: Props) {
 	);
 
 	return (
-		<ModalStyled
-			header={header}
-			body={body}
-			footer={footer}
-			onClose={() => closeModal()}
-		/>
+		<>
+			<ModalStyled
+				header={header}
+				body={body}
+				footer={footer}
+				onClose={() => closeModal()}
+			/>
+			<Dialog
+				open={showConfirmComplete}
+				onClose={() => setShowConfirmComplete(false)}
+			>
+				<DialogTitle>Confirmar Completado</DialogTitle>
+				<DialogContent>
+					<Typography>
+						Esto descontará del inventario. ¿Desea continuar?
+					</Typography>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => setShowConfirmComplete(false)}
+						variant="outlined"
+						sx={{
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 600,
+							textTransform: "none",
+						}}
+					>
+						Cancelar
+					</Button>
+					<Button
+						onClick={() => {
+							setShowConfirmComplete(false);
+							updateStatus("completed");
+						}}
+						variant="contained"
+						color="success"
+						disabled={updating}
+						sx={{
+							py: 1.5,
+							borderRadius: 2,
+							fontWeight: 600,
+							textTransform: "none",
+						}}
+					>
+						Confirmar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</>
 	);
 }
