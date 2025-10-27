@@ -61,6 +61,12 @@ class OrdersController extends Controller
             'status' => 'required|string|in:cancelled,pending,expired,completed,paid',
         ]);
 
+        if (!Auth::user()->role) {
+            if($request->status !== 'cancelled') {
+                return response()->json(['message' => 'No tienes permisos para cambiar el estado del pedido'], 403);
+            }
+        }
+
         $order->update(['status' => $request->status]);
 
         if ($request->status === 'completed') {
