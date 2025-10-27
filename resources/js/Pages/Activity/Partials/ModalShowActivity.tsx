@@ -198,16 +198,16 @@ const ModalShowActivity: React.FC<ModalShowActivityProps> = ({
 						{/* Properties */}
 						{activity.properties &&
 							Object.keys(activity.properties).length > 0 && (
-								<div className="border-t-2 border-slate-100 pt-6">
-									<h4 className="text-base font-bold text-slate-700 mb-3">
-										Propiedades Adicionales
-									</h4>
-									<div className="bg-white border border-gray-200 rounded-lg p-4">
+								<details className="border-t-2 border-slate-100 pt-6">
+									<summary className="text-base font-bold text-slate-700 mb-3 cursor-pointer">
+										Propiedades Avanzadas
+									</summary>
+									<div className="bg-white border border-gray-200 rounded-lg p-4 mt-3">
 										<pre className="text-sm text-slate-700 whitespace-pre-wrap">
 											{JSON.stringify(activity.properties, null, 2)}
 										</pre>
 									</div>
-								</div>
+								</details>
 							)}
 					</div>
 				</div>
