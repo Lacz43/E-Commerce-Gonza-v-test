@@ -74,6 +74,7 @@ export default function CartModal({ onClose, user }: Props) {
 				(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
 				0,
 			);
+			toast.success("Orden creada exitosamente");
 			openModal(({ closeModal }) => (
 				<OrderInfoDialog
 					orderDetails={{ id: orderId, amount: totalAmount }}
@@ -113,6 +114,7 @@ export default function CartModal({ onClose, user }: Props) {
 				(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
 				0,
 			);
+			toast.success("Orden creada exitosamente");
 			openModal(({ closeModal }) => (
 				<OrderInfoDialog
 					orderDetails={{ id: orderId, amount: totalAmount }}
