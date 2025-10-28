@@ -38,7 +38,7 @@ export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 						<p className="text-lg font-semibold text-slate-700 mb-2">
 							Monto Total
 						</p>
-						<p className="text-3xl font-black bg-gradient-to-r from-orange-100 to-emerald-200 bg-clip-text text-transparent">
+						<p className="text-3xl font-black bg-gradient-to-r bg-clip-text text-green-700">
 							{settings.currency === "VES" ? "Bs " : "$ "}
 							{orderDetails.amount.toFixed(2)}
 						</p>
