@@ -56,7 +56,7 @@ export const paths: Record<string, Route> = {
 		path: "products.index",
 		name: "Productos",
 		icon: <Category />,
-		roles: ["admin"],
+		roles: ["admin", "seller"],
 		group: "management",
 		children: {
 			register: {
@@ -77,7 +77,7 @@ export const paths: Record<string, Route> = {
 		path: "inventory.index",
 		name: "Inventario",
 		icon: <Inventory />,
-		roles: ["admin"],
+		roles: ["admin", "seller"],
 		group: "management",
 		children: {
 			index: {
