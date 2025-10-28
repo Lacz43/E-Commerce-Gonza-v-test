@@ -35,3 +35,6 @@ Route::middleware('auth', 'permission:delete backups')->group(function () {
 
 // Ruta pública para obtener settings generales (sin middleware auth)
 Route::get('/settings/public', [GeneralSettingsController::class, 'getPublicSettings'])->name('settings.public');
+
+// Ruta pública para obtener settings de órdenes (sin middleware auth)
+Route::get('/settings/order/public', [OrderSettingsController::class, 'getPublicSettings'])->name('settings.order.public');
