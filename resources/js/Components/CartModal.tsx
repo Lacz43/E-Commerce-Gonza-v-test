@@ -3,8 +3,10 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
+import OrderInfoDialog from "@/Components/OrderInfoDialog";
 import ProductsInCar from "@/Components/ProductsInCar";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
+import { useModal } from "@/Context/Modal";
 import shoppingCart from "@/shoppingCart";
 
 type Props = {
@@ -15,6 +17,7 @@ type Props = {
 export default function CartModal({ onClose, user }: Props) {
 	const [items, setItems] = useState<Item[]>([]);
 	const { settings } = useGeneralSettings();
+	const { openModal } = useModal();
 
 	function emtyCart() {
 		const cart = new shoppingCart();
@@ -66,9 +69,21 @@ export default function CartModal({ onClose, user }: Props) {
 			}
 			url += `?text=${encodeURI(message)}`;
 			window.open(url);
-			cart.clear();
-			setItems([]);
-			onClose();
+
+			const totalAmount = cart.items.reduce(
+				(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
+				0,
+			);
+			openModal(({ closeModal }) => (
+				<OrderInfoDialog
+					orderDetails={{ id: orderId, amount: totalAmount }}
+					onClose={() => {
+						closeModal();
+						emtyCart();
+						onClose();
+					}}
+				/>
+			));
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
 				console.log("Axios error:", error.response?.data);
@@ -78,7 +93,7 @@ export default function CartModal({ onClose, user }: Props) {
 				toast.error("Error inesperado");
 			}
 		}
-	}, [createOrder, settings.company_phone]);
+	}, [createOrder, settings.company_phone, openModal]);
 
 	const sendOrder = useCallback(async () => {
 		if (!user) {
@@ -94,10 +109,20 @@ export default function CartModal({ onClose, user }: Props) {
 
 		try {
 			const orderId = await createOrder(items);
-			toast.success(`Orden creada exitosamente. ID: ${orderId}`);
-			cart.clear();
-			setItems([]);
-			onClose();
+			const totalAmount = cart.items.reduce(
+				(prev, curr) => curr.price * (curr.quantity ?? 1) + prev,
+				0,
+			);
+			openModal(({ closeModal }) => (
+				<OrderInfoDialog
+					orderDetails={{ id: orderId, amount: totalAmount }}
+					onClose={() => {
+						closeModal();
+						emtyCart();
+						onClose();
+					}}
+				/>
+			));
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
 				console.log("Axios error:", error.response?.data);
@@ -107,7 +132,7 @@ export default function CartModal({ onClose, user }: Props) {
 				toast.error("Error inesperado");
 			}
 		}
-	}, [onClose, createOrder, user]);
+	}, [onClose, createOrder, user, openModal]);
 
 	return (
 		<ModalStyled
