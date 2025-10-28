@@ -18,6 +18,8 @@ class FakeDataSeeder extends Seeder
 
         $this->call([AdminSeeder::class]);
 
+        $this->call([SellerSeeder::class]);
+
         ProductCategory::factory()->count(5)->create();
         Brand::factory()->count(10)->create();
         Product::factory()->count(20)->withImages(3)->withBrands()->withInventory()->create();
