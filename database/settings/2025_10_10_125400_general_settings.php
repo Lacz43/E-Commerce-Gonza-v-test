@@ -12,7 +12,7 @@ return new class extends SettingsMigration
         $this->migrator->add('general.company_address', null);
         $this->migrator->add('general.company_rif', null);
         $this->migrator->add('general.company_email', null);
-        $this->migrator->add('general.currency', 'VES');
+        $this->migrator->add('general.currency', 'USD');
         $this->migrator->add('general.reference_price', null);
     }
 };

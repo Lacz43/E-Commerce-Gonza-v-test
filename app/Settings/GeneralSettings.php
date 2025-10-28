@@ -23,7 +23,7 @@ class GeneralSettings extends Settings
     public ?string $company_address = null;
     public ?string $company_rif = null;
     public ?string $company_email = null;
-    public string $currency = 'VES';
+    public string $currency = 'USD';
 
     public static function group(): string
     {
