@@ -36,6 +36,14 @@ export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 				<div className="space-y-4">
 					<div className="text-center">
 						<p className="text-lg font-semibold text-slate-700 mb-2">
+							ID de Orden
+						</p>
+						<p className="text-2xl font-bold bg-gradient-to-r text-green-700 bg-clip-text mb-4">
+							{orderDetails.id}
+						</p>
+					</div>
+					<div className="text-center">
+						<p className="text-lg font-semibold text-slate-700 mb-2">
 							Monto Total
 						</p>
 						<p className="text-3xl font-black bg-gradient-to-r bg-clip-text text-green-700">
