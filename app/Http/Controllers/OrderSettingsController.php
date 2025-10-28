@@ -70,4 +70,19 @@ class OrderSettingsController extends Controller
 
         return back()->with('success', 'Configuración de órdenes actualizada correctamente.');
     }
+
+    /**
+     * Get public order settings.
+     */
+    public function getPublicSettings()
+    {
+        $settings = app(OrderSettings::class);
+
+        return response()->json([
+            'max_payment_wait_time_hours' => $settings->max_payment_wait_time_hours ?? 2,
+            'max_guest_orders_per_hour' => $settings->max_guest_orders_per_hour ?? 3,
+            'max_guest_order_amount' => $settings->max_guest_order_amount ?? 1000.00,
+            'max_guest_order_items' => $settings->max_guest_order_items ?? 10,
+        ]);
+    }
 }
