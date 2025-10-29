@@ -96,7 +96,7 @@ const getFieldLabel = (field: string): string => {
 		phone: "Teléfono",
 		bank: "Banco",
 		account_holder: "Titular de la Cuenta",
-		document_number: "Número de Documento",
+		document_number: "Cédula",
 		cedula: "Cédula",
 		account_number: "Número de Cuenta",
 		email: "Correo Electrónico",
@@ -288,7 +288,7 @@ export default function PaymentMethodFormModal({
 												message: "Correo electrónico inválido",
 											},
 										}),
-										...(field === "cedula" && {
+										...((field === "cedula" || field === "document_number") && {
 											pattern: {
 												value: /^\d+$/,
 												message: "La cédula debe contener solo números",
