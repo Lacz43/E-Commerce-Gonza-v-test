@@ -87,10 +87,10 @@ export default function ModalOrderDetail({ data: order, onClose }: Props) {
 		}
 	};
 
-	const updateStatus = async (status: string) => {
+	const updateStatus = async () => {
 		setUpdating(true);
 		try {
-			await axios.put(route('orders.update', order.id), { status });
+			await axios.put(route('orders.cancel', order.id));
 			toast.success("Pedido cancelado exitosamente");
 			router.reload();
 			closeModal();
@@ -352,7 +352,7 @@ export default function ModalOrderDetail({ data: order, onClose }: Props) {
 					<Button
 						onClick={() => {
 							setShowConfirmCancel(false);
-							updateStatus("cancelled");
+							updateStatus();
 						}}
 						variant="contained"
 						color="error"
