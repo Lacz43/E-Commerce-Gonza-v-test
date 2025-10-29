@@ -46,3 +46,4 @@ require __DIR__.'/attachments.php';
 require __DIR__.'/orders.php';
 require __DIR__.'/metrics.php';
 require __DIR__.'/reports.php';
+require __DIR__.'/payment_methods.php';

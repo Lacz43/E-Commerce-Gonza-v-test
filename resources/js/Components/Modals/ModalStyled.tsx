@@ -22,7 +22,7 @@ const IconStyle: SxProps = {
 export default function ModalStyled(props: Props) {
 	const { header, body, footer } = props;
 	return (
-		<div className="animate-fadeIn">
+		<div className="animate-fadeIn w-full sm:w-auto">
 			<div className="max-h-dvh flex flex-col rounded-xl overflow-hidden shadow-2xl border border-emerald-200/50">
 				{/* Header con gradiente moderno */}
 				<div className="py-4 px-6 text-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 flex justify-between items-center text-white shadow-lg">

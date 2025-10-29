@@ -1,4 +1,22 @@
-import { ShoppingCart } from "@mui/icons-material";
+import {
+	AccountBalance,
+	ContentCopy,
+	CreditCard,
+	PhoneAndroid,
+	ShoppingCart,
+} from "@mui/icons-material";
+import {
+	Box,
+	FormControl,
+	IconButton,
+	InputLabel,
+	MenuItem,
+	Select,
+	Typography,
+} from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
 import { useGeneralSettings } from "@/Hook/useGeneralSettings";
 import { useOrderSettings } from "@/Hook/useOrderSettings";
@@ -8,9 +26,102 @@ type Props = {
 	onClose: () => void;
 };
 
+type PaymentMethod = {
+	id: number;
+	type: "pago_movil" | "transferencia_bancaria" | "zelle" | "binance";
+	type_label: string;
+	name: string;
+	account_details: Record<string, any>;
+	is_active: boolean;
+	created_at: string;
+	updated_at: string;
+};
+
+const getFieldLabel = (key: string) => {
+	switch (key) {
+		case "phone":
+			return "Teléfono";
+		case "bank":
+			return "Banco";
+		case "account_holder":
+			return "Titular de la Cuenta";
+		case "document_type":
+			return "Tipo de Documento";
+		case "document_number":
+			return "Cédula";
+		case "cedula":
+			return "Cédula";
+		case "account_number":
+			return "Número de Cuenta";
+		case "email":
+			return "Correo Electrónico";
+		case "wallet_address":
+			return "Dirección de Billetera";
+		case "user_id":
+			return "ID de Usuario";
+		case "merchant_id":
+			return "ID de Comercio";
+		default:
+			return key.charAt(0).toUpperCase() + key.slice(1);
+	}
+};
+
+const getTypeIcon = (type: string) => {
+	switch (type) {
+		case "pago_movil":
+			return <PhoneAndroid />;
+		case "transferencia_bancaria":
+			return <AccountBalance />;
+		case "zelle":
+			return <CreditCard />;
+		case "binance":
+			return <CreditCard />;
+		default:
+			return <CreditCard />;
+	}
+};
+
 export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 	const { settings } = useGeneralSettings();
 	const { settings: orderSettings } = useOrderSettings();
+
+	const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+	const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
+		null,
+	);
+
+	useEffect(() => {
+		axios
+			.get(route("payment-methods.active"))
+			.then((res) => {
+				setPaymentMethods(res.data.payment_methods);
+			})
+			.catch(() => {
+				toast.error("Error al cargar métodos de pago");
+			});
+	}, []);
+
+	const handleCopy = () => {
+		if (!selectedMethod) return;
+
+		const details = Object.values(selectedMethod.account_details).join("\n");
+		const text = details;
+
+		navigator.clipboard
+			.writeText(text)
+			.then(() => {
+				toast.success("Información copiada al portapapeles");
+			})
+			.catch(() => {
+				toast.error("Error al copiar");
+			});
+	};
+
+	const handleSendWhatsApp = () => {
+		const message = `Orden ID: ${orderDetails?.id}`;
+		const url = `https://wa.me/${settings.company_phone}?text=${encodeURI(message)}`;
+		window.open(url);
+	};
 
 	if (!orderDetails) return null;
 
@@ -57,10 +168,63 @@ export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 							{orderSettings.max_payment_wait_time_hours} horas
 						</p>
 					</div>
+					<div>
+						<FormControl fullWidth>
+							<InputLabel>Seleccionar Método de Pago</InputLabel>
+							<Select
+								value={selectedMethod?.id || ""}
+								label="Seleccionar Método de Pago"
+								onChange={(e) => {
+									const id = Number(e.target.value);
+									const method = paymentMethods.find((m) => m.id === id);
+									setSelectedMethod(method || null);
+								}}
+							>
+								{paymentMethods.map((method) => (
+									<MenuItem key={method.id} value={method.id}>
+										<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+											{getTypeIcon(method.type)}
+											{method.name} - {method.type_label}
+										</Box>
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</div>
+					{selectedMethod && (
+						<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+							<div className="flex justify-between items-center mb-2">
+								<Typography variant="h6">
+									Detalles del Método de Pago
+								</Typography>
+								<IconButton onClick={handleCopy} color="primary">
+									<ContentCopy />
+								</IconButton>
+							</div>
+							{Object.entries(selectedMethod.account_details).map(
+								([key, value]) => (
+									<Box key={key} sx={{ mb: 1 }}>
+										<Typography variant="body2" color="text.secondary">
+											<strong>{getFieldLabel(key)}:</strong> {String(value)}
+										</Typography>
+									</Box>
+								),
+							)}
+						</div>
+					)}
 				</div>
 			}
 			footer={
-				<div className="flex justify-end">
+				<div className="flex justify-end gap-3">
+					{settings.company_phone && (
+						<button
+							type="button"
+							onClick={handleSendWhatsApp}
+							className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+						>
+							Enviar por WhatsApp
+						</button>
+					)}
 					<button
 						type="button"
 						onClick={onClose}

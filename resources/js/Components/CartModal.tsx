@@ -140,25 +140,25 @@ export default function CartModal({ onClose, user }: Props) {
 		<ModalStyled
 			onClose={onClose}
 			header={
-				<div className="flex items-center justify-between w-full">
+				<div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
 					<div className="flex items-center gap-4">
-						<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-emerald-500 flex items-center justify-center shadow-lg">
-							<ShoppingCart className="text-white" fontSize="medium" />
+						<div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-orange-500 to-emerald-500 flex items-center justify-center shadow-lg">
+							<ShoppingCart className="text-white" fontSize="small" />
 						</div>
 						<div>
-							<h2 className="text-2xl font-extrabold bg-gradient-to-r from-orange-100 to-emerald-200 bg-clip-text text-transparent">
+							<h2 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-orange-100 to-emerald-200 bg-clip-text text-transparent">
 								Mi Carrito
 							</h2>
-							<p className="text-sm text-slate-100 font-medium">
+							<p className="text-xs sm:text-sm text-slate-100 font-medium">
 								{items.length} {items.length === 1 ? "producto" : "productos"}
 							</p>
 						</div>
 					</div>
-					<div className="text-right px-4 py-2">
+					<div className="text-center sm:text-right px-4 py-2">
 						<p className="text-xs text-slate-100 uppercase tracking-wider font-bold mb-1">
 							Total a pagar
 						</p>
-						<p className="text-3xl font-black bg-gradient-to-r from-orange-100 to-emerald-200 bg-clip-text text-transparent">
+						<p className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-orange-100 to-emerald-200 bg-clip-text text-transparent">
 							{settings.currency === "VES" ? "Bs " : "$ "}
 							{items
 								.reduce(

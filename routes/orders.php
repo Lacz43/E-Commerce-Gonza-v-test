@@ -16,4 +16,8 @@ Route::middleware(['auth', 'permission:edit orders|create orders'])->group(funct
     Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::put('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
+});
+
 Route::post('/order/store', [OrdersController::class, 'store'])->name('order.store');

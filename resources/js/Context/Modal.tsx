@@ -30,6 +30,8 @@ const style: SxProps = {
 	top: "50%",
 	left: "50%",
 	transform: "translate(-50%, -50%)",
+	width: { xs: "95vw", sm: "auto" },
+	maxWidth: { xs: "none", sm: "600px" },
 	bgcolor: "background.paper",
 	borderRadius: 2,
 	boxShadow: 24,

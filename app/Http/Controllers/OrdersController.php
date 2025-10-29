@@ -69,12 +69,6 @@ class OrdersController extends Controller
             'status' => 'required|string|in:cancelled,pending,expired,completed,paid',
         ]);
 
-        if (!Auth::user()->role) {
-            if ($request->status !== 'cancelled') {
-                return response()->json(['message' => 'No tienes permisos para cambiar el estado del pedido'], 403);
-            }
-        }
-
         $order->update(['status' => $request->status]);
 
         if ($request->status === 'completed') {
@@ -84,6 +78,15 @@ class OrdersController extends Controller
         }
 
         return response()->json(['message' => 'Estado actualizado exitosamente']);
+    }
+
+    public function cancel(Order $order)
+    {
+        if($order->user_id !== Auth::id()) {
+            return response()->json(['message' => 'No tienes permisos para cancelar este pedido'], 403);
+        }
+        $order->update(['status' => 'cancelled']);
+        return response()->json(['message' => 'Pedido cancelado exitosamente']);
     }
 
     public function store(Request $request)
