@@ -22,7 +22,7 @@ import {
 	Typography,
 } from "@mui/material";
 import axios from "axios";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import CreateButton from "@/Components/CreateButton";
 import PageHeader from "@/Components/PageHeader";
@@ -199,12 +199,34 @@ export default function PaymentMethods({
 					const methods = paymentMethods[typeConfig.value] || [];
 
 					return (
-						<Card key={typeConfig.value} sx={{ mb: 3 }}>
+						<Card
+							key={typeConfig.value}
+							elevation={2}
+							sx={{
+								mb: 3,
+								borderRadius: 3,
+								border: "1px solid rgba(102, 126, 234, 0.15)",
+							}}
+						>
 							<CardHeader
 								title={
-									<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-										{typeConfig.icon}
-										<Typography variant="h6">{typeConfig.label}</Typography>
+									<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+										<Box
+											sx={{
+												background:
+													"linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+												borderRadius: 2,
+												p: 1,
+												display: "flex",
+											}}
+										>
+											{React.cloneElement(typeConfig.icon, {
+												sx: { color: "white", fontSize: 24 },
+											})}
+										</Box>
+										<Typography variant="h6" fontWeight={600}>
+											{typeConfig.label}
+										</Typography>
 										<Typography variant="body2" color="text.secondary">
 											({methods.length} método{methods.length !== 1 ? "s" : ""})
 										</Typography>
