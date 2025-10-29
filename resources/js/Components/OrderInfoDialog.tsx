@@ -1,9 +1,9 @@
 import {
-	ShoppingCart,
-	ContentCopy,
-	PhoneAndroid,
 	AccountBalance,
+	ContentCopy,
 	CreditCard,
+	PhoneAndroid,
+	ShoppingCart,
 } from "@mui/icons-material";
 import {
 	Box,
@@ -14,12 +14,12 @@ import {
 	Select,
 	Typography,
 } from "@mui/material";
-import ModalStyled from "@/Components/Modals/ModalStyled";
-import { useGeneralSettings } from "@/Hook/useGeneralSettings";
-import { useOrderSettings } from "@/Hook/useOrderSettings";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import ModalStyled from "@/Components/Modals/ModalStyled";
+import { useGeneralSettings } from "@/Hook/useGeneralSettings";
+import { useOrderSettings } from "@/Hook/useOrderSettings";
 
 type Props = {
 	orderDetails: { id: string; amount: number } | null;
@@ -49,8 +49,8 @@ const getFieldLabel = (key: string) => {
 			return "Tipo de Documento";
 		case "document_number":
 			return "Número de Documento";
-		case "account_type":
-			return "Tipo de Cuenta";
+		case "cedula":
+			return "Cédula";
 		case "account_number":
 			return "Número de Cuenta";
 		case "email":

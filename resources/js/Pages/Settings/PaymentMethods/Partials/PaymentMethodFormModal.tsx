@@ -72,7 +72,7 @@ const paymentMethodTypes: PaymentMethodType[] = [
 		value: "transferencia_bancaria",
 		label: "Transferencia Bancaria",
 		icon: <AccountBalance />,
-		fields: ["bank", "account_type", "account_number", "account_holder"],
+		fields: ["bank", "cedula", "account_number", "account_holder"],
 	},
 	// {
 	// 	value: "zelle",
@@ -97,7 +97,7 @@ const getFieldLabel = (field: string): string => {
 		bank: "Banco",
 		account_holder: "Titular de la Cuenta",
 		document_number: "Número de Documento",
-		account_type: "Tipo de Cuenta",
+		cedula: "Cédula",
 		account_number: "Número de Cuenta",
 		email: "Correo Electrónico",
 		wallet_address: "Dirección de Billetera",
@@ -286,6 +286,12 @@ export default function PaymentMethodFormModal({
 											pattern: {
 												value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 												message: "Correo electrónico inválido",
+											},
+										}),
+										...(field === "cedula" && {
+											pattern: {
+												value: /^\d+$/,
+												message: "La cédula debe contener solo números",
 											},
 										}),
 									})}

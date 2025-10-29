@@ -82,8 +82,8 @@ const getFieldLabel = (key: string) => {
 			return "Tipo de Documento";
 		case "document_number":
 			return "Número de Documento";
-		case "account_type":
-			return "Tipo de Cuenta";
+		case "cedula":
+			return "Cédula";
 		case "account_number":
 			return "Número de Cuenta";
 		case "email":
