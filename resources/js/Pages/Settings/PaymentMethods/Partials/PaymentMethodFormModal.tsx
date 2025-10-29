@@ -64,7 +64,6 @@ const paymentMethodTypes: PaymentMethodType[] = [
 			"phone",
 			"bank",
 			"account_holder",
-			"document_type",
 			"document_number",
 		],
 	},
@@ -96,7 +95,6 @@ const getFieldLabel = (field: string): string => {
 		phone: "Teléfono",
 		bank: "Banco",
 		account_holder: "Titular de la Cuenta",
-		document_type: "Tipo de Documento",
 		document_number: "Número de Documento",
 		account_type: "Tipo de Cuenta",
 		account_number: "Número de Cuenta",
@@ -273,7 +271,7 @@ export default function PaymentMethodFormModal({
 										required: `${getFieldLabel(field)} es requerido`,
 									})}
 									error={!!errors.account_details?.[field]}
-									helperText={errors.account_details?.[field]?.message}
+									helperText={errors.account_details?.[field]?.message as string}
 								/>
 							</Grid>
 						))}
