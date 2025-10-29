@@ -117,6 +117,12 @@ export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 			});
 	};
 
+	const handleSendWhatsApp = () => {
+		const message = `Orden ID: ${orderDetails?.id}`;
+		const url = `https://wa.me/${settings.company_phone}?text=${encodeURI(message)}`;
+		window.open(url);
+	};
+
 	if (!orderDetails) return null;
 
 	return (
@@ -209,7 +215,16 @@ export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 				</div>
 			}
 			footer={
-				<div className="flex justify-end">
+				<div className="flex justify-end gap-3">
+					{settings.company_phone && (
+						<button
+							type="button"
+							onClick={handleSendWhatsApp}
+							className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+						>
+							Enviar por WhatsApp
+						</button>
+					)}
 					<button
 						type="button"
 						onClick={onClose}
