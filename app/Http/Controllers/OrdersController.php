@@ -80,6 +80,15 @@ class OrdersController extends Controller
         return response()->json(['message' => 'Estado actualizado exitosamente']);
     }
 
+    public function cancel(Order $order)
+    {
+        if($order->user_id !== Auth::id()) {
+            return response()->json(['message' => 'No tienes permisos para cancelar este pedido'], 403);
+        }
+        $order->update(['status' => 'cancelled']);
+        return response()->json(['message' => 'Pedido cancelado exitosamente']);
+    }
+
     public function store(Request $request)
     {
         // Rate limiting for guest users
