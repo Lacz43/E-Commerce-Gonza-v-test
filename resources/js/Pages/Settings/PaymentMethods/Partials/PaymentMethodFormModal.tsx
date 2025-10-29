@@ -269,6 +269,24 @@ export default function PaymentMethodFormModal({
 									label={getFieldLabel(field)}
 									{...register(`account_details.${field}`, {
 										required: `${getFieldLabel(field)} es requerido`,
+										...(field === 'phone' && {
+											pattern: {
+												value: /^\d{4}-\d{7}$/,
+												message: 'Formato: xxxx-xxxxxxx',
+											},
+										}),
+										...(field === 'account_number' && {
+											pattern: {
+												value: /^\d{20}$/,
+												message: 'Debe tener exactamente 20 dígitos',
+											},
+										}),
+										...(field === 'email' && {
+											pattern: {
+												value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+												message: 'Correo electrónico inválido',
+											},
+										}),
 									})}
 									error={!!errors.account_details?.[field]}
 									helperText={errors.account_details?.[field]?.message as string}
