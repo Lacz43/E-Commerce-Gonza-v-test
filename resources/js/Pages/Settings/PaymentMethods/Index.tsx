@@ -1,47 +1,33 @@
-import { Head } from "@inertiajs/react";
 import {
 	AccountBalance,
-	Add,
 	CreditCard,
 	Delete,
 	Edit,
 	PhoneAndroid,
 	Power,
-	PowerOff,
 	Visibility,
 	VisibilityOff,
 } from "@mui/icons-material";
 import {
 	Alert,
 	Box,
-	Button,
 	Card,
 	CardContent,
 	CardHeader,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Divider,
-	FormControl,
 	Grid,
 	IconButton,
-	InputLabel,
-	MenuItem,
 	Paper,
-	Select,
-	SelectChangeEvent,
-	TextField,
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import PageHeader from "@/Components/PageHeader";
+import PaymentMethodFormModal from "./Partials/PaymentMethodFormModal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CreateButton from "@/Components/CreateButton";
+import { useModal } from "@/Context/Modal";
 
 /*
  * INFO: PaymentMethod
@@ -58,195 +44,103 @@ type PaymentMethod = {
 };
 
 /*
- * INFO: PaymentMethodsProps
+ * PaymentMethods component
  */
-type PaymentMethodsProps = {
-	paymentMethods: Record<string, PaymentMethod[]>;
-};
-
-/*
- * INFO: FormData
- */
-type FormData = {
-	type: "pago_movil" | "transferencia_bancaria" | "zelle" | "binance";
-	name: string;
-	account_details: Record<string, any>;
-	is_active: boolean;
-};
-
-/*
- * INFO: PaymentMethodType
- */
-type PaymentMethodType = {
-	value: "pago_movil" | "transferencia_bancaria" | "zelle" | "binance";
-	label: string;
-	icon: React.ReactNode;
-	fields: string[];
-};
-
-/*
- * Payment method types configuration
- */
-const paymentMethodTypes: PaymentMethodType[] = [
+const paymentMethodTypes = [
 	{
 		value: "pago_movil",
 		label: "Pago Móvil",
 		icon: <PhoneAndroid />,
-		fields: [
-			"phone",
-			"bank",
-			"account_holder",
-			"document_type",
-			"document_number",
-		],
 	},
 	{
 		value: "transferencia_bancaria",
 		label: "Transferencia Bancaria",
 		icon: <AccountBalance />,
-		fields: ["bank", "account_type", "account_number", "account_holder"],
 	},
 	{
 		value: "zelle",
 		label: "Zelle",
 		icon: <CreditCard />,
-		fields: ["email", "account_holder"],
 	},
 	{
 		value: "binance",
 		label: "Binance",
-		icon: <CreditCard />,
-		fields: ["wallet_address", "user_id", "email", "merchant_id"],
+		icon: <Power />,
 	},
 ];
 
-/*
- * Get field label
- */
-const getFieldLabel = (field: string): string => {
-	const labels: Record<string, string> = {
-		phone: "Teléfono",
-		bank: "Banco",
-		account_holder: "Titular de la Cuenta",
-		document_type: "Tipo de Documento",
-		document_number: "Número de Documento",
-		account_type: "Tipo de Cuenta",
-		account_number: "Número de Cuenta",
-		email: "Correo Electrónico",
-		wallet_address: "Dirección de Billetera",
-		user_id: "ID de Usuario",
-		merchant_id: "ID de Comercio",
-	};
-	return labels[field] || field;
+const getFieldLabel = (key: string) => {
+	switch (key) {
+		case "phone":
+			return "Teléfono";
+		case "bank":
+			return "Banco";
+		case "account_holder":
+			return "Titular de la Cuenta";
+		case "document_type":
+			return "Tipo de Documento";
+		case "document_number":
+			return "Número de Documento";
+		case "account_type":
+			return "Tipo de Cuenta";
+		case "account_number":
+			return "Número de Cuenta";
+		case "email":
+			return "Correo Electrónico";
+		case "wallet_address":
+			return "Dirección de Billetera";
+		case "user_id":
+			return "ID de Usuario";
+		case "merchant_id":
+			return "ID de Comercio";
+		default:
+			return key.charAt(0).toUpperCase() + key.slice(1);
+	}
 };
 
-/*
- * PaymentMethods component
- */
 export default function PaymentMethods({
 	paymentMethods,
-}: PaymentMethodsProps) {
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(
-		null,
-	);
-	const [selectedType, setSelectedType] =
-		useState<PaymentMethodType["value"]>("pago_movil");
-
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<FormData>({
-		defaultValues: {
-			type: "pago_movil",
-			name: "",
-			account_details: {},
-			is_active: true,
-		},
-	});
-
-	const watchedType = watch("type");
+}: {
+	paymentMethods: Record<string, PaymentMethod[]>;
+}) {
+	const { openModal } = useModal();
+	const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(null);
 
 	/*
-	 * Handle type change
-	 */
-	const handleTypeChange = useCallback(
-		(event: SelectChangeEvent) => {
-			const type = event.target.value as PaymentMethodType["value"];
-			setSelectedType(type);
-			setValue("type", type);
-			setValue("account_details", {});
-		},
-		[setValue],
-	);
-
-	/*
-	 * Open create dialog
+	 * Handle create
 	 */
 	const handleCreate = useCallback(() => {
 		setEditingMethod(null);
-		setSelectedType("pago_movil");
-		reset({
-			type: "pago_movil",
-			name: "",
-			account_details: {},
-			is_active: true,
-		});
-		setDialogOpen(true);
-	}, [reset]);
+		openModal(({ closeModal }) => (
+			<PaymentMethodFormModal
+				editingMethod={null}
+				onSuccess={() => {
+					closeModal();
+					window.location.reload();
+				}}
+				closeModal={closeModal}
+			/>
+		));
+	}, [openModal]);
 
 	/*
-	 * Open edit dialog
+	 * Handle edit
 	 */
 	const handleEdit = useCallback(
 		(method: PaymentMethod) => {
 			setEditingMethod(method);
-			setSelectedType(method.type);
-			reset({
-				type: method.type,
-				name: method.name,
-				account_details: method.account_details,
-				is_active: method.is_active,
-			});
-			setDialogOpen(true);
+			openModal(({ closeModal }) => (
+				<PaymentMethodFormModal
+					editingMethod={method}
+					onSuccess={() => {
+						closeModal();
+						window.location.reload();
+					}}
+					closeModal={closeModal}
+				/>
+			));
 		},
-		[reset],
-	);
-
-	/*
-	 * Handle form submit
-	 */
-	const onSubmit = useCallback(
-		async (data: FormData) => {
-			try {
-				if (editingMethod) {
-					await axios.put(
-						route("payment-methods.update", editingMethod.id),
-						data,
-					);
-					toast.success("Método de pago actualizado correctamente");
-				} else {
-					await axios.post(route("payment-methods.store"), data);
-					toast.success("Método de pago creado correctamente");
-				}
-
-				window.location.reload();
-			} catch (error) {
-				if (error instanceof AxiosError) {
-					toast.error(
-						error.response?.data?.message ||
-							"Error al guardar el método de pago",
-					);
-				} else {
-					toast.error("Error desconocido");
-				}
-			}
-		},
-		[editingMethod],
+		[openModal],
 	);
 
 	/*
@@ -281,28 +175,22 @@ export default function PaymentMethods({
 		}
 	}, []);
 
-	/*
-	 * Get current type configuration
-	 */
-	const currentTypeConfig = paymentMethodTypes.find(
-		(t) => t.value === watchedType,
-	);
-
 	return (
 		<AuthenticatedLayout>
-			<Head title="Métodos de Pago" />
-
 			<PageHeader
 				title="Métodos de Pago"
 				subtitle="Gestiona los métodos de pago disponibles para tus clientes"
 				icon={CreditCard}
 			/>
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-                <CreateButton
-                    onAction={handleCreate}
-                    label="Nuevo Método"
-                />
-            </div>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "flex-end",
+					marginBottom: 16,
+				}}
+			>
+				<CreateButton onAction={handleCreate} label="Nuevo Método" />
+			</div>
 			<Box sx={{ mt: 3 }}>
 				{paymentMethodTypes.map((typeConfig) => {
 					const methods = paymentMethods[typeConfig.value] || [];
@@ -415,82 +303,6 @@ export default function PaymentMethods({
 					);
 				})}
 			</Box>
-
-			{/* Create/Edit Dialog */}
-			<Dialog
-				open={dialogOpen}
-				onClose={() => setDialogOpen(false)}
-				maxWidth="md"
-				fullWidth
-			>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<DialogTitle>
-						{editingMethod ? "Editar Método de Pago" : "Nuevo Método de Pago"}
-					</DialogTitle>
-					<DialogContent>
-						<Grid container spacing={2} sx={{ mt: 1 }}>
-							<Grid item xs={12} md={6}>
-								<FormControl fullWidth>
-									<InputLabel>Tipo de Método</InputLabel>
-									<Select
-										value={watchedType}
-										label="Tipo de Método"
-										onChange={handleTypeChange}
-									>
-										{paymentMethodTypes.map((type) => (
-											<MenuItem key={type.value} value={type.value}>
-												<Box
-													sx={{ display: "flex", alignItems: "center", gap: 1 }}
-												>
-													{type.icon}
-													{type.label}
-												</Box>
-											</MenuItem>
-										))}
-									</Select>
-								</FormControl>
-							</Grid>
-							<Grid item xs={12} md={6}>
-								<TextField
-									fullWidth
-									label="Nombre"
-									{...register("name", { required: "El nombre es requerido" })}
-									error={!!errors.name}
-									helperText={errors.name?.message}
-								/>
-							</Grid>
-						</Grid>
-
-						<Divider sx={{ my: 2 }} />
-
-						<Typography variant="h6" sx={{ mb: 2 }}>
-							Datos de la Cuenta
-						</Typography>
-
-						<Grid container spacing={2}>
-							{currentTypeConfig?.fields.map((field) => (
-								<Grid item xs={12} md={6} key={field}>
-									<TextField
-										fullWidth
-										label={getFieldLabel(field)}
-										{...register(`account_details.${field}`, {
-											required: `${getFieldLabel(field)} es requerido`,
-										})}
-										error={!!errors.account_details?.[field]}
-										helperText={errors.account_details?.[field]?.message}
-									/>
-								</Grid>
-							))}
-						</Grid>
-					</DialogContent>
-					<DialogActions>
-						<Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-						<Button type="submit" variant="contained">
-							{editingMethod ? "Actualizar" : "Crear"}
-						</Button>
-					</DialogActions>
-				</form>
-			</Dialog>
 		</AuthenticatedLayout>
 	);
 }
