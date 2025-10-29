@@ -194,7 +194,9 @@ export default function PaymentMethods({
 			</div>
 			<Box sx={{ mt: 3 }}>
 				{paymentMethodTypes.map((typeConfig) => {
-					const methods = paymentMethods[typeConfig.value] || [];
+					const methods = (paymentMethods[typeConfig.value] || []).filter(
+						(method) => !method.is_active,
+					);
 
 					return (
 						<Card key={typeConfig.value} sx={{ mb: 3 }}>
@@ -237,9 +239,16 @@ export default function PaymentMethods({
 															mb: 1,
 														}}
 													>
-														<Typography variant="h6" sx={{ fontSize: "1rem" }}>
-															{method.name}
-														</Typography>
+														<Box>
+															<Typography variant="h6" sx={{ fontSize: "1rem" }}>
+																{method.name}
+															</Typography>
+															{!method.is_active && (
+																<Typography variant="body2" color="error">
+																	Desactivado
+																</Typography>
+															)}
+														</Box>
 														<Box>
 															<Tooltip
 																title={
