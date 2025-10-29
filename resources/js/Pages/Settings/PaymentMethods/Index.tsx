@@ -1,3 +1,4 @@
+import { router } from "@inertiajs/react";
 import {
 	AccountBalance,
 	CreditCard,
@@ -23,11 +24,11 @@ import {
 import axios from "axios";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import PageHeader from "@/Components/PageHeader";
-import PaymentMethodFormModal from "./Partials/PaymentMethodFormModal";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import CreateButton from "@/Components/CreateButton";
+import PageHeader from "@/Components/PageHeader";
 import { useModal } from "@/Context/Modal";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import PaymentMethodFormModal from "./Partials/PaymentMethodFormModal";
 
 /*
  * INFO: PaymentMethod
@@ -116,7 +117,7 @@ export default function PaymentMethods({
 				editingMethod={null}
 				onSuccess={() => {
 					closeModal();
-					window.location.reload();
+					router.reload();
 				}}
 				closeModal={closeModal}
 			/>
@@ -134,7 +135,7 @@ export default function PaymentMethods({
 					editingMethod={method}
 					onSuccess={() => {
 						closeModal();
-						window.location.reload();
+						router.reload();
 					}}
 					closeModal={closeModal}
 				/>
@@ -154,7 +155,7 @@ export default function PaymentMethods({
 		try {
 			await axios.delete(route("payment-methods.destroy", method.id));
 			toast.success("Método de pago eliminado correctamente");
-			window.location.reload();
+			router.reload();
 		} catch (error) {
 			toast.error("Error al eliminar el método de pago");
 		}
@@ -169,7 +170,7 @@ export default function PaymentMethods({
 			toast.success(
 				`Método de pago ${method.is_active ? "desactivado" : "activado"} correctamente`,
 			);
-			window.location.reload();
+			router.reload();
 		} catch (error) {
 			toast.error("Error al cambiar el estado del método de pago");
 		}
