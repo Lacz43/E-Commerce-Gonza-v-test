@@ -16,7 +16,7 @@ class PaymentMethodsController extends Controller
      */
     public function index()
     {
-        $paymentMethods = PaymentMethod::active()->orderBy('type')->orderBy('name')->get();
+        $paymentMethods = PaymentMethod::orderBy('type')->orderBy('name')->get();
 
         // Group by type for better display
         $groupedMethods = $paymentMethods->groupBy('type')->map(function ($methods) {
