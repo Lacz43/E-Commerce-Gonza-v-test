@@ -1,4 +1,10 @@
-import { ShoppingCart, ContentCopy } from "@mui/icons-material";
+import {
+	ShoppingCart,
+	ContentCopy,
+	PhoneAndroid,
+	AccountBalance,
+	CreditCard,
+} from "@mui/icons-material";
 import {
 	Box,
 	FormControl,
@@ -57,6 +63,21 @@ const getFieldLabel = (key: string) => {
 			return "ID de Comercio";
 		default:
 			return key.charAt(0).toUpperCase() + key.slice(1);
+	}
+};
+
+const getTypeIcon = (type: string) => {
+	switch (type) {
+		case "pago_movil":
+			return <PhoneAndroid />;
+		case "transferencia_bancaria":
+			return <AccountBalance />;
+		case "zelle":
+			return <CreditCard />;
+		case "binance":
+			return <CreditCard />;
+		default:
+			return <CreditCard />;
 	}
 };
 
@@ -155,7 +176,10 @@ export default function OrderInfoDialog({ orderDetails, onClose }: Props) {
 							>
 								{paymentMethods.map((method) => (
 									<MenuItem key={method.id} value={method.id}>
-										{method.name} - {method.type_label}
+										<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+											{getTypeIcon(method.type)}
+											{method.name} - {method.type_label}
+										</Box>
 									</MenuItem>
 								))}
 							</Select>
