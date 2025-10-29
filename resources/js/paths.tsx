@@ -158,6 +158,10 @@ export const paths: Record<string, Route> = {
 				path: "settings.order",
 				name: "Órdenes",
 			},
+			paymentMethods: {
+				path: "payment-methods.index",
+				name: "Métodos de Pago",
+			},
 			backup: {
 				path: "backup.index",
 				name: "Respaldo y Restauracion",
