@@ -13,7 +13,13 @@ import {
 	Typography,
 } from "@mui/material";
 import axios, { AxiosError } from "axios";
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import ModalStyled from "@/Components/Modals/ModalStyled";
@@ -60,12 +66,7 @@ const paymentMethodTypes: PaymentMethodType[] = [
 		value: "pago_movil",
 		label: "Pago Móvil",
 		icon: <PhoneAndroid />,
-		fields: [
-			"phone",
-			"bank",
-			"account_holder",
-			"document_number",
-		],
+		fields: ["phone", "bank", "account_holder", "document_number"],
 	},
 	{
 		value: "transferencia_bancaria",
@@ -164,19 +165,16 @@ export default function PaymentMethodFormModal({
 	/*
 	 * Handle type change
 	 */
-	const handleTypeChange = useCallback(
-		(event: SelectChangeEvent) => {
-			const type = event.target.value as PaymentMethodType["value"];
-			setSelectedType(type);
-			reset({
-				type,
-				name: watch("name"), // Keep the name
-				account_details: {}, // Clear account details
-				is_active: watch("is_active"), // Keep the active status
-			});
-		},
-		[],
-	);
+	const handleTypeChange = useCallback((event: SelectChangeEvent) => {
+		const type = event.target.value as PaymentMethodType["value"];
+		setSelectedType(type);
+		reset({
+			type,
+			name: watch("name"), // Keep the name
+			account_details: {}, // Clear account details
+			is_active: watch("is_active"), // Keep the active status
+		});
+	}, []);
 
 	/*
 	 * Handle form submit
@@ -210,20 +208,23 @@ export default function PaymentMethodFormModal({
 		},
 		[editingMethod, closeModal, onSuccess],
 	);
-	const currentTypeConfig = useMemo(() => paymentMethodTypes.find(
-		(t) => t.value === watchedType,
-	), [watchedType, selectedType]);
+	const currentTypeConfig = useMemo(
+		() => paymentMethodTypes.find((t) => t.value === watchedType),
+		[watchedType, selectedType],
+	);
 
 	return (
 		<ModalStyled
 			onClose={closeModal}
 			header={
-				<h2>{editingMethod ? "Editar Método de Pago" : "Nuevo Método de Pago"}</h2>
+				<h2>
+					{editingMethod ? "Editar Método de Pago" : "Nuevo Método de Pago"}
+				</h2>
 			}
 			body={
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 					<Grid container spacing={2}>
-						<Grid item xs={12} md={6}>
+						<Grid size={{ xs: 12, md: 6 }}>
 							<FormControl fullWidth>
 								<InputLabel>Tipo de Método</InputLabel>
 								<Select
@@ -244,7 +245,7 @@ export default function PaymentMethodFormModal({
 								</Select>
 							</FormControl>
 						</Grid>
-						<Grid item xs={12} md={6}>
+						<Grid size={{ xs: 12, md: 6 }}>
 							<TextField
 								fullWidth
 								label="Nombre"
@@ -263,33 +264,35 @@ export default function PaymentMethodFormModal({
 
 					<Grid container spacing={2}>
 						{currentTypeConfig?.fields.map((field) => (
-							<Grid item xs={12} md={6} key={field}>
+							<Grid size={{ xs: 12, md: 6 }} key={field}>
 								<TextField
 									fullWidth
 									label={getFieldLabel(field)}
 									{...register(`account_details.${field}`, {
 										required: `${getFieldLabel(field)} es requerido`,
-										...(field === 'phone' && {
+										...(field === "phone" && {
 											pattern: {
 												value: /^\d{4}-\d{7}$/,
-												message: 'Formato: xxxx-xxxxxxx',
+												message: "Formato: xxxx-xxxxxxx",
 											},
 										}),
-										...(field === 'account_number' && {
+										...(field === "account_number" && {
 											pattern: {
 												value: /^\d{20}$/,
-												message: 'Debe tener exactamente 20 dígitos',
+												message: "Debe tener exactamente 20 dígitos",
 											},
 										}),
-										...(field === 'email' && {
+										...(field === "email" && {
 											pattern: {
 												value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-												message: 'Correo electrónico inválido',
+												message: "Correo electrónico inválido",
 											},
 										}),
 									})}
 									error={!!errors.account_details?.[field]}
-									helperText={errors.account_details?.[field]?.message as string}
+									helperText={
+										errors.account_details?.[field]?.message as string
+									}
 								/>
 							</Grid>
 						))}

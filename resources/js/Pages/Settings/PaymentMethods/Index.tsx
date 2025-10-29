@@ -105,7 +105,9 @@ export default function PaymentMethods({
 	paymentMethods: Record<string, PaymentMethod[]>;
 }) {
 	const { openModal } = useModal();
-	const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(null);
+	const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(
+		null,
+	);
 
 	/*
 	 * Handle create
@@ -218,7 +220,7 @@ export default function PaymentMethods({
 								) : (
 									<Grid container spacing={2}>
 										{methods.map((method) => (
-											<Grid item xs={12} md={6} lg={4} key={method.id}>
+											<Grid size={{ xs: 12, md: 6, lg: 4 }} key={method.id}>
 												<Paper
 													sx={{
 														p: 2,
@@ -238,7 +240,10 @@ export default function PaymentMethods({
 														}}
 													>
 														<Box>
-															<Typography variant="h6" sx={{ fontSize: "1rem" }}>
+															<Typography
+																variant="h6"
+																sx={{ fontSize: "1rem" }}
+															>
 																{method.name}
 															</Typography>
 															{!method.is_active && (
