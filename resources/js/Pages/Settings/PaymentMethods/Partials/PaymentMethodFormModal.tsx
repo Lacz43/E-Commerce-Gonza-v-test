@@ -74,18 +74,18 @@ const paymentMethodTypes: PaymentMethodType[] = [
 		icon: <AccountBalance />,
 		fields: ["bank", "cedula", "account_number", "account_holder"],
 	},
-	// {
-	// 	value: "zelle",
-	// 	label: "Zelle",
-	// 	icon: <CreditCard />,
-	// 	fields: ["email", "account_holder"],
-	// },
-	// {
-	// 	value: "binance",
-	// 	label: "Binance",
-	// 	icon: <CreditCard />,
-	// 	fields: ["wallet_address", "user_id", "email", "merchant_id"],
-	// },
+	{
+		value: "zelle",
+		label: "Zelle",
+		icon: <CreditCard />,
+		fields: ["email"],
+	},
+	{
+		value: "binance",
+		label: "Binance",
+		icon: <CreditCard />,
+		fields: ["user_id", "email"],
+	},
 ];
 
 /*
