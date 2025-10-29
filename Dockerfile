@@ -74,6 +74,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 # Copiamos assets compilados
 COPY --from=node-builder /var/www/html/public ./public
 
+RUN rm -f public/hot
+
 # Añadimos el crontab para Laravel Scheduler
 COPY docker/laravel-cron /etc/cron.d/laravel-cron
 RUN chmod 0644 /etc/cron.d/laravel-cron \
