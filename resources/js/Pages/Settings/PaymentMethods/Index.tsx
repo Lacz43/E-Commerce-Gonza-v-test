@@ -58,16 +58,16 @@ const paymentMethodTypes = [
 		label: "Transferencia Bancaria",
 		icon: <AccountBalance />,
 	},
-	{
-		value: "zelle",
-		label: "Zelle",
-		icon: <CreditCard />,
-	},
-	{
-		value: "binance",
-		label: "Binance",
-		icon: <Power />,
-	},
+	// {
+	// 	value: "zelle",
+	// 	label: "Zelle",
+	// 	icon: <CreditCard />,
+	// },
+	// {
+	// 	value: "binance",
+	// 	label: "Binance",
+	// 	icon: <Power />,
+	// },
 ];
 
 const getFieldLabel = (key: string) => {
