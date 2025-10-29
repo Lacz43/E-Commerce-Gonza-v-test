@@ -194,9 +194,7 @@ export default function PaymentMethods({
 			</div>
 			<Box sx={{ mt: 3 }}>
 				{paymentMethodTypes.map((typeConfig) => {
-					const methods = (paymentMethods[typeConfig.value] || []).filter(
-						(method) => !method.is_active,
-					);
+					const methods = paymentMethods[typeConfig.value] || [];
 
 					return (
 						<Card key={typeConfig.value} sx={{ mb: 3 }}>
