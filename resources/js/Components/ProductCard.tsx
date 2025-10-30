@@ -144,11 +144,13 @@ export default function ProductCard({
 
 				{/* Content */}
 				<div className="flex flex-col p-5 mt-auto">
-					<div className="flex items-start justify-between gap-3 mb-3">
-						<h3 className="text-lg font-bold tracking-tight text-slate-800 line-clamp-2 group-hover:text-orange-600 transition-colors">
-							{item.name}
-						</h3>
-						{/* Dynamic rating mejorado */}
+					{/* Product Name */}
+					<h3 className="text-lg font-bold tracking-tight text-slate-800 line-clamp-2 group-hover:text-orange-600 transition-colors text-center mb-3">
+						{item.name}
+					</h3>
+
+					{/* Dynamic rating mejorado */}
+					<div className="flex justify-center mb-3">
 						<div
 							className={`flex items-center gap-0.5 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200/50 ${auth.user ? "cursor-pointer hover:bg-amber-100 transition-colors" : ""}`}
 							onClick={() => handleRatingClick()}
@@ -176,7 +178,9 @@ export default function ProductCard({
 						<span className="text-3xl font-black bg-gradient-to-r from-orange-600 to-emerald-600 bg-clip-text text-transparent">
 							{priceFormatted}
 						</span>
-						<span className="text-sm font-medium text-slate-500">{settings.currency === "VES" ? "Bs" : "USD"}</span>
+						<span className="text-sm font-medium text-slate-500">
+							{settings.currency === "VES" ? "Bs" : "USD"}
+						</span>
 					</div>
 
 					{item.description && (
