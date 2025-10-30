@@ -22,7 +22,7 @@ class ProductInventoryController extends Controller
     {
         // TODO: aplicar filtros específicos de inventario (stock, low_stock, etc.)
         $products = (new QueryFilters($request))->apply(
-            Product::query()->with(['productInventory', 'defaultImage:product_id,image'])->whereHas('productInventory')
+            Product::query()->with(['productInventory', 'defaultImage:product_id,image'])
         );
         $filtersFields = Product::getFilterableFields();
         $sortFields = Product::getSortableFields();
